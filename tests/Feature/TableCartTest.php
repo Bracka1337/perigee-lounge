@@ -127,3 +127,17 @@ test('invalid item ids in cart urls are rejected without a server error', functi
     $this->post("/en/menu/table-z4/cart/{$id}", ['qty' => 1])->assertMethodNotAllowed();
     $this->delete("/en/menu/table-z4/cart/{$id}")->assertMethodNotAllowed();
 })->with(['text' => 'abc', 'too long' => '99999999999999999999']);
+
+test('verified guests see a confirmation after sending an order', function () {
+    Order::create([
+        'table_id' => Table::where('name', 'Z4')->value('id'),
+        'status' => Order::STATUS_OPEN,
+    ]);
+
+    $this->post($this->addUrl, ['menu_item_id' => $this->item->id]);
+
+    $this->followingRedirects()
+        ->post(route('client.table.cart.confirm', ['locale' => 'en', 'code' => 'z4']))
+        ->assertOk()
+        ->assertSee('Your order was sent to the waiter');
+});
