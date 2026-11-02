@@ -104,29 +104,54 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'LOUNGE',
             ],
             'home-page-title' => [
-                'en' => 'A hookah bar with a dark space atmosphere, soft lighting and deep vibes.',
-                'lv' => 'Ūdenspīpes bārs ar tumšu telpas atmosfēru, maigu apgaismojumu un dziļu vibrāciju.',
-                'ru' => 'Кальянная с атмосферой ночного неба, мягким светом и глубоким вайбом.',
+                'en' => 'Low light, slow smoke and a calm soundtrack. Step out of the city\'s orbit for an evening.',
+                'lv' => 'Maiga gaisma, lēni dūmi un mierīga mūzika. Izkāpiet no pilsētas orbītas uz vienu vakaru.',
+                'ru' => 'Мягкий свет, неспешный дым и спокойная музыка. Сойдите с городской орбиты на один вечер.',
             ],
             'perigee-booking-button' => [
-                'en' => 'book a table',
-                'lv' => 'rezervēt galdiņu',
-                'ru' => 'забронировать стол',
+                'en' => 'Book a table',
+                'lv' => 'Rezervēt galdiņu',
+                'ru' => 'Забронировать стол',
             ],
             'perigee-menu-button' => [
                 'en' => 'Check menu',
                 'lv' => 'Skatit edienkarti',
                 'ru' => 'Посмотреть меню',
             ],
-            'home-page-section-title' => [
-                'en' => 'Dark light, thick smoke, calm sound',
-                'lv' => 'Tumša gaisma, biezi dūmi, mierīga skaņa',
-                'ru' => 'Тёмный свет, густой дым, спокойный звук.',
+            'home-hero-title' => [
+                'en' => 'The closest point to quiet.',
+                'lv' => 'Tuvākais punkts klusumam.',
+                'ru' => 'Ближайшая точка к тишине.',
             ],
-            'home-page-section-content' => [
-                'en' => 'PERIGEE — place to unwind from the city, hang out with friends, choose your favorite flavor, and simply unwind. The minimalist interior, dark tones, and emphasis on atmosphere.',
-                'lv' => 'PERIGEE — vieta, kur atpūsties no pilsētas burzmas, pavadīt laiku ar draugiem, izvēlēties savu iecienītāko garšu un vienkārši relaksēties. Minimālistisks interjers, tumši toņi un uzsvars uz atmosfēru.',
-                'ru' => 'PERIGEE — это место, где можно отдохнуть от города, посидеть с друзьями, выбрать свой вкус и просто отключиться. Минималистичный интерьер, тёмные тона и акцент на атмосфере.',
+            'home-feature-title-1' => [
+                'en' => 'Blended in-house',
+                'lv' => 'Gatavots uz vietas',
+                'ru' => 'Забиваем под заказ',
+            ],
+            'home-feature-content-1' => [
+                'en' => 'Each bowl is mixed to order, from light citrus to deep, spiced blends.',
+                'lv' => 'Katra ūdenspīpe tiek gatavota pēc pasūtījuma, no vieglām citrusaugļu līdz bagātīgām garšvielu notēm.',
+                'ru' => 'Каждая чаша готовится под заказ: от лёгких цитрусовых до глубоких пряных миксов.',
+            ],
+            'home-feature-title-2' => [
+                'en' => 'Built for long evenings',
+                'lv' => 'Gariem vakariem',
+                'ru' => 'Для долгих вечеров',
+            ],
+            'home-feature-content-2' => [
+                'en' => 'Deep seating, soft light and music you can still talk over.',
+                'lv' => 'Ērti dīvāni, maiga gaisma un mūzika, kas netraucē sarunai.',
+                'ru' => 'Удобные диваны, мягкий свет и музыка, которая не мешает разговору.',
+            ],
+            'home-feature-title-3' => [
+                'en' => 'Book and order online',
+                'lv' => 'Rezervē un pasūti tiešsaistē',
+                'ru' => 'Бронь и заказ онлайн',
+            ],
+            'home-feature-content-3' => [
+                'en' => 'Reserve a table, scan the QR code at your table to order, and earn loyalty points.',
+                'lv' => 'Rezervē galdiņu, noskenē QR kodu pie galda, lai pasūtītu, un krāj lojalitātes punktus.',
+                'ru' => 'Забронируйте стол, закажите по QR-коду на столе и копите баллы лояльности.',
             ],
             'about-title' => [
                 'en' => 'A hookah bar with a dark space atmosphere, soft lighting and deep vibes.',
