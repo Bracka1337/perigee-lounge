@@ -25,10 +25,10 @@
 
 @section('content')
     <div class="mb-8">
-        <h1 class="logo-font text-3xl md:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+        <h1 class="logo-font text-3xl md:text-4xl mb-2">
             {{ __('staff-orders-create-title') }}
         </h1>
-        <p class="text-sm text-white/70">
+        <p class="text-sm text-ink-muted">
             {{ __('staff-orders-create-subtitle') }}
         </p>
     </div>
@@ -46,20 +46,21 @@
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/60 overflow-hidden min-w-0">
+        <div class="lg:col-span-2 rounded-2xl border border-line bg-surface p-4  overflow-hidden min-w-0">
             <div class="flex items-center justify-between gap-3 mb-3 min-w-0">
-                <h2 class="min-w-0 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-white/60 inline-flex items-center gap-2">
+                <h2 class="min-w-0 text-xs sm:text-xs text-ink-muted inline-flex items-center gap-2">
                     <x-icon category="System" name="Window" class="w-5 h-5 shrink-0"/>
                     {{ __('staff-orders-field-table') }}
                 </h2>
 
-                <div class="text-[10px] uppercase tracking-[0.18em] text-white/50">
+                <div class="text-xs text-ink-muted">
                     {{ __('staff-orders-field-table-placeholder') }}
                 </div>
             </div>
 
-            <div id="staffFloorPlan"
-                 class="relative w-full aspect-[16/14] rounded-2xl border border-white/15 bg-black/70 overflow-hidden select-none">
+            <div class="overflow-x-auto">
+<div id="staffFloorPlan"
+                 class="relative w-full min-w-[640px] aspect-[16/14] rounded-2xl border border-line bg-ground/70 overflow-hidden select-none">
                 <!-- Floor Plan Zones -->
                 <x-floor-plan-zones />
                 
@@ -73,14 +74,14 @@
                         $statusClass = match (true) {
                             $hasOpenOrder   => 'bg-emerald-500/70 border-emerald-300', // гость за столом (как в бронированиях)
                             $hasReservation => 'bg-sky-500/70 border-sky-300',         // бронь (как в бронированиях)
-                            default         => 'bg-white/10 border-white/60',
+                            default         => 'bg-line border-line-strong',
                         };
 
                         $disabled = !$isActive || $hasOpenOrder || $hasReservation;
                     @endphp
 
                     <button type="button"
-                            class="js-staff-table absolute flex items-center justify-center rounded-xl border text-[11px] text-white {{ $statusClass }}
+                            class="js-staff-table absolute flex items-center justify-center rounded-xl border text-xs text-ink {{ $statusClass }}
                                    transition focus:outline-none
                                    {{ $disabled ? 'cursor-not-allowed opacity-60' : 'hover:brightness-110' }}"
                             data-id="{{ $table->id }}"
@@ -97,14 +98,15 @@
                                 transform: translate(-50%, -50%) rotate({{ $table->rotation }}deg);
                                 opacity: {{ $isActive ? '1' : '0.3' }};
                             ">
-                        <div class="text-white font-semibold text-[10px] md:text-[11px] leading-tight max-w-full px-1 truncate text-center">
+                        <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                             {{ $table->name }}
                         </div>
                     </button>
                 @endforeach
             </div>
+</div>
 
-            <div class="mt-4 flex flex-wrap gap-3 text-[10px] uppercase tracking-[0.18em] text-white/60">
+            <div class="mt-4 flex flex-wrap gap-3 text-xs text-ink-muted">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
                     <span>{{ __('staff-reservations-legend-active') }}</span>
@@ -114,14 +116,14 @@
                     <span>{{ __('staff-reservations-legend-pending') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-white/30"></span>
+                    <span class="w-3 h-3 rounded-full bg-line"></span>
                     <span>{{ __('staff-reservations-legend-free') }}</span>
                 </div>
             </div>
 
-            <div class="mt-3 pt-3 border-t border-white/10 flex flex-wrap gap-3 text-[10px] uppercase tracking-[0.18em] text-white/50">
+            <div class="mt-3 pt-3 border-t border-line flex flex-wrap gap-3 text-xs text-ink-muted">
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded bg-purple-500/30 border border-purple-400/40"></span>
+                    <span class="w-3 h-3 rounded bg-nebula/15 border border-nebula"></span>
                     <span>{{ __('floor-plan-zone-terrace') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -143,8 +145,8 @@
             </div>
         </div>
 
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/60 overflow-hidden min-w-0">
-            <h2 class="text-xs uppercase tracking-[0.22em] text-white/60 mb-3 inline-flex items-center gap-2">
+        <div class="rounded-2xl border border-line bg-surface p-4  overflow-hidden min-w-0">
+            <h2 class="text-xs text-ink-muted mb-3 inline-flex items-center gap-2">
                 <x-icon category="Interface" name="Book" class="w-5 h-5 shrink-0"/>
                 {{ __('staff-orders-create-title') }}
             </h2>
@@ -157,7 +159,7 @@
 
                 <input type="hidden" name="table_id" id="staff_table_id" value="{{ old('table_id') }}">
 
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-3 py-2 text-xs text-white/80 min-w-0">
+                <div class="rounded-2xl bg-ground/40 border border-line px-3 py-2 text-xs text-ink-soft min-w-0">
                     <div class="inline-flex items-center gap-2 min-w-0">
                         <x-icon category="System" name="Window" class="w-5 h-5 shrink-0"/>
                         <span id="staffSelectedTableText" class="truncate">
@@ -168,11 +170,11 @@
 
                 <noscript>
                     <div class="space-y-1.5">
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                        <label class="block text-xs text-ink-muted">
                             {{ __('staff-orders-field-table') }}
                         </label>
                         <select name="table_id"
-                                class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-xs text-white">
+                                class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-xs text-ink">
                             <option value="">{{ __('staff-orders-field-table-placeholder') }}</option>
                             @foreach($tables as $table)
                                 <option value="{{ $table->id }}" @selected(old('table_id') == $table->id)>
@@ -186,8 +188,8 @@
                 <button id="staffCreateBtn"
                         type="submit"
                         class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full
-                               border border-white/70 text-[11px] uppercase tracking-[0.22em] text-white
-                               hover:bg-white hover:text-black transition disabled:opacity-50 disabled:cursor-not-allowed"
+                               border border-line-strong text-xs text-ink
+                               hover:bg-ink hover:text-on-nebula transition disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled>
                     <x-icon category="Edit" name="Add_Plus_Circle" class="w-5 h-5 shrink-0"/>
                     <span class="leading-none">{{ __('staff-orders-create-submit') }}</span>
@@ -212,10 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!btn || btn.dataset.disabled === '1') return;
 
         if (selectedBtn && selectedBtn !== btn) {
-            selectedBtn.classList.remove('ring-2', 'ring-white');
+            selectedBtn.classList.remove('ring-2', 'ring-line-strong');
         }
 
-        btn.classList.add('ring-2', 'ring-white');
+        btn.classList.add('ring-2', 'ring-line-strong');
         selectedBtn = btn;
 
         tableIdInput.value = btn.dataset.id;

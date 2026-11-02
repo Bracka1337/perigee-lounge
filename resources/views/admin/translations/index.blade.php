@@ -3,10 +3,10 @@
 @section('content')
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2">
                 {{ __('admin-translations-title') }}
             </h1>
-            <p class="text-xs md:text-sm text-white/70">
+            <p class="text-xs md:text-sm text-ink-muted">
                 {{ __('admin-translations-subtitle') }}
             </p>
         </div>
@@ -18,14 +18,13 @@
                        name="q"
                        value="{{ request('q') }}"
                        placeholder="{{ __('admin-translations-search-placeholder') }}"
-                       class="bg-black/60 border border-white/20 rounded-full px-3 py-1.5 text-xs text-white w-full md:w-56">
+                       class="bg-ground/60 border border-line rounded-full px-3 py-1.5 text-xs text-ink w-full md:w-56">
             </form>
 
             <a href="{{ route('admin.translations.create') }}"
                class="inline-flex justify-center items-center gap-2 px-4 py-2 rounded-full border border-red-500/70
-                      bg-red-600/80 text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-white
-                      shadow-[0_0_12px_rgba(248,113,113,0.7)] w-full md:w-auto
-                      hover:bg-red-500 transition">
+                      bg-nebula text-xs md:text-xs text-on-nebula w-full md:w-auto
+                      hover:bg-ink transition">
                 <x-icon category="Edit" name="Add_Plus_Circle" class="w-5 h-5 shrink-0"/>
                 <span>{{ __('admin-translations-create-button') }}</span>
             </a>
@@ -35,7 +34,7 @@
 
     @if (session('status'))
         <div class="mb-6 bg-emerald-950/60 border border-emerald-500/70 text-emerald-100 text-xs md:text-sm rounded-xl px-4 py-3">
-            <p class="font-semibold mb-1 text-[11px] tracking-wide uppercase text-emerald-200">
+            <p class="font-semibold mb-1 text-xs tracking-wide uppercase text-emerald-200">
                 {{ __('admin-translations-alert-success-title') }}
             </p>
             <p>{{ session('status') }}</p>
@@ -51,38 +50,37 @@
     </div>
 
     <div id="deleteTranslationModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
-        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-ground/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-ground/95 border border-red-500/50 rounded-2xl p-6">
             <div class="mb-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
                     <span class="text-red-400 text-lg">!</span>
                 </div>
-                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                <h2 class="text-base md:text-lg font-semibold text-ink tracking-wide">
                     {{ __('admin-translations-delete-modal-title') }}
                 </h2>
             </div>
 
-            <p class="text-sm text-white/70 mb-4">
+            <p class="text-sm text-ink-muted mb-4">
                 {{ __('admin-translations-delete-modal-text-prefix') }}
-                <span id="deleteTranslationKey" class="font-semibold text-white break-all"></span>?
+                <span id="deleteTranslationKey" class="font-semibold text-ink break-all"></span>?
             </p>
-            <p class="text-xs text-white/40 mb-5">
+            <p class="text-xs text-ink-muted mb-5">
                 {{ __('admin-translations-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
                 <button type="button"
                         id="deleteTranslationCancelBtn"
-                        class="px-5 py-2 rounded-full border border-white/30
-                               text-[11px] tracking-[0.22em] uppercase text-white/70
-                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                        class="px-5 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-muted
+                               hover:text-ink hover:border-line-strong hover:bg-surface transition">
                     {{ __('admin-translations-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteTranslationConfirmBtn"
                         class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
-                               text-[11px] tracking-[0.22em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     {{ __('admin-translations-delete-modal-confirm') }}
                 </button>
