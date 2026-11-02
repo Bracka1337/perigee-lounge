@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Translation;
 use Database\Seeders\DefaultTranslationsSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class SyncTranslations extends Command
 {
@@ -17,10 +18,12 @@ class SyncTranslations extends Command
         $existing = Translation::query()->pluck('key')->all();
         $missing = array_diff_key($seeder->items(), array_flip($existing));
 
-        foreach ($missing as $key => $values) {
-            Translation::create(['key' => $key, 'value' => $seeder->normalize($key, $values)]);
-            Translation::forgetCache($key);
-        }
+        DB::transaction(function () use ($missing, $seeder) {
+            foreach ($missing as $key => $values) {
+                Translation::create(['key' => $key, 'value' => $seeder->normalize($key, $values)]);
+                Translation::forgetCache($key);
+            }
+        });
 
         $this->info('Added '.count($missing).' missing translations.');
 

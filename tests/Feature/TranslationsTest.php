@@ -48,3 +48,26 @@ test('table errors follow the locale', function () {
         ->assertRedirect('/en/menu')
         ->assertSessionHas('error', 'Table not found');
 });
+
+test('activity log uses the same labels as its filters', function () {
+    $this->seed(DefaultTranslationsSeeder::class);
+    app()->setLocale('en');
+
+    $log = new ActivityLog(['action' => 'created', 'model_type' => 'App\Models\PromoCode']);
+
+    expect($log->action_name)->toBe(__('logs-action-created'))
+        ->and($log->model_name)->toBe(__('logs-model-promocode'))
+        ->and(ActivityLog::modelLabel(null))->toBe('');
+});
+
+test('sync adds nothing if it fails partway', function () {
+    Translation::saving(function () {
+        if (Translation::count() === 5) {
+            throw new RuntimeException('Stopped');
+        }
+    });
+
+    expect(fn () => $this->artisan('translations:sync')->run())->toThrow(RuntimeException::class);
+
+    expect(Translation::count())->toBe(0);
+});
