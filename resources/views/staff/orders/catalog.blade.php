@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-4">
-    <a href="{{ route('staff.orders.show', ['locale' => $locale, 'order' => $order]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-white/80 transition">
+    <a href="{{ route('staff.orders.show', ['locale' => $locale, 'order' => $order]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface hover:bg-line border border-line text-sm text-ink-soft transition">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4">
             <path d="M19 12H5m5-7l-7 7 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -13,15 +13,15 @@
 </div>
 
 <div class="mb-6">
-    <label class="w-full inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 shadow-inner shadow-black/20">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-white/60">
+    <label class="w-full inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-surface border border-line shadow-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-ink-muted">
             <path d="M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14Zm0 0L5 5m13.5 14L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <input
             id="itemsSearch"
             type="search"
             placeholder="{{ __('common-search-items') }}"
-            class="w-full bg-transparent outline-none text-sm text-white placeholder:text-white/50"
+            class="w-full bg-transparent outline-none text-sm text-ink placeholder:text-ink-muted"
             autocomplete="off"
             spellcheck="false"
         >
@@ -35,7 +35,7 @@
             @foreach ($categories as $category)
                 @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
                 <button type="button"
-                        class="category-pill px-3 py-2 rounded-full border border-white/15 bg-white/5 text-xs text-white/80 whitespace-nowrap"
+                        class="category-pill px-3 py-2 rounded-full border border-line bg-surface text-xs text-ink-soft whitespace-nowrap"
                         data-category="cat-{{ $category->id }}">
                     {{ $catName }}
                 </button>
@@ -44,14 +44,14 @@
     </div>
 
     {{-- Категории: desktop sidebar --}}
-    <aside class="hidden md:block md:w-1/4 bg-white/5 border border-white/10 rounded-2xl p-4">
-        <h2 class="text-xs uppercase tracking-[0.2em] text-white/60 mb-3">{{ __('common-categories') }}</h2>
-        <ul class="space-y-2 text-sm text-white/80" id="categoryList">
+    <aside class="hidden md:block md:w-1/4 bg-surface border border-line rounded-2xl p-4">
+        <h2 class="text-xs text-ink-muted mb-3">{{ __('common-categories') }}</h2>
+        <ul class="space-y-2 text-sm text-ink-soft" id="categoryList">
             @foreach ($categories as $category)
                 @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
                 <li>
                     <button type="button"
-                            class="category-pill w-full text-left px-3 py-2 rounded-lg border border-transparent hover:border-white/15 hover:bg-white/5 transition"
+                            class="category-pill w-full text-left px-3 py-2 rounded-lg border border-transparent hover:border-line hover:bg-surface transition"
                             data-category="cat-{{ $category->id }}">
                         <span class="font-semibold">{{ $catName }}</span>
                     </button>
@@ -67,28 +67,28 @@
 
             <div id="cat-{{ $category->id }}" class="col-span-full pt-2 pb-1" data-category-header="cat-{{ $category->id }}">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-white">{{ $catName }}</span>
-                    <span class="h-px flex-1 bg-white/10"></span>
+                    <span class="text-sm font-semibold text-ink">{{ $catName }}</span>
+                    <span class="h-px flex-1 bg-line"></span>
                 </div>
             </div>
 
             @foreach ($category->items as $item)
                 @php($itemName = $item->name[$locale] ?? ($item->name['ru'] ?? reset($item->name) ?? ''))
                 @php($itemNameLower = mb_strtolower($itemName))
-                <div class="product-card rounded-2xl border border-white/10 bg-white/5 p-3 flex flex-col gap-1" data-category="cat-{{ $category->id }}" data-name="{{ $itemNameLower }}">
+                <div class="product-card rounded-2xl border border-line bg-surface p-3 flex flex-col gap-1" data-category="cat-{{ $category->id }}" data-name="{{ $itemNameLower }}">
                     @if ($item->image_url)
                         <img
                             src="{{ $item->image_url }}"
                             alt="{{ $itemName }}"
-                            class="w-full h-32 object-cover rounded-xl bg-black/40"
+                            class="w-full h-32 object-cover rounded-xl bg-ground/40"
                             loading="lazy"
                         >
                     @endif
 
-                    <div class="font-medium text-white truncate product-name" title="{{ $itemName }}">
+                    <div class="font-medium text-ink truncate product-name" title="{{ $itemName }}">
                         {{ $itemName }}
                     </div>
-                    <div class="text-xs text-white/60">{{ number_format($item->price, 2, '.', ' ') }} €</div>
+                    <div class="text-xs text-ink-muted">{{ number_format($item->price, 2, '.', ' ') }} €</div>
 
                     <form method="POST" action="{{ route('staff.orders.items.store', ['locale' => $locale, 'order' => $order]) }}" class="pt-0">
                         @csrf
@@ -107,7 +107,7 @@
 <button
     id="backToTop"
     type="button"
-    class="hidden fixed bottom-6 right-6 z-40 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white p-3 shadow-lg backdrop-blur"
+    class="hidden fixed bottom-6 right-6 z-40 rounded-full bg-line hover:bg-line border border-line text-ink p-3  backdrop-blur"
     aria-label="{{ __('common-back-to-top') }}"
 >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
@@ -123,9 +123,9 @@
         const setActive = (cat) => {
             pills.forEach(p => {
                 const active = p.dataset.category === cat;
-                p.classList.toggle('border-white/40', active);
-                p.classList.toggle('bg-white/15', active);
-                p.classList.toggle('text-white', active);
+                p.classList.toggle('border-line-strong', active);
+                p.classList.toggle('bg-line', active);
+                p.classList.toggle('text-ink', active);
             });
         };
 

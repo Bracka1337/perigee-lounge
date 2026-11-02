@@ -15,7 +15,7 @@
 <div class="no-x-scroll">
 
     <div class="mb-6">
-        <a href="{{ route('staff.orders.index', ['locale' => $locale]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-white/80 transition">
+        <a href="{{ route('staff.orders.index', ['locale' => $locale]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface hover:bg-line border border-line text-sm text-ink-soft transition">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-4 h-4">
                 <path d="M19 12H5m5-7l-7 7 7 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -25,24 +25,24 @@
 
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="min-w-0">
-            <p class="text-[10px] uppercase tracking-[0.25em] text-white/60 mb-2">
+            <p class="text-xs text-ink-muted mb-2">
                 {{ __('staff-orders-show-badge') }}
             </p>
-            <h1 class="logo-font text-3xl md:text-4xl mb-1 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+            <h1 class="logo-font text-3xl md:text-4xl mb-1">
                 {{ __('staff-orders-show-title', ['id' => $order->id]) }}
             </h1>
-            <p class="text-sm text-white/70">
+            <p class="text-sm text-ink-muted">
                 {{ __('staff-orders-show-subtitle', ['table' => $order->table->name ?? '#']) }}
             </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2 text-xs">
-            <div class="px-3 py-1 rounded-full border border-white/30 text-white/80 inline-flex items-center gap-2">
+            <div class="px-3 py-1 rounded-full border border-line-strong text-ink-soft inline-flex items-center gap-2">
                 <x-icon category="Interface" name="Info_Circle" class="w-4 h-4"/>
                 <span>{{ __('staff-orders-status-label') }}: {{ __('staff-orders-status-'.$order->status) }}</span>
             </div>
 
-            <div class="px-3 py-1 rounded-full border border-white/30 text-white/80 inline-flex items-center gap-2">
+            <div class="px-3 py-1 rounded-full border border-line-strong text-ink-soft inline-flex items-center gap-2">
                 <x-icon category="Finance" name="Money" class="w-4 h-4"/>
                 <span>{{ __('staff-orders-total-label') }}: {{ number_format($order->total, 2, '.', ' ') }} €</span>
             </div>
@@ -63,16 +63,16 @@
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 rounded-2xl border border-white/10 bg-white/5 p-4 min-w-0">
+        <div class="lg:col-span-2 rounded-2xl border border-line bg-surface p-4 min-w-0">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
-                <h2 class="text-xs uppercase tracking-[0.22em] text-white/60 inline-flex items-center gap-2">
+                <h2 class="text-xs text-ink-muted inline-flex items-center gap-2">
                     <x-icon category="Interface" name="List_Check" class="w-5 h-5"/>
                     {{ __('staff-orders-items-title') }}
                 </h2>
 
                 @if($order->status === \App\Models\Order::STATUS_OPEN)
                     <a href="{{ route('staff.orders.items.catalog', ['locale' => $locale, 'order' => $order]) }}"
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-sm text-white transition">
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-line hover:bg-line border border-line text-sm text-ink transition">
                         <x-icon category="Shopping" name="Shopping_Cart_01" class="w-5 h-5"/>
                         <span>{{ __('staff-orders-select-items') }}</span>
                     </a>
@@ -81,7 +81,7 @@
 
             <div class="space-y-3">
                 @forelse($order->items as $item)
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 py-2 rounded-xl bg-black/40 border border-white/10 min-w-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 py-2 rounded-xl bg-ground/40 border border-line min-w-0">
                         <div class="flex items-center gap-3 min-w-0">
                             @if($item->menuItem->image_path ?? false)
                                 <img src="{{ asset('storage/'.$item->menuItem->image_path) }}"
@@ -92,7 +92,7 @@
                                 <div class="text-xs font-medium truncate">
                                     {{ $item->menuItem->name[$locale] ?? '' }}
                                 </div>
-                                <div class="text-[11px] text-white/50">
+                                <div class="text-xs text-ink-muted">
                                     {{ number_format($item->unit_price, 2, '.', ' ') }} € × {{ $item->quantity }}
                                 </div>
                             </div>
@@ -105,12 +105,12 @@
                                       class="inline">
                                     @csrf
                                     @method('PATCH')
-                                    <label class="flex items-center gap-2 cursor-pointer px-2.5 py-1.5 rounded-xl border border-amber-400/50 bg-amber-500/10 hover:bg-amber-400/20 transition shadow-[0_6px_18px_rgba(251,191,36,0.15)]">
+                                    <label class="flex items-center gap-2 cursor-pointer px-2.5 py-1.5 rounded-xl border border-amber-400/50 bg-amber-500/10 hover:bg-amber-400/20 transition">
                                         <input type="checkbox"
                                                {{ $item->is_served ? 'checked' : '' }}
                                                onchange="this.form.submit()"
-                                               class="w-4 h-4 rounded-md border-amber-400/80 text-amber-500 bg-black/50 focus:ring-amber-300 focus:ring-1 cursor-pointer">
-                                        <span class="text-[10px] text-amber-100 font-semibold uppercase tracking-[0.16em]">{{ __('staff-orders-item-served') }}</span>
+                                               class="w-4 h-4 rounded-md border-amber-400/80 text-amber-500 bg-ground/50 focus:ring-amber-300 focus:ring-1 cursor-pointer">
+                                        <span class="text-xs text-amber-100 font-semibold">{{ __('staff-orders-item-served') }}</span>
                                     </label>
                                 </form>
 
@@ -124,10 +124,10 @@
                                            value="{{ $item->quantity }}"
                                            min="1"
                                            max="99"
-                                           class="w-16 bg-black/60 border border-white/20 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70">
+                                           class="w-16 bg-ground/60 border border-line rounded-lg px-2 py-1 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong">
                                     <button type="submit"
                                             aria-label="{{ __('staff-orders-item-update-button') }}"
-                                            class="px-3 py-1 rounded-full border border-white/40 text-white hover:bg-white hover:text-black transition">
+                                            class="px-3 py-1 rounded-full border border-line-strong text-ink hover:bg-ink hover:text-on-nebula transition">
                                         <x-icon category="Arrow" name="Arrow_Reload_02" class="w-5 h-5"/>
                                     </button>
                                 </form>
@@ -146,16 +146,16 @@
                         @endif
                     </div>
                 @empty
-                    <p class="text-xs text-white/60">
+                    <p class="text-xs text-ink-muted">
                         {{ __('staff-orders-items-empty') }}
                     </p>
                 @endforelse
             </div>
         </div>
 
-        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-5 min-w-0">
+        <div class="rounded-2xl border border-line bg-surface p-4 space-y-5 min-w-0">
             <div>
-                <h2 class="text-xs uppercase tracking-[0.22em] text-white/60 mb-3 inline-flex items-center gap-2">
+                <h2 class="text-xs text-ink-muted mb-3 inline-flex items-center gap-2">
                     <x-icon category="Interface" name="Chart_Pie" class="w-5 h-5"/>
                     {{ __('staff-orders-summary-title') }}
                 </h2>
@@ -171,22 +171,22 @@
                         @php
                             $isEligible = in_array($item->id, $eligibleItemIds);
                         @endphp
-                        <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg {{ $isEligible ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-black/20' }}">
+                        <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg {{ $isEligible ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-ground/20' }}">
                             <div class="flex-1 min-w-0">
-                                <div class="text-white/90 text-xs truncate">
+                                <div class="text-ink-soft text-xs truncate">
                                     {{ $item->menuItem->name[app()->getLocale()] ?? '' }}
                                 </div>
-                                <div class="text-white/50 text-[11px]">
+                                <div class="text-ink-muted text-xs">
                                     {{ number_format($item->unit_price, 2, '.', ' ') }} € × {{ $item->quantity }}
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
                                 <div class="text-right">
-                                    <div class="text-white/90 text-xs font-medium">
+                                    <div class="text-ink-soft text-xs font-medium">
                                         {{ number_format($item->total_price, 2, '.', ' ') }} €
                                     </div>
                                     @if($isEligible)
-                                        <div class="text-emerald-300 text-[10px]">✓ {{ __('staff-orders-with-discount') }}</div>
+                                        <div class="text-emerald-300 text-xs">✓ {{ __('staff-orders-with-discount') }}</div>
                                     @endif
                                 </div>
                             </div>
@@ -194,12 +194,12 @@
                     @endforeach
                 </div>
 
-                <div class="h-px bg-white/10 mb-3"></div>
+                <div class="h-px bg-line mb-3"></div>
 
-                <div class="space-y-1 text-xs text-white/80">
+                <div class="space-y-1 text-xs text-ink-soft">
                     <div class="flex items-center justify-between gap-3">
-                        <span class="text-white/70">{{ __('staff-orders-summary-subtotal') }}</span>
-                        <span class="text-white/90">{{ number_format($order->subtotal, 2, '.', ' ') }} €</span>
+                        <span class="text-ink-muted">{{ __('staff-orders-summary-subtotal') }}</span>
+                        <span class="text-ink-soft">{{ number_format($order->subtotal, 2, '.', ' ') }} €</span>
                     </div>
 
                     @if($order->promoCode && $order->discount_total > 0)
@@ -209,34 +209,34 @@
 
                         <div class="flex items-start justify-between gap-3 text-rose-300">
                             <div class="flex-1 min-w-0">
-                                <div class="text-white/70 text-[11px]">{{ __('staff-orders-summary-promo-discount') }}</div>
+                                <div class="text-ink-muted text-xs">{{ __('staff-orders-summary-promo-discount') }}</div>
                                 @if($promoDetails['scope'] === 'all')
-                                    <div class="text-[10px] text-white/50">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-scope-all-desc') }}
                                     </div>
                                 @elseif($promoDetails['scope'] === 'category')
-                                    <div class="text-[10px] text-white/50">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-scope-category-desc') }}:
                                         {{ $promoDetails['category_name'][app()->getLocale()] ?? '' }}
                                     </div>
-                                    <div class="text-[10px] text-white/40">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-eligible-amount') }}: {{ number_format($promoDetails['eligible_amount'], 2, '.', ' ') }} €
                                     </div>
                                 @elseif($promoDetails['scope'] === 'item')
-                                    <div class="text-[10px] text-white/50">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-scope-item-desc') }}:
                                         {{ $promoDetails['item_name'][app()->getLocale()] ?? '' }}
                                     </div>
-                                    <div class="text-[10px] text-white/40">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-eligible-amount') }}: {{ number_format($promoDetails['eligible_amount'], 2, '.', ' ') }} €
                                     </div>
                                 @endif
                                 @if($promoDetails['discount_type'] === 'percent')
-                                    <div class="text-[10px] text-white/40">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-discount-percent', ['value' => $promoDetails['discount_value']]) }}
                                     </div>
                                 @else
-                                    <div class="text-[10px] text-white/40">
+                                    <div class="text-xs text-ink-muted">
                                         {{ __('staff-orders-promo-discount-fixed', ['value' => number_format($promoDetails['discount_value'], 2, '.', ' ')]) }}
                                     </div>
                                 @endif
@@ -247,19 +247,19 @@
 
                     @if(($loyaltySpent ?? 0) > 0)
                         <div class="flex items-center justify-between gap-3 text-rose-300">
-                            <div class="text-white/70 text-[11px]">{{ __('staff-orders-summary-loyalty-discount') }}</div>
+                            <div class="text-ink-muted text-xs">{{ __('staff-orders-summary-loyalty-discount') }}</div>
                             <span class="shrink-0">-{{ number_format($loyaltySpent, 2, '.', ' ') }} €</span>
                         </div>
                     @endif
 
                     @if(!($order->promoCode) && !($loyaltySpent ?? 0) > 0 && $order->discount_total > 0)
                         <div class="flex items-center justify-between gap-3">
-                            <span class="text-white/70">{{ __('staff-orders-summary-discount') }}</span>
-                            <span class="text-white/90">-{{ number_format($order->discount_total, 2, '.', ' ') }} €</span>
+                            <span class="text-ink-muted">{{ __('staff-orders-summary-discount') }}</span>
+                            <span class="text-ink-soft">-{{ number_format($order->discount_total, 2, '.', ' ') }} €</span>
                         </div>
                     @endif
 
-                    <div class="flex items-center justify-between gap-3 text-sm font-semibold mt-1 pt-2 border-t border-white/10">
+                    <div class="flex items-center justify-between gap-3 text-sm font-semibold mt-1 pt-2 border-t border-line">
                         <span>{{ __('staff-orders-summary-total') }}</span>
                         <span>{{ number_format($order->total, 2, '.', ' ') }} €</span>
                     </div>
@@ -267,17 +267,17 @@
             </div>
 
             <div>
-                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2 inline-flex items-center gap-2">
+                <h3 class="text-xs text-ink-muted mb-2 inline-flex items-center gap-2">
                     <x-icon category="User" name="User_01" class="w-5 h-5"/>
                     {{ __('staff-orders-client-title') }}
                 </h3>
 
-                <div class="text-xs text-white/80">
+                <div class="text-xs text-ink-soft">
                     @if($order->user)
-                        <div class="text-white">{{ $order->user->name }}</div>
-                        <div class="text-white/60 text-[11px]">ID: {{ $order->user->id }}</div>
+                        <div class="text-ink">{{ $order->user->name }}</div>
+                        <div class="text-ink-muted text-xs">ID: {{ $order->user->id }}</div>
 
-                        <div class="text-white/60 text-[11px] mt-1">
+                        <div class="text-ink-muted text-xs mt-1">
                             {{ __('staff-orders-client-loyalty-balance') }}:
                             {{ number_format($order->user->loyalty_balance, 2, '.', ' ') }} €
                         </div>
@@ -288,7 +288,7 @@
                                   class="mt-3 space-y-2 text-xs">
                                 @csrf
 
-                                <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                                <label class="block text-xs text-ink-muted">
                                     {{ __('staff-orders-loyalty-withdraw-label') }}
                                 </label>
 
@@ -299,35 +299,35 @@
                                         min="0.01"
                                         max="{{ number_format(min($order->user->loyalty_balance ?? 0, $order->total ?? 0), 2, '.', '') }}"
                                         data-max-allowed="{{ number_format(min($order->user->loyalty_balance ?? 0, $order->total ?? 0), 2, '.', '') }}"
-                                        class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70"
+                                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong"
                                         placeholder="{{ __('staff-orders-loyalty-amount-placeholder') }}">
 
                                 <div class="flex flex-col gap-2">
                                         <button type="button"
                                             id="loyalty_use_all_btn"
                                             class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-full
-                                                   border border-white/40 text-[11px] uppercase tracking-[0.18em] text-white
-                                                   hover:bg-white hover:text-black transition">
+                                                   border border-line-strong text-xs text-ink
+                                                   hover:bg-ink hover:text-on-nebula transition">
                                         <x-icon category="Interface" name="Magic_Wand" class="w-5 h-5"/>
                                         {{ __('staff-orders-loyalty-use-all') }}
                                     </button>
 
                                     <button type="submit"
                                             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full
-                                                   border border-emerald-500/70 text-[11px] uppercase tracking-[0.22em]
+                                                   border border-emerald-500/70 text-xs
                                                    text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-100 transition">
                                         <x-icon category="Interface" name="Check_Big" class="w-5 h-5"/>
                                         {{ __('staff-orders-loyalty-apply') }}
                                     </button>
                                 </div>
 
-                                <p class="text-[11px] text-white/40">
+                                <p class="text-xs text-ink-muted">
                                     {{ __('staff-orders-loyalty-hint') }}
                                 </p>
                             </form>
                         @endif
                     @else
-                        <div class="text-white/60">
+                        <div class="text-ink-muted">
                             {{ __('staff-orders-client-empty') }}
                         </div>
                     @endif
@@ -340,36 +340,36 @@
                           class="mt-4 space-y-2 text-xs">
                         @csrf
 
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                        <label class="block text-xs text-ink-muted">
                             {{ __('staff-orders-attach-client-field') }}
                         </label>
 
                         <input type="text"
                                id="attach_client_code"
                                name="loyalty_code"
-                               class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70"
+                               class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong"
                                placeholder="{{ __('staff-orders-attach-client-placeholder') }}">
 
                         <div class="flex flex-col gap-2">
                             <button type="button"
                                     id="js-scan-qr-btn"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full
-                                           border border-sky-400/70 text-[11px] uppercase tracking-[0.22em] text-sky-200
-                                           hover:bg-sky-500 hover:text-black transition">
+                                           border border-sky-400/70 text-xs text-sky-200
+                                           hover:bg-sky-500 hover:text-on-nebula transition">
                                 <x-icon category="System" name="Qr_Code" class="w-5 h-5"/>
                                 {{ __('staff-orders-attach-client-scan-button') }}
                             </button>
 
                             <button type="submit"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full
-                                           border border-white/70 text-[11px] uppercase tracking-[0.22em] text-white
-                                           hover:bg-white hover:text-black transition">
+                                           border border-line-strong text-xs text-ink
+                                           hover:bg-ink hover:text-on-nebula transition">
                                 <x-icon category="Interface" name="Link" class="w-5 h-5"/>
                                 {{ __('staff-orders-attach-client-submit') }}
                             </button>
                         </div>
 
-                        <p class="text-[11px] text-white/40">
+                        <p class="text-xs text-ink-muted">
                             {{ __('staff-orders-attach-client-hint') }}
                         </p>
                     </form>
@@ -377,18 +377,18 @@
             </div>
 
             <div>
-                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2 inline-flex items-center gap-2">
+                <h3 class="text-xs text-ink-muted mb-2 inline-flex items-center gap-2">
                     <x-icon category="Interface" name="Ticket_Voucher" class="w-5 h-5"/>
                     {{ __('staff-orders-promo-title') }}
                 </h3>
 
                 @if($order->promoCode)
-                    <div class="text-xs text-white/80">
+                    <div class="text-xs text-ink-soft">
                         <div>
                             {{ __('staff-orders-promo-code-label') }}:
                             {{ $order->promoCode->public_code ?? (\Illuminate\Support\Str::substr($order->promoCode->qr_code, 0, 8) ?? '') }}
                         </div>
-                        <div class="text-white/60 text-[11px]">
+                        <div class="text-ink-muted text-xs">
                             {{ $order->promoCode->name }}
                         </div>
                     </div>
@@ -406,41 +406,41 @@
                           class="space-y-2 text-xs min-w-0">
                         @csrf
 
-                        <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                        <label class="block text-xs text-ink-muted">
                             {{ __('staff-orders-promo-field') }}
                         </label>
 
                         <input type="text"
                                id="promo_code_input"
                                name="code"
-                               class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70"
+                               class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong"
                                placeholder="{{ __('staff-orders-promo-placeholder') }}">
 
                         <div class="flex flex-col gap-2">
                             <button type="button"
                                     id="js-scan-promo-btn"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full
-                                           border border-sky-400/70 text-[11px] uppercase tracking-[0.22em] text-sky-200
-                                           hover:bg-sky-500 hover:text-black transition">
+                                           border border-sky-400/70 text-xs text-sky-200
+                                           hover:bg-sky-500 hover:text-on-nebula transition">
                                 <x-icon category="System" name="Qr_Code" class="w-5 h-5"/>
                                 {{ __('staff-orders-promo-scan-button') }}
                             </button>
 
                             <button type="submit"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full
-                                           border border-white/70 text-[11px] uppercase tracking-[0.22em] text-white
-                                           hover:bg-white hover:text-black transition">
+                                           border border-line-strong text-xs text-ink
+                                           hover:bg-ink hover:text-on-nebula transition">
                                 <x-icon category="Interface" name="Check_Big" class="w-5 h-5"/>
                                 {{ __('staff-orders-promo-submit') }}
                             </button>
                         </div>
 
-                        <p class="text-[11px] text-white/40">
+                        <p class="text-xs text-ink-muted">
                             {{ $promoHint }}
                         </p>
                     </form>
                 @else
-                    <p class="text-xs text-white/60">
+                    <p class="text-xs text-ink-muted">
                         {{ __('staff-orders-promo-locked') }}
                     </p>
                 @endif
@@ -453,9 +453,9 @@
                         <button type="submit"
                                 class="w-full inline-flex items-center justify-center gap-3 px-4 py-3 rounded-2xl
                                        border border-emerald-500/60 bg-emerald-500/15 text-emerald-100 text-sm font-semibold
-                                       hover:bg-emerald-500/25 hover:border-emerald-400 hover:text-white transition">
+                                       hover:bg-emerald-500/25 hover:border-emerald-400 hover:text-ink transition">
                             <x-icon category="Interface" name="Checkbox_Check" class="w-5 h-5"/>
-                            <span class="tracking-[0.18em] uppercase">{{ __('staff-orders-complete-button') }}</span>
+                            <span class="">{{ __('staff-orders-complete-button') }}</span>
                         </button>
                     </form>
                 </div>
@@ -463,7 +463,7 @@
         </div>
     </div>
 
-    <div id="qrScanModal" class="fixed inset-0 bg-black/90 hidden z-50">
+    <div id="qrScanModal" class="fixed inset-0 bg-ground/90 hidden z-50">
         <div class="w-full h-full flex flex-col"
              style="
                padding-left: calc(1rem + env(safe-area-inset-left));
@@ -472,30 +472,30 @@
                padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
              ">
 
-            <p id="qrModalHint" class="text-[11px] text-white/60 mb-3">
+            <p id="qrModalHint" class="text-xs text-ink-muted mb-3">
                 {{ __('staff-orders-attach-client-scan-hint') }}
             </p>
 
             <div class="flex-1 flex items-center justify-center">
                 <div class="w-full max-w-[520px]">
                     <div class="flex items-center justify-between px-1 pb-2">
-                        <span id="qrModalTitle" class="text-[11px] uppercase tracking-[0.22em] text-white/70">
+                        <span id="qrModalTitle" class="text-xs text-ink-muted">
                             {{ __('staff-orders-attach-client-scan-title') }}
                         </span>
                         <button type="button"
                                 id="js-close-qr-modal"
-                                class="h-9 w-9 flex items-center justify-center rounded-full border border-white/30 text-white/80 bg-white/10 hover:bg-white hover:text-black transition">
+                                class="h-9 w-9 flex items-center justify-center rounded-full border border-line-strong text-ink-soft bg-line hover:bg-ink hover:text-on-nebula transition">
                             ×
                         </button>
                     </div>
                     <div class="relative w-full" style="aspect-ratio: 1 / 1;">
-                        <div class="absolute inset-0 rounded-2xl overflow-hidden border border-white/15 bg-black/60">
+                        <div class="absolute inset-0 rounded-2xl overflow-hidden border border-line bg-ground/60">
                         <video id="qr-video" playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
-                        <div id="qr-overlay" class="pointer-events-none absolute inset-0 bg-black/70 opacity-0" style="transition: opacity 260ms ease-out; clip-path: none;"></div>
+                        <div id="qr-overlay" class="pointer-events-none absolute inset-0 bg-ground/70 opacity-0" style="transition: opacity 260ms ease-out; clip-path: none;"></div>
                         <div id="qr-focus-box"
-                             class="pointer-events-none absolute border-2 border-[#f472b6] shadow-[0_0_0_4px_rgba(244,114,182,0.38)] rounded-xl opacity-0"
+                             class="pointer-events-none absolute border-2 border-[#f472b6] rounded-xl opacity-0"
                              style="transform: translate(0, 0); width: 0; height: 0;"></div>
-                        <div class="pointer-events-none absolute inset-[10%] rounded-2xl border border-white/25"></div>
+                        <div class="pointer-events-none absolute inset-[10%] rounded-2xl border border-line"></div>
                     </div>
                 </div>
             </div>
@@ -507,7 +507,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/@zxing/library@latest"></script>
+@vite('resources/js/vendor/zxing.js')
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

@@ -119,6 +119,11 @@ class MenuItemController extends Controller
 
     public function destroy(string $locale, MenuItem $menuItem): RedirectResponse
     {
+        if ($menuItem->orderItems()->exists()) {
+            return redirect()->route('staff.menu-categories.index')
+                ->with('error', __('staff-menu-item-delete-blocked'));
+        }
+
         if ($menuItem->image_path !== null && $menuItem->image_path !== '') {
             Storage::disk('public')->delete($menuItem->image_path);
         }
