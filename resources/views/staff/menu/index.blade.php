@@ -30,6 +30,12 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div role="alert" class="mb-4 text-xs text-red-200 border border-red-500/60 bg-red-500/10 px-4 py-2 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div id="menuCategories"
          class="space-y-4"
          data-sort-url="{{ route('staff.menu.sort') }}">
@@ -42,7 +48,7 @@
                     <div>
                         <h2 class="text-sm font-semibold flex items-center gap-2">
                             <span class="inline-block w-2 h-2 rounded-full bg-line"></span>
-                            {{ $category->name[$locale] }}
+                            {{ $category->t('name') }}
 
                             @if($category->is_special)
                                 <span class="ml-1 px-2 py-0.5 rounded-full border border-nebula
@@ -60,7 +66,7 @@
 
                         @if($category->description)
                             <p class="text-xs text-ink-muted mt-1">
-                                {{ $category->description[$locale] }}
+                                {{ $category->t('description') }}
                             </p>
                         @endif
                     </div>
@@ -103,13 +109,13 @@
                             <div class="flex items-center gap-3">
                                 @if($item->image_path)
                                     <img src="{{ asset('storage/'.$item->image_path) }}"
-                                         alt="{{ $item->name[$locale] }}"
+                                         alt="{{ $item->t('name') }}"
                                          class="w-10 h-10 rounded-lg object-cover">
                                 @endif
 
                                 <div>
                                     <div class="text-xs font-medium flex items-center gap-2">
-                                        {{ $item->name[$locale] }}
+                                        {{ $item->t('name') }}
                                             @if(!$item->is_available)
                                                 <span class="inline-flex items-center text-amber-400">
                                                     <x-icon category="Warning" name="Stop_Sign" class="w-5 h-5"/>
@@ -119,7 +125,7 @@
                                     </div>
                                     @if($item->description)
                                         <div class="text-xs text-ink-muted line-clamp-2">
-                                            {{ $item->description[$locale] }}
+                                            {{ $item->t('description') }}
                                         </div>
                                     @endif
                                 </div>

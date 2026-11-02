@@ -1874,6 +1874,18 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Позиция удалена.',
             ],
 
+            'staff-menu-item-delete-blocked' => [
+                'en' => 'This item appears in orders, so it cannot be deleted. Hide it instead.',
+                'lv' => 'Šī pozīcija ir pasūtījumos, tāpēc to nevar dzēst. Tā vietā paslēpiet to.',
+                'ru' => 'Эта позиция есть в заказах, поэтому её нельзя удалить. Вместо этого скройте её.',
+            ],
+
+            'staff-menu-category-delete-blocked' => [
+                'en' => 'This category has items that appear in orders, so it cannot be deleted. Hide it instead.',
+                'lv' => 'Šajā kategorijā ir pozīcijas, kas ir pasūtījumos, tāpēc to nevar dzēst. Tā vietā paslēpiet to.',
+                'ru' => 'В этой категории есть позиции из заказов, поэтому её нельзя удалить. Вместо этого скройте её.',
+            ],
+
             // --- Client area: dashboard ---
 
             'client-dashboard-badge' => [
