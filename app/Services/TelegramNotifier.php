@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Order;
 use App\Models\Reservation;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
@@ -9,13 +10,14 @@ use Illuminate\Support\Facades\Log;
 
 class TelegramNotifier
 {
-    public static function notifyNewOrder(\App\Models\Order $order): void
+    public static function notifyNewOrder(Order $order): void
     {
         $token = config('services.telegram.staff_bot_token');
         $chatId = config('services.telegram.orders_chat_id');
 
         if ($token === null || $token === '' || $chatId === null || $chatId === '') {
             Log::warning('TelegramNotifier: missing token or chat_id for new order.');
+
             return;
         }
 
@@ -68,7 +70,7 @@ class TelegramNotifier
         }
     }
 
-    public static function notifyAddedItems(\App\Models\Order $order, array $newItemIds): void
+    public static function notifyAddedItems(Order $order, array $newItemIds): void
     {
         $token = config('services.telegram.staff_bot_token');
         $chatId = config('services.telegram.orders_chat_id');
@@ -130,6 +132,7 @@ class TelegramNotifier
                 'token_present' => $token !== null && $token !== '',
                 'chat_id_present' => $chatId !== null && $chatId !== '',
             ]);
+
             return;
         }
 
@@ -143,7 +146,7 @@ class TelegramNotifier
             ? $reservation->user->phone
             : (($reservation->guest_phone !== null && $reservation->guest_phone !== '') ? $reservation->guest_phone : '—');
         $email = $reservation->user !== null ? $reservation->user->email : '—';
-        $status = match($reservation->status) {
+        $status = match ($reservation->status) {
             'pending' => '⏳ Ожидает',
             'active' => '✅ Активна',
             'completed' => '✔️ Завершена',
@@ -209,6 +212,7 @@ class TelegramNotifier
                 'token_present' => $token !== null && $token !== '',
                 'chat_id_present' => $chatId !== null && $chatId !== '',
             ]);
+
             return;
         }
 

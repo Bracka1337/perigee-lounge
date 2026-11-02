@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
-use Carbon\Carbon;
-
-use App\Models\User;
+use App\Models\LoyaltyEarning;
 use App\Models\Order;
 use App\Models\Reservation;
-use App\Models\LoyaltyEarning;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
 
 class AdminController extends Controller
 {
     public function index(): View
     {
         $today = Carbon::today();
-        $from7  = Carbon::now()->subDays(7);
+        $from7 = Carbon::now()->subDays(7);
         $from30 = Carbon::now()->subDays(30);
 
         $revenueToday = Order::where('status', Order::STATUS_COMPLETED)
@@ -96,18 +95,18 @@ class AdminController extends Controller
             }], 'total')
             ->orderByDesc('spent')
             ->limit(10)
-            ->get(['id','name','email']);
+            ->get(['id', 'name', 'email']);
 
         $newClients30 = User::where('role', User::ROLE_CLIENT)
             ->where('created_at', '>=', $from30)
             ->count();
 
         return view('admin.dashboard', compact(
-            'revenueToday','revenue7','revenue30',
-            'ordersToday','orders7','orders30',
-            'aov30','discount30','promoShare30',
-            'loyaltyEarned30','activeOrdersNow','activeReservationsNow',
-            'revenueByDay','ordersByDay','topPromos','topClients','newClients30'
+            'revenueToday', 'revenue7', 'revenue30',
+            'ordersToday', 'orders7', 'orders30',
+            'aov30', 'discount30', 'promoShare30',
+            'loyaltyEarned30', 'activeOrdersNow', 'activeReservationsNow',
+            'revenueByDay', 'ordersByDay', 'topPromos', 'topClients', 'newClients30'
         ));
     }
 }

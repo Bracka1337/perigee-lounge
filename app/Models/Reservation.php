@@ -2,23 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Validation\ValidationException;
-use App\Models\Order;
 use App\Models\Concerns\LogsActivity;
+use Carbon\Carbon;
+use Database\Factories\ReservationFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Validation\ValidationException;
 
 /**
- * @use HasFactory<\Database\Factories\ReservationFactory>
+ * @use HasFactory<ReservationFactory>
  */
 class Reservation extends Model
 {
     use HasFactory, LogsActivity;
 
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_ACTIVE = 'active';
+
     public const STATUS_COMPLETED = 'completed';
+
     public const STATUS_CANCELLED = 'cancelled';
+
     public const STATUS_EXPIRED = 'expired';
 
     protected $fillable = [
@@ -39,8 +47,8 @@ class Reservation extends Model
     ];
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<static> $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeActive($query)
     {
@@ -56,7 +64,7 @@ class Reservation extends Model
             $startDate = null;
             if ($reservation->start_at !== null && $reservation->start_at !== '') {
                 try {
-                    $startDate = \Carbon\Carbon::parse($reservation->start_at)->toDateString();
+                    $startDate = Carbon::parse($reservation->start_at)->toDateString();
                 } catch (\Exception $e) {
                     $startDate = null;
                 }
@@ -82,9 +90,9 @@ class Reservation extends Model
     /**
      * Получить пользователя
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, Reservation>
+     * @return BelongsTo<User, Reservation>
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -92,9 +100,9 @@ class Reservation extends Model
     /**
      * Получить столик
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Table, Reservation>
+     * @return BelongsTo<Table, Reservation>
      */
-    public function table(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function table(): BelongsTo
     {
         return $this->belongsTo(Table::class);
     }
@@ -102,9 +110,9 @@ class Reservation extends Model
     /**
      * Получить заказ
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<Order, Reservation>
+     * @return HasOne<Order, Reservation>
      */
-    public function order(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function order(): HasOne
     {
         return $this->hasOne(Order::class);
     }

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Database\Factories\PromoCodeUsageFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @use HasFactory<\Database\Factories\PromoCodeUsageFactory>
+ * @use HasFactory<PromoCodeUsageFactory>
  */
 class PromoCodeUsage extends Model
 {

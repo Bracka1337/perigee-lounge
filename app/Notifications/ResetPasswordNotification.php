@@ -2,15 +2,15 @@
 
 namespace App\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ResetPasswordNotification extends Notification
 {
     public function __construct(public string $token) {}
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array<int, string>
      */
     public function via($notifiable): array
@@ -19,13 +19,13 @@ class ResetPasswordNotification extends Notification
     }
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      */
     public function toMail($notifiable): MailMessage
     {
         $locale = $notifiable->preferredLocale() ?? app()->getLocale();
         app()->setLocale($locale);
-        
+
         return (new MailMessage)
             ->subject(__('reset-password-email-title').' | '.config('app.name'))
             ->view('emails.reset-password', [

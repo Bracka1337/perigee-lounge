@@ -3,15 +3,15 @@
 namespace App\Notifications;
 
 use App\Models\Order;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class OrderCompleted extends Notification
 {
     public function __construct(public Order $order) {}
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array<int, string>
      */
     public function via($notifiable): array
@@ -20,7 +20,7 @@ class OrderCompleted extends Notification
     }
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      */
     public function toMail($notifiable): MailMessage
     {

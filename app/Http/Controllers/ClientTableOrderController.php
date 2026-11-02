@@ -20,7 +20,7 @@ class ClientTableOrderController extends Controller
     public function show(string $locale, string $code): View|RedirectResponse
     {
         // If user is not authenticated, redirect to regular menu
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('menu', ['locale' => $locale]);
         }
 
@@ -60,7 +60,7 @@ class ClientTableOrderController extends Controller
                 ->with('error', 'Стол не найден');
         }
 
-        if (!$table->is_active) {
+        if (! $table->is_active) {
             return redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code])
                 ->with('error', 'Стол недоступен для заказа');
         }
@@ -88,7 +88,7 @@ class ClientTableOrderController extends Controller
             'quantity' => ['nullable', 'integer', 'min:1', 'max:99'],
         ]);
 
-        $qty = (int)($data['quantity'] ?? 1);
+        $qty = (int) ($data['quantity'] ?? 1);
         $cartKey = $this->cartKey($table->id);
         $cart = session()->get($cartKey, []);
         $cart[$data['menu_item_id']] = ($cart[$data['menu_item_id']] ?? 0) + $qty;
@@ -103,7 +103,7 @@ class ClientTableOrderController extends Controller
     public function cart(string $locale, string $code): View|RedirectResponse
     {
         // If user is not authenticated, redirect to regular menu
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('menu', ['locale' => $locale]);
         }
 
@@ -118,15 +118,15 @@ class ClientTableOrderController extends Controller
 
         $cartItems = [];
         $cartTotal = 0;
-        if (!empty($cart)) {
+        if (! empty($cart)) {
             $items = MenuItem::whereIn('id', array_keys($cart))->get()->keyBy('id');
             foreach ($cart as $menuItemId => $qty) {
-                $menuItem = $items->get((int)$menuItemId);
-                $sum = ($menuItem?->price ?? 0) * (int)$qty;
+                $menuItem = $items->get((int) $menuItemId);
+                $sum = ($menuItem?->price ?? 0) * (int) $qty;
                 $cartTotal += $sum;
-                $cartItems[(int)$menuItemId] = [
+                $cartItems[(int) $menuItemId] = [
                     'item' => $menuItem,
-                    'qty' => (int)$qty,
+                    'qty' => (int) $qty,
                     'sum' => $sum,
                 ];
             }
@@ -156,7 +156,7 @@ class ClientTableOrderController extends Controller
                 ->with('error', 'Стол не найден');
         }
 
-        if (!$table->is_active) {
+        if (! $table->is_active) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
                 ->with('error', 'Стол недоступен для заказа');
         }
@@ -209,9 +209,9 @@ class ClientTableOrderController extends Controller
             $newItem = OrderItem::create([
                 'order_id' => $order->id,
                 'menu_item_id' => $menuItemId,
-                'quantity' => (int)$qty,
+                'quantity' => (int) $qty,
                 'unit_price' => $menuItem->price,
-                'total_price' => $menuItem->price * (int)$qty,
+                'total_price' => $menuItem->price * (int) $qty,
             ]);
             $newItemIds[] = $newItem->id;
         }
@@ -222,7 +222,7 @@ class ClientTableOrderController extends Controller
         $order->save();
 
         try {
-            if (!empty($newItemIds)) {
+            if (! empty($newItemIds)) {
                 TelegramNotifier::notifyAddedItems($order, $newItemIds);
             }
         } catch (\Throwable $e) {
@@ -260,7 +260,7 @@ class ClientTableOrderController extends Controller
             'qty' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
 
-        $qty = (int)$data['qty'];
+        $qty = (int) $data['qty'];
         if ($qty > 0) {
             $cart[$itemId] = $qty;
         } else {
@@ -297,7 +297,7 @@ class ClientTableOrderController extends Controller
      */
     public function orderCatalog(string $locale, string $code): View|RedirectResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
@@ -307,7 +307,7 @@ class ClientTableOrderController extends Controller
                 ->with('error', 'Стол не найден');
         }
 
-        if (!$table->is_active) {
+        if (! $table->is_active) {
             return redirect()->route('menu', ['locale' => $locale])
                 ->with('error', 'Стол недоступен для заказа');
         }
@@ -347,12 +347,12 @@ class ClientTableOrderController extends Controller
      */
     public function orderAddItem(Request $request, string $locale, string $code): RedirectResponse
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return redirect()->route('login');
         }
 
         $table = $this->resolveTableFromCode($code);
-        if ($table === null || !$table->is_active) {
+        if ($table === null || ! $table->is_active) {
             return redirect()->route('menu', ['locale' => $locale])
                 ->with('error', 'Стол недоступен для заказа');
         }
@@ -377,7 +377,7 @@ class ClientTableOrderController extends Controller
             'quantity' => ['nullable', 'integer', 'min:1'],
         ]);
 
-        $qty = (int)($data['quantity'] ?? 1);
+        $qty = (int) ($data['quantity'] ?? 1);
 
         $existing = $order->items()->where('menu_item_id', $data['menu_item_id'])->first();
         if ($existing !== null) {
@@ -425,6 +425,7 @@ class ClientTableOrderController extends Controller
         if (ctype_digit($normalized)) {
             return Table::find((int) $normalized);
         }
+
         return null;
     }
 
@@ -445,6 +446,7 @@ class ClientTableOrderController extends Controller
 
         if ($existingOrder !== null && $existingOrder->table_id !== $requestedTableId) {
             $boundTable = $existingOrder->table;
+
             return $boundTable?->name ?? "#{$existingOrder->table_id}";
         }
 

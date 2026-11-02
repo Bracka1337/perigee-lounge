@@ -23,4 +23,3 @@ class RoleMiddleware
         abort(403, 'У вас нет доступа к этой странице.');
     }
 }
-

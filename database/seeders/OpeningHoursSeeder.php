@@ -23,7 +23,6 @@ class OpeningHoursSeeder extends Seeder
             0 => ['18:00:00', '00:00:00'],
         ];
 
-
         foreach ($schedule as $weekday => [$open, $close]) {
             OpeningHour::create([
                 'weekday' => $weekday,

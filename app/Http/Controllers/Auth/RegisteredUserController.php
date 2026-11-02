@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-
-use App\Models\User;
 
 class RegisteredUserController extends Controller
 {
@@ -29,14 +28,14 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming registration request.
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'indisposable', 'unique:'.User::class],
-            'birth_date' => ['required', 'date', 'before_or_equal:' . Carbon::now()->subYears(20)->format('Y-m-d')],
+            'birth_date' => ['required', 'date', 'before_or_equal:'.Carbon::now()->subYears(20)->format('Y-m-d')],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'terms' => ['required', 'accepted'],
             'newsletter_agreed' => ['sometimes', 'accepted'],
@@ -60,7 +59,7 @@ class RegisteredUserController extends Controller
         try {
             event(new Registered($user));
         } catch (\Exception $e) {
-            Log::error('Email verification sending failed for user: ' . $user->id, [
+            Log::error('Email verification sending failed for user: '.$user->id, [
                 'email' => $user->email,
                 'error' => $e->getMessage(),
             ]);
