@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\OpeningHour;
+use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\Order;
-use App\Services\TelegramNotifier;
-use App\Notifications\ReservationCreated;
 use App\Notifications\ReservationCancelled;
+use App\Notifications\ReservationCreated;
+use App\Services\TelegramNotifier;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ClientReservationController extends Controller
 {
@@ -67,21 +68,18 @@ class ClientReservationController extends Controller
         ]);
     }
 
-
-
-
     public function store(Request $request, string $locale): RedirectResponse
     {
         $user = $request->user();
 
-        if (!($user instanceof MustVerifyEmail) || !$user->hasVerifiedEmail()) {
+        if (! ($user instanceof MustVerifyEmail) || ! $user->hasVerifiedEmail()) {
             return back()->with('error', __('client-reservations-error-email'))->withInput();
         }
 
         $data = $request->validate([
-            'table_id'     => ['required', 'exists:tables,id'],
-            'date'         => ['required', 'date'],
-            'time'         => ['required', 'date_format:H:i'],
+            'table_id' => ['required', 'exists:tables,id'],
+            'date' => ['required', 'date'],
+            'time' => ['required', 'date_format:H:i'],
             'guests_count' => ['required', 'integer', 'min:1', 'max:20'],
         ]);
 
@@ -91,12 +89,12 @@ class ClientReservationController extends Controller
             return back()->with('error', __('client-reservations-error-overlap'))->withInput();
         }
 
-        $start = Carbon::parse($data['date'] . ' ' . $data['time']);
-        $now   = Carbon::now();
+        $start = Carbon::parse($data['date'].' '.$data['time']);
+        $now = Carbon::now();
         $minStart = $now->copy()->addHour();
 
         $startDate = $start->toDateString();
-        $nowDate   = $now->toDateString();
+        $nowDate = $now->toDateString();
 
         if ($startDate < $nowDate) {
             return back()->with('error', __('client-reservations-error-past'))->withInput();
@@ -107,15 +105,15 @@ class ClientReservationController extends Controller
         }
 
         $weekday = $start->dayOfWeek;
-        $hours   = OpeningHour::where('weekday', $weekday)->first();
+        $hours = OpeningHour::where('weekday', $weekday)->first();
 
-        if ($hours === null || !$hours->is_open) {
+        if ($hours === null || ! $hours->is_open) {
             return back()->with('error', __('client-reservations-error-closed'))->withInput();
         }
 
         $timeString = $start->format('H:i:s');
-        $opensAt    = $hours->opens_at;
-        $closesAt   = $hours->closes_at;
+        $opensAt = $hours->opens_at;
+        $closesAt = $hours->closes_at;
 
         if ($closesAt === '00:00:00') {
             $closesAt = '23:59:59';
@@ -125,7 +123,7 @@ class ClientReservationController extends Controller
             if ($closesAt > $opensAt) {
                 $isClosed = $timeString < $opensAt || $timeString >= $closesAt;
             } else {
-                $isClosed = !($timeString >= $opensAt || $timeString < $closesAt);
+                $isClosed = ! ($timeString >= $opensAt || $timeString < $closesAt);
             }
 
             if ($isClosed) {
@@ -158,6 +156,7 @@ class ClientReservationController extends Controller
                     ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
                     ->count(),
             ]);
+
             return back()->with('error', __('client-reservations-error-overlap'))->withInput();
         }
 
@@ -175,17 +174,17 @@ class ClientReservationController extends Controller
 
         try {
             $reservation = Reservation::create([
-                'user_id'      => $user->id,
-                'table_id'     => $table->id,
-                'guest_name'   => null,
-                'guest_phone'  => null,
-                'start_at'     => $start,
-                'end_at'       => null,
-                'status'       => Reservation::STATUS_PENDING,
+                'user_id' => $user->id,
+                'table_id' => $table->id,
+                'guest_name' => null,
+                'guest_phone' => null,
+                'start_at' => $start,
+                'end_at' => null,
+                'status' => Reservation::STATUS_PENDING,
                 'guests_count' => $data['guests_count'],
-                'source'       => 'client',
+                'source' => 'client',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 
@@ -197,8 +196,6 @@ class ClientReservationController extends Controller
             ->with('success', __('client-reservations-created'));
     }
 
-
-
     public function cancel(Request $request, string $locale, Reservation $reservation): RedirectResponse
     {
         $user = $request->user();
@@ -207,7 +204,7 @@ class ClientReservationController extends Controller
             abort(403);
         }
 
-        if (!in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
+        if (! in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
             return back()->with('error', __('client-reservations-cancel-forbidden'));
         }
 

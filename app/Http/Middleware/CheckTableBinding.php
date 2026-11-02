@@ -69,6 +69,7 @@ class CheckTableBinding
         if (ctype_digit($normalized)) {
             return Table::find((int) $normalized);
         }
+
         return null;
     }
 }

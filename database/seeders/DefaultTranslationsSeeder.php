@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Translation;
+use Illuminate\Database\Seeder;
 
 class DefaultTranslationsSeeder extends Seeder
 {
@@ -2349,7 +2349,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'сохранить изменения',
             ],
 
-
             'staff-header-reservations-link' => [
                 'en' => 'Reservations',
                 'lv' => 'Rezervācijas',
@@ -2502,7 +2501,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'мест',
             ],
 
-
             'client-reservations-badge' => [
                 'en' => 'Your reservations',
                 'lv' => 'Tavas rezervācijas',
@@ -2649,7 +2647,7 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Бронь создана. Мы тебя ждём.',
             ],
 
-             'staff-reservations-legend-active' => [
+            'staff-reservations-legend-active' => [
                 'en' => 'active',
                 'lv' => 'aktīvs',
                 'ru' => 'активен',
@@ -2789,7 +2787,7 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Не получилось отменить эту бронь. Свяжись с персоналом.',
             ],
 
-'admin-tables-opening-hours-title' => [
+            'admin-tables-opening-hours-title' => [
                 'en' => 'Opening hours by day',
                 'lv' => 'Darba laiks pa nedēļas dienām',
                 'ru' => 'Время работы по дням недели',
@@ -3176,7 +3174,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Нельзя отменить этот заказ.',
             ],
 
-
             'staff-orders-items-title' => [
                 'en' => 'Order items',
                 'lv' => 'Pasūtījuma pozīcijas',
@@ -3441,8 +3438,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Kods',
                 'ru' => 'Код',
             ],
-
-
 
             'staff-promo-field-description' => [
                 'en' => 'Description',
@@ -4060,7 +4055,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Промокоды можно использовать для скидок или специальных предложений.',
             ],
 
-
             // --- List section ---
             'client-promo-codes-list-title' => [
                 'en' => 'Your promo codes',
@@ -4079,7 +4073,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Jums vēl nav promo kodu.',
                 'ru' => 'У вас пока нет промокодов.',
             ],
-
 
             'client-promo-codes-discount-label' => [
                 'en' => 'Discount',

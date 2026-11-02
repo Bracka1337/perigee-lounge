@@ -3,6 +3,8 @@
 namespace App\Models\Concerns;
 
 use App\Models\ActivityLog;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
 trait LogsActivity
@@ -20,27 +22,27 @@ trait LogsActivity
         // Логирование обновления
         static::updated(function ($model) {
             $changes = $model->getChanges();
-            
+
             // Игнорируем updated_at
             unset($changes['updated_at']);
-            
+
             if (count($changes) > 0) {
                 $old = [];
                 foreach (array_keys($changes) as $key) {
                     $old[$key] = $model->getOriginal($key);
                 }
-                
+
                 // Фильтруем только реально измененные значения (с нормализацией чисел)
                 $actualChanges = [];
                 $actualOld = [];
                 foreach ($changes as $key => $newValue) {
                     $oldValue = $old[$key];
-                    if (!$model->valuesAreEqual($oldValue, $newValue)) {
+                    if (! $model->valuesAreEqual($oldValue, $newValue)) {
                         $actualChanges[$key] = $newValue;
                         $actualOld[$key] = $oldValue;
                     }
                 }
-                
+
                 // Логируем только если есть реальные изменения
                 if (count($actualChanges) > 0) {
                     $model->logActivity('updated', $actualOld, $actualChanges);
@@ -62,12 +64,12 @@ trait LogsActivity
         // Нормализуем оба значения
         $normalizedOld = $this->normalizeValue($oldValue);
         $normalizedNew = $this->normalizeValue($newValue);
-        
+
         // Если оба числа, сравниваем численно
         if (is_numeric($normalizedOld) && is_numeric($normalizedNew)) {
             return (float) $normalizedOld === (float) $normalizedNew;
         }
-        
+
         return $normalizedOld === $normalizedNew;
     }
 
@@ -80,20 +82,20 @@ trait LogsActivity
         if (is_string($value) && is_numeric($value)) {
             return (float) $value;
         }
-        
+
         // Если это число (int или float), преобразуем в float
-        if (is_numeric($value) && !is_string($value)) {
+        if (is_numeric($value) && ! is_string($value)) {
             return (float) $value;
         }
-        
+
         return $value;
     }
 
     /**
      * Логировать активность
      *
-     * @param array<string, mixed>|null $oldValues
-     * @param array<string, mixed>|null $newValues
+     * @param  array<string, mixed>|null  $oldValues
+     * @param  array<string, mixed>|null  $newValues
      */
     protected function logActivity(string $action, ?array $oldValues, ?array $newValues): void
     {
@@ -121,17 +123,17 @@ trait LogsActivity
     protected function getLoggableAttributes(): array
     {
         $attributes = $this->getAttributes();
-        
+
         // Исключаем технические поля
         $excluded = ['created_at', 'updated_at', 'deleted_at', 'password', 'remember_token'];
-        
+
         return array_diff_key($attributes, array_flip($excluded));
     }
 
     /**
      * Фильтровать чувствительные данные
      *
-     * @param array<string, mixed>|null $data
+     * @param  array<string, mixed>|null  $data
      * @return array<string, mixed>|null
      */
     protected function filterSensitiveData(?array $data): ?array
@@ -141,7 +143,7 @@ trait LogsActivity
         }
 
         $sensitive = ['password', 'password_confirmation', 'remember_token', 'api_token'];
-        
+
         foreach ($sensitive as $field) {
             if (isset($data[$field])) {
                 $data[$field] = '[HIDDEN]';
@@ -154,7 +156,7 @@ trait LogsActivity
     /**
      * Получить логи активности для данной модели
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<ActivityLog, \Illuminate\Database\Eloquent\Model>
+     * @return MorphMany<ActivityLog, Model>
      */
     public function activityLogs()
     {

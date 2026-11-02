@@ -16,10 +16,10 @@ class SetLocale
         $locales = config('site.locales', ['ru']);
         $default = config('site.default_locale', $locales[0] ?? 'ru');
 
-        $route    = $request->route();
-        $locale   = $route?->parameter('locale') ?? $default;
+        $route = $request->route();
+        $locale = $route?->parameter('locale') ?? $default;
 
-        if (!in_array($locale, $locales, true)) {
+        if (! in_array($locale, $locales, true)) {
             $locale = $default;
         }
 

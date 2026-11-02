@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoyaltyEarning;
+use App\Models\Order;
+use App\Models\PromoCodeUsage;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-
-use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -40,7 +42,7 @@ class UserController extends Controller
             ->withQueryString();
 
         return view('admin.users.index', [
-            'users'         => $users,
+            'users' => $users,
             'currentFilter' => $role,
         ]);
     }
@@ -53,16 +55,16 @@ class UserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'role'     => ['required', Rule::in(['admin', 'staff'])],
+            'role' => ['required', Rule::in(['admin', 'staff'])],
         ]);
 
-        $user = new User();
-        $user->name  = $data['name'];
+        $user = new User;
+        $user->name = $data['name'];
         $user->email = $data['email'];
-        $user->role  = $data['role'];
+        $user->role = $data['role'];
         $user->password = bcrypt($data['password']);
 
         $user->save();
@@ -82,20 +84,20 @@ class UserController extends Controller
     public function update(Request $request, string $locale, User $user): RedirectResponse
     {
         $data = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'role'  => ['required', Rule::in(['admin', 'staff', 'client'])],
+            'role' => ['required', Rule::in(['admin', 'staff', 'client'])],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
 
-        $user->name  = $data['name'];
+        $user->name = $data['name'];
         $user->email = $data['email'];
-        $user->role  = $data['role'];
+        $user->role = $data['role'];
 
         if (isset($data['password']) && $data['password'] !== '' && $data['password'] !== null) {
             $user->password = bcrypt($data['password']);
@@ -124,7 +126,7 @@ class UserController extends Controller
     public function show(string $locale, User $user): View|RedirectResponse
     {
         // Only clients can be viewed in the history page.
-        if (!$user->isClient()) {
+        if (! $user->isClient()) {
             return redirect()->route('admin.users.index')
                 ->with('error', __('admin-users-show-forbidden'));
         }
@@ -148,7 +150,7 @@ class UserController extends Controller
             ->get();
 
         // Promo code usages with amounts
-        $promoUsages = \App\Models\PromoCodeUsage::where('user_id', $user->id)
+        $promoUsages = PromoCodeUsage::where('user_id', $user->id)
             ->with(['promoCode', 'order'])
             ->orderByDesc('created_at')
             ->paginate(20);
@@ -156,20 +158,20 @@ class UserController extends Controller
         // Statistics summary
         $ordersCount = $user->orders()->count();
         $completedTotal = $user->orders()
-            ->where('status', \App\Models\Order::STATUS_COMPLETED)
+            ->where('status', Order::STATUS_COMPLETED)
             ->sum('total');
 
-        $loyaltyEarned = \App\Models\LoyaltyEarning::where('user_id', $user->id)
+        $loyaltyEarned = LoyaltyEarning::where('user_id', $user->id)
             ->where('amount', '>', 0)
             ->sum('amount');
 
-        $loyaltyRedeemed = abs(\App\Models\LoyaltyEarning::where('user_id', $user->id)
+        $loyaltyRedeemed = abs(LoyaltyEarning::where('user_id', $user->id)
             ->where('amount', '<', 0)
             ->sum('amount'));
 
         $promoClaimedCount = $user->promoCodes()->count();
-        $promoUsedCount = \App\Models\PromoCodeUsage::where('user_id', $user->id)->count();
-        $promoDiscountTotal = \App\Models\PromoCodeUsage::where('user_id', $user->id)->sum('discount_amount');
+        $promoUsedCount = PromoCodeUsage::where('user_id', $user->id)->count();
+        $promoDiscountTotal = PromoCodeUsage::where('user_id', $user->id)->sum('discount_amount');
 
         $stats = [
             'orders_count' => $ordersCount,

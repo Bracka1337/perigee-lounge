@@ -3,18 +3,17 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoyaltyEarning;
 use App\Models\OpeningHour;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\User;
-use App\Services\TelegramNotifier;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\LoyaltyEarning;
+use Illuminate\Validation\ValidationException;
 
 class ReservationController extends Controller
 {
@@ -67,22 +66,22 @@ class ReservationController extends Controller
     public function store(Request $request, string $locale): RedirectResponse
     {
         $data = $request->validate([
-            'table_id'      => ['required', 'integer', 'exists:tables,id'],
-            'date'          => ['required', 'date'],
-            'time'          => ['required', 'date_format:H:i'],
-            'mode'          => ['required', 'in:phone,walkin'],
-            'guest_name'    => ['nullable', 'string', 'max:255'],
-            'guest_phone'   => ['nullable', 'string', 'max:255'],
-            'guests_count'  => ['required', 'integer', 'min:1', 'max:20'],
+            'table_id' => ['required', 'integer', 'exists:tables,id'],
+            'date' => ['required', 'date'],
+            'time' => ['required', 'date_format:H:i'],
+            'mode' => ['required', 'in:phone,walkin'],
+            'guest_name' => ['nullable', 'string', 'max:255'],
+            'guest_phone' => ['nullable', 'string', 'max:255'],
+            'guests_count' => ['required', 'integer', 'min:1', 'max:20'],
         ]);
 
         $tableId = (int) $data['table_id'];
 
-        $start = Carbon::parse($data['date'] . ' ' . $data['time']);
-        $now   = Carbon::now();
+        $start = Carbon::parse($data['date'].' '.$data['time']);
+        $now = Carbon::now();
 
         $startDate = $start->toDateString();
-        $nowDate   = $now->toDateString();
+        $nowDate = $now->toDateString();
 
         if ($startDate < $nowDate) {
             return back()->with('error', __('staff-reservations-error-past'))->withInput();
@@ -109,19 +108,20 @@ class ReservationController extends Controller
                     ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
                     ->count(),
             ]);
+
             return back()->with('error', __('staff-reservations-error-table-has-open-order'))->withInput();
         }
 
         $weekday = $start->dayOfWeek;
-        $hours   = OpeningHour::where('weekday', $weekday)->first();
+        $hours = OpeningHour::where('weekday', $weekday)->first();
 
-        if ($hours === null || !$hours->is_open) {
+        if ($hours === null || ! $hours->is_open) {
             return back()->with('error', __('staff-reservations-error-closed'))->withInput();
         }
 
         $timeString = $start->format('H:i:s');
-        $opensAt    = $hours->opens_at;
-        $closesAt   = $hours->closes_at;
+        $opensAt = $hours->opens_at;
+        $closesAt = $hours->closes_at;
 
         if ($closesAt === '00:00:00') {
             $closesAt = '23:59:59';
@@ -131,7 +131,7 @@ class ReservationController extends Controller
             if ($closesAt > $opensAt) {
                 $isClosed = $timeString < $opensAt || $timeString >= $closesAt;
             } else {
-                $isClosed = !($timeString >= $opensAt || $timeString < $closesAt);
+                $isClosed = ! ($timeString >= $opensAt || $timeString < $closesAt);
             }
 
             if ($isClosed) {
@@ -153,37 +153,31 @@ class ReservationController extends Controller
 
         try {
             Reservation::create([
-                'user_id'      => null,
-                'table_id'     => $tableId,
-                'guest_name'   => (isset($data['guest_name']) && $data['guest_name'] !== '') ? $data['guest_name'] : null,
-                'guest_phone'  => (isset($data['guest_phone']) && $data['guest_phone'] !== '') ? $data['guest_phone'] : null,
-                'start_at'     => $start,
-                'end_at'       => null,
-                'status'       => Reservation::STATUS_PENDING,
+                'user_id' => null,
+                'table_id' => $tableId,
+                'guest_name' => (isset($data['guest_name']) && $data['guest_name'] !== '') ? $data['guest_name'] : null,
+                'guest_phone' => (isset($data['guest_phone']) && $data['guest_phone'] !== '') ? $data['guest_phone'] : null,
+                'start_at' => $start,
+                'end_at' => null,
+                'status' => Reservation::STATUS_PENDING,
                 'guests_count' => $data['guests_count'],
-                'source'       => $data['mode'],
+                'source' => $data['mode'],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 
         return redirect()
             ->route('staff.reservations.index', [
                 'locale' => $locale,
-                'date'   => $startDate,
+                'date' => $startDate,
             ])
             ->with('success', __('staff-reservations-created'));
     }
 
-
-
-
-
-
-
     public function markArrived(string $locale, Reservation $reservation): RedirectResponse
     {
-        if (!in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
+        if (! in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
             return back()->with('error', __('staff-reservations-arrive-forbidden'));
         }
 
@@ -221,11 +215,11 @@ class ReservationController extends Controller
             } else {
                 $order = Order::create([
                     'reservation_id' => $reservation->id,
-                    'table_id'       => $reservation->table_id,
-                    'user_id'        => $reservation->user_id,
-                    'status'         => Order::STATUS_OPEN,
-                    'started_at'     => Carbon::now(),
-                    'source'         => ($reservation->source !== null && $reservation->source !== '') ? $reservation->source : 'reservation',
+                    'table_id' => $reservation->table_id,
+                    'user_id' => $reservation->user_id,
+                    'status' => Order::STATUS_OPEN,
+                    'started_at' => Carbon::now(),
+                    'source' => ($reservation->source !== null && $reservation->source !== '') ? $reservation->source : 'reservation',
                 ]);
             }
         }
@@ -240,12 +234,9 @@ class ReservationController extends Controller
             ->with('success', __('staff-reservations-arrived'));
     }
 
-
-
-
     public function markCompleted(string $locale, Reservation $reservation): RedirectResponse
     {
-        if (!in_array($reservation->status, [Reservation::STATUS_ACTIVE], true)) {
+        if (! in_array($reservation->status, [Reservation::STATUS_ACTIVE], true)) {
             return back()->with('error', __('staff-reservations-complete-forbidden'));
         }
 
@@ -308,7 +299,7 @@ class ReservationController extends Controller
                     ])
                     ->exists();
 
-                if (!$hasOtherOpenOrders && !$hasActiveReservations) {
+                if (! $hasOtherOpenOrders && ! $hasActiveReservations) {
                     $table->is_occupied = false;
                     $table->save();
                 }
@@ -320,11 +311,11 @@ class ReservationController extends Controller
 
     public function cancel(string $locale, Reservation $reservation): RedirectResponse
     {
-        if (!in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
+        if (! in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
             return back()->with('error', __('staff-reservations-cancel-forbidden'));
         }
 
-        if (!is_null($reservation->user_id)) {
+        if (! is_null($reservation->user_id)) {
             return back()->with('error', __('staff-reservations-cancel-client-forbidden'));
         }
 

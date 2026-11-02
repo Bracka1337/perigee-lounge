@@ -1,30 +1,28 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\TableController;
+use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Client\PromoCodeController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientLoyaltyController;
+use App\Http\Controllers\ClientOrderController;
+use App\Http\Controllers\ClientReservationController;
+use App\Http\Controllers\ClientTableOrderController;
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Staff\StaffController;
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Staff\MenuCategoryController;
 use App\Http\Controllers\Staff\MenuItemController;
 use App\Http\Controllers\Staff\MenuSortController;
-use App\Http\Controllers\Admin\ActivityLogController;
-
-use App\Http\Controllers\MenuController;
-use App\Http\Controllers\Admin\TranslationController;
-
-use App\Http\Controllers\Admin\TableController as AdminTableController;
-use App\Http\Controllers\Staff\ReservationController as StaffReservationController;
-use App\Http\Controllers\ClientReservationController;
 use App\Http\Controllers\Staff\OrderController as StaffOrderController;
-use App\Http\Controllers\Staff\PromoCodeController as StaffPromoCodeController;
-use App\Http\Controllers\ClientOrderController;
-use App\Http\Controllers\ClientLoyaltyController;
-use App\Http\Controllers\ClientTableOrderController;
-
 use App\Http\Controllers\Staff\OrderItemCatalogController;
+use App\Http\Controllers\Staff\PromoCodeController as StaffPromoCodeController;
+use App\Http\Controllers\Staff\ReservationController;
+use App\Http\Controllers\Staff\StaffController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $locales = config('site.locales', ['ru']);
@@ -39,7 +37,7 @@ Route::get('/menu/table-{code}', function (string $code) {
     $default = config('site.default_locale', $locales[0] ?? 'ru');
 
     // If user is not authenticated, redirect to regular menu
-    if (!auth()->check()) {
+    if (! auth()->check()) {
         return redirect()->route('menu', ['locale' => $default]);
     }
 
@@ -47,7 +45,7 @@ Route::get('/menu/table-{code}', function (string $code) {
 });
 
 // Catch all routes without locale prefix and redirect to default locale
-Route::fallback(function (\Illuminate\Http\Request $request) {
+Route::fallback(function (Request $request) {
     $locales = config('site.locales', ['ru']);
     $default = config('site.default_locale', $locales[0] ?? 'ru');
     $path = $request->path();
@@ -104,8 +102,8 @@ Route::group([
     Route::middleware(['auth', 'role:client', 'verified'])->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::get('/promo-codes', [\App\Http\Controllers\Client\PromoCodeController::class, 'index'])->name('client.promo-codes.index');
-        Route::post('/promo-codes', [\App\Http\Controllers\Client\PromoCodeController::class, 'store'])->name('client.promo-codes.store');
+        Route::get('/promo-codes', [PromoCodeController::class, 'index'])->name('client.promo-codes.index');
+        Route::post('/promo-codes', [PromoCodeController::class, 'store'])->name('client.promo-codes.store');
         Route::get('/reservations', [ClientReservationController::class, 'index'])->name('client.reservations.index');
         Route::post('/reservations', [ClientReservationController::class, 'store'])->name('client.reservations.store');
         Route::post('/reservations/{reservation}/cancel', [ClientReservationController::class, 'cancel'])->name('client.reservations.cancel');
@@ -122,12 +120,12 @@ Route::group([
             Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
             Route::resource('users', UserController::class);
             Route::resource('translations', TranslationController::class)->except(['show']);
-            Route::resource('tables', \App\Http\Controllers\Admin\TableController::class)->except(['show']);
+            Route::resource('tables', TableController::class)->except(['show']);
 
-            Route::post('tables/layout', [\App\Http\Controllers\Admin\TableController::class, 'updateLayout'])
+            Route::post('tables/layout', [TableController::class, 'updateLayout'])
                 ->name('tables.layout.update');
 
-            Route::post('tables/opening-hours', [\App\Http\Controllers\Admin\TableController::class, 'updateOpeningHours'])
+            Route::post('tables/opening-hours', [TableController::class, 'updateOpeningHours'])
                 ->name('tables.opening-hours.update');
 
             Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
@@ -142,11 +140,11 @@ Route::group([
             Route::resource('menu-items', MenuItemController::class)->except(['show', 'index']);
 
             Route::post('/menu/sort', [MenuSortController::class, 'update'])->name('menu.sort');
-            Route::get('/reservations', [\App\Http\Controllers\Staff\ReservationController::class, 'index'])->name('reservations.index');
-            Route::post('/reservations', [\App\Http\Controllers\Staff\ReservationController::class, 'store'])->name('reservations.store');
-            Route::patch('/reservations/{reservation}/arrive', [\App\Http\Controllers\Staff\ReservationController::class, 'markArrived'])->name('reservations.arrive');
-            Route::patch('/reservations/{reservation}/complete', [\App\Http\Controllers\Staff\ReservationController::class, 'markCompleted'])->name('reservations.complete');
-            Route::patch('/reservations/{reservation}/cancel', [\App\Http\Controllers\Staff\ReservationController::class, 'cancel'])->name('reservations.cancel');
+            Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+            Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+            Route::patch('/reservations/{reservation}/arrive', [ReservationController::class, 'markArrived'])->name('reservations.arrive');
+            Route::patch('/reservations/{reservation}/complete', [ReservationController::class, 'markCompleted'])->name('reservations.complete');
+            Route::patch('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
 
             Route::get('/orders', [StaffOrderController::class, 'index'])->name('orders.index');
             Route::get('/orders/create', [StaffOrderController::class, 'create'])->name('orders.create');
@@ -163,8 +161,8 @@ Route::group([
             Route::post('/orders/{order}/complete', [StaffOrderController::class, 'complete'])->name('orders.complete');
             // Cancel endpoint removed per requirements: staff cannot cancel orders.
 
-             Route::get('orders/{order}/items/catalog', [OrderItemCatalogController::class, 'index'])->name('orders.items.catalog');
-             Route::post('orders/{order}/items', [OrderItemCatalogController::class, 'store'])->name('orders.items.store');
+            Route::get('orders/{order}/items/catalog', [OrderItemCatalogController::class, 'index'])->name('orders.items.catalog');
+            Route::post('orders/{order}/items', [OrderItemCatalogController::class, 'store'])->name('orders.items.store');
 
             Route::resource('promo-codes', StaffPromoCodeController::class)->except(['show']);
         });

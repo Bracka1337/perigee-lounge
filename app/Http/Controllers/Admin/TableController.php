@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-
-use App\Models\Table;
 use App\Models\OpeningHour;
+use App\Models\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TableController extends Controller
 {
@@ -112,10 +110,10 @@ class TableController extends Controller
         ]);
 
         foreach ($data['hours'] as $weekday => $row) {
-            $model = OpeningHour::firstOrNew(['weekday' => (int)$weekday]);
-            $model->is_open = isset($row['is_open']) ? (bool)$row['is_open'] : false;
-            $model->opens_at = $row['opens_at'] ? $row['opens_at'] . ':00' : null;
-            $model->closes_at = $row['closes_at'] ? $row['closes_at'] . ':00' : null;
+            $model = OpeningHour::firstOrNew(['weekday' => (int) $weekday]);
+            $model->is_open = isset($row['is_open']) ? (bool) $row['is_open'] : false;
+            $model->opens_at = $row['opens_at'] ? $row['opens_at'].':00' : null;
+            $model->closes_at = $row['closes_at'] ? $row['closes_at'].':00' : null;
             $model->save();
         }
 
@@ -132,7 +130,7 @@ class TableController extends Controller
         $items = json_decode($data['layout_payload'], true) ?? [];
 
         foreach ($items as $row) {
-            if (!isset($row['id'])) {
+            if (! isset($row['id'])) {
                 continue;
             }
 
