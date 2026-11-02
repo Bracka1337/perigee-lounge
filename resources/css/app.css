@@ -6,6 +6,52 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Unbounded Variable', ui-sans-serif, system-ui, sans-serif;
+
+    --color-ground: #07080f;
+    --color-surface: #0e0f1b;
+    --color-line: #1e2033;
+    --color-line-strong: #3a3d57;
+    --color-ink: #f2f1f7;
+    --color-ink-soft: #c9cbdd;
+    --color-ink-muted: #a9abbd;
+    --color-nebula: #b9a5ff;
+    --color-on-nebula: #0b0c16;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background-color: var(--color-ground);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-nebula);
+        outline-offset: 2px;
+    }
+
+    ::selection {
+        background-color: var(--color-nebula);
+        color: var(--color-on-nebula);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        ::before,
+        ::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
 }
