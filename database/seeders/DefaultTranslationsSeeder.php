@@ -45,8 +45,8 @@ class DefaultTranslationsSeeder extends Seeder
             ],
             'header-admin' => [
                 'en' => 'Admin Panel',
-                'lv' => 'Admin Panel',
-                'ru' => 'Admin Panel',
+                'lv' => 'Administratora panelis',
+                'ru' => 'Панель администратора',
             ],
             'header-staff' => [
                 'en' => 'Employee panel',
@@ -115,7 +115,7 @@ class DefaultTranslationsSeeder extends Seeder
             ],
             'perigee-menu-button' => [
                 'en' => 'Check menu',
-                'lv' => 'Skatit edienkarti',
+                'lv' => 'Skatīt ēdienkarti',
                 'ru' => 'Посмотреть меню',
             ],
             'home-hero-title' => [
@@ -252,31 +252,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'en' => 'The menu is currently empty. New items will be added soon.',
                 'lv' => 'Ēdienkarte pašlaik ir tukša. Drīzumā tiks pievienoti jauni vienumi.',
                 'ru' => 'Меню пока пусто. Скоро здесь появятся позиции.',
-            ],
-            'menu-no-image' => [
-                'en' => 'No image',
-                'lv' => 'Nav attēla',
-                'ru' => 'Нет изображения',
-            ],
-            'menu-category-title' => [
-                'en' => 'Category',
-                'lv' => 'Kategorija',
-                'ru' => 'Категория',
-            ],
-            'menu-item-title' => [
-                'en' => 'Item title',
-                'lv' => 'Produkta nosaukums',
-                'ru' => 'Название позиции',
-            ],
-            'menu-item-content' => [
-                'en' => 'Item description',
-                'lv' => 'Produkta apraksts',
-                'ru' => 'Описание позиции',
-            ],
-            'menu-money-title' => [
-                'en' => '0.00 €',
-                'lv' => '0.00 €',
-                'ru' => '0.00 €',
             ],
             'menu-allergens-title' => [
                 'en' => 'Allergens',
