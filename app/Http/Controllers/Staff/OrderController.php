@@ -25,12 +25,7 @@ class OrderController extends Controller
 {
     public function index(Request $request, string $locale): View
     {
-        $date = $request->query('date');
-        if ($date === null || $date === '' || (is_array($date) && count($date) === 0)) {
-            $date = Carbon::now()->toDateString();
-        }
-
-        $selectedDate = Carbon::parse($date)->startOfDay();
+        $selectedDate = $this->dateFilter($request);
 
         $tables = Table::where('is_active', true)->orderBy('id')->get();
 
@@ -505,27 +500,6 @@ class OrderController extends Controller
 
     protected function releaseTableIfFree(Order $order): void
     {
-        $table = $order->table;
-
-        if ($table === null) {
-            return;
-        }
-
-        $hasOtherOpenOrders = Order::where('table_id', $table->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
-            ->where('id', '!=', $order->id)
-            ->exists();
-
-        $hasActiveReservations = Reservation::where('table_id', $table->id)
-            ->whereIn('status', [
-                Reservation::STATUS_PENDING,
-                Reservation::STATUS_ACTIVE,
-            ])
-            ->exists();
-
-        if (! $hasOtherOpenOrders && ! $hasActiveReservations) {
-            $table->is_occupied = false;
-            $table->save();
-        }
+        $order->table?->releaseIfFree($order->id);
     }
 }
