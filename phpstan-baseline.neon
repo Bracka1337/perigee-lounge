@@ -1,0 +1,1531 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ActivityLog\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/ActivityLogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ActivityLog\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/ActivityLogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 5
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:groupBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 3
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:limit\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:selectRaw\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 4
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereNotNull\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:limit\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/AdminController.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:update\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/TableController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 4
+			path: app/Http/Controllers/Admin/TableController.php
+
+		-
+			message: '''
+				#^Call to deprecated method get\(\) of class Illuminate\\Http\\Request\:
+				since Symfony 7\.4, use properties `\-\>attributes`, `query` or `request` directly instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: app/Http/Controllers/Admin/TranslationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Translation\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/TranslationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/TranslationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:paginate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:with\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:paginate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:where\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:with\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCode\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCode\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCode\>\:\:with\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCodeUsage\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCodeUsage\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCodeUsage\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\User\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Parameter \#1 \$num of function abs expects float\|int, float\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Cannot access property \$email on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/ConfirmablePasswordController.php
+
+		-
+			message: '#^Cannot access property \$email on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+
+		-
+			message: '#^Cannot call method hasVerifiedEmail\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+
+		-
+			message: '#^Cannot call method sendEmailVerificationNotification\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationNotificationController.php
+
+		-
+			message: '#^Cannot call method hasVerifiedEmail\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/EmailVerificationPromptController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Auth/NewPasswordController.php
+
+		-
+			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
+			identifier: equal.notAllowed
+			count: 1
+			path: app/Http/Controllers/Auth/NewPasswordController.php
+
+		-
+			message: '#^Cannot call method update\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validateWithBag\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordResetLinkController.php
+
+		-
+			message: '#^Loose comparison via "\=\=" is not allowed\.$#'
+			identifier: equal.notAllowed
+			count: 1
+			path: app/Http/Controllers/Auth/PasswordResetLinkController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Auth/RegisteredUserController.php
+
+		-
+			message: '#^Cannot call method hasVerifiedEmail\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Cannot call method markEmailAsVerified\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Parameter \#1 \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Auth/VerifyEmailController.php
+
+		-
+			message: '#^Cannot call method promoCodes\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Client/PromoCodeController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\PromoCode\>\:\:with\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Client/PromoCodeController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Client/PromoCodeController.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Models\\PromoCode\:\:claimForUser\(\) expects App\\Models\\User, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Client/PromoCodeController.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Models\\PromoCode\:\:isClaimedBy\(\) expects App\\Models\\User, App\\Models\\User\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Client/PromoCodeController.php
+
+		-
+			message: '#^Cannot call method isAdmin\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ClientController.php
+
+		-
+			message: '#^Cannot call method isWorker\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ClientController.php
+
+		-
+			message: '#^Cannot access property \$loyalty_code on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Cannot call method loyaltyEarnings\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Cannot call method save\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Contracts\\Auth\\Guard\:\:user\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:with\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientLoyaltyController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Contracts\\Auth\\Guard\:\:id\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/ClientOrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientOrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientOrderController.php
+
+		-
+			message: '#^Parameter \#1 \$num of function abs expects float\|int, float\|int\<min, \-1\>\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/ClientOrderController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:\$is_occupied\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Cannot call method notify\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:limit\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Table\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Parameter \#1 \$time of static method Carbon\\Carbon\:\:parse\(\) expects Carbon\\Month\|Carbon\\WeekDay\|DateTimeInterface\|float\|int\|string\|null, array\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/ClientReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuCategory\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/MenuController.php
+
+		-
+			message: '#^Cannot access property \$email_verified_at on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Cannot call method fill\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Cannot call method isDirty\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Cannot call method save\(\) on App\\Models\\User\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/ProfileController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ActivityLog\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ActivityLogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\ActivityLog\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/ActivityLogController.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Staff/ActivityLogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuCategory\>\:\:ordered\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/MenuCategoryController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/MenuCategoryController.php
+
+		-
+			message: '''
+				#^Call to deprecated method get\(\) of class Illuminate\\Http\\Request\:
+				since Symfony 7\.4, use properties `\-\>attributes`, `query` or `request` directly instead$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: app/Http/Controllers/Staff/MenuItemController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuItem\>\:\:max\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/MenuItemController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/MenuItemController.php
+
+		-
+			message: '#^Property App\\Models\\MenuItem\:\:\$menu_category_id \(int\<0, max\>\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/Staff/MenuSortController.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between mixed and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: app/Http/Controllers/Staff/MenuSortController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\MenuItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\MenuItem\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\MenuItem\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\MenuItem\>\:\:\$price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:\$is_occupied\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$end_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_occupied\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$loyalty_balance\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$quantity\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Table\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Table\>\:\:save\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuCategory\>\:\:ordered\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:orderByDesc\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 3
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 4
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Table\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:first\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:where\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 6
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Parameter \#1 \$num of function abs expects float\|int, float\|int\<min, \-1\>\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Parameter \#1 \$time of static method Carbon\\Carbon\:\:parse\(\) expects Carbon\\Month\|Carbon\\WeekDay\|DateTimeInterface\|float\|int\|string\|null, array\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Property App\\Models\\Order\:\:\$promo_code_id \(int\<0, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Property App\\Models\\Order\:\:\$reservation_id \(int\<0, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Property App\\Models\\Order\:\:\$user_id \(int\<0, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Reservation\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Staff/OrderController.php
+
+		-
+			message: '#^Cannot access property \$price on Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Staff/OrderItemCatalogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuCategory\>\:\:ordered\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderItemCatalogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/OrderItemCatalogController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuItem\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/PromoCodeController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/PromoCodeController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$end_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$loyalty_balance\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:count\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 5
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 2
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 3
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Table\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Http\\Request\:\:validate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Parameter \#1 \$time of static method Carbon\\Carbon\:\:parse\(\) expects Carbon\\Month\|Carbon\\WeekDay\|DateTimeInterface\|float\|int\|string\|null, array\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Property App\\Models\\Order\:\:\$reservation_id \(int\<0, max\>\|null\) does not accept int\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/Staff/ReservationController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/StaffController.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Http/Controllers/Staff/StaffController.php
+
+		-
+			message: '#^Method App\\Models\\ActivityLog\:\:subject\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\MorphTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\ActivityLog\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Class App\\Models\\LoyaltyEarning uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LoyaltyEarning.php
+
+		-
+			message: '#^Method App\\Models\\LoyaltyEarning\:\:order\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LoyaltyEarning.php
+
+		-
+			message: '#^Method App\\Models\\LoyaltyEarning\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/LoyaltyEarning.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\MenuItem\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<static\(App\\Models\\MenuCategory\)\>\:\:orderBy\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Method App\\Models\\MenuCategory\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\MenuCategory\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Method App\\Models\\MenuCategory\:\:items\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Variable property access on \$this\(App\\Models\\MenuCategory\)\.$#'
+			identifier: property.dynamicName
+			count: 1
+			path: app/Models/MenuCategory.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\OrderItem\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Method App\\Models\\MenuItem\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\MenuItem\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Method App\\Models\\MenuItem\:\:category\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Method App\\Models\\MenuItem\:\:orderItems\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\OrderItem\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\OrderItem, \$this\(App\\Models\\MenuItem\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, string\|null given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Variable property access on \$this\(App\\Models\\MenuItem\)\.$#'
+			identifier: property.dynamicName
+			count: 1
+			path: app/Models/MenuItem.php
+
+		-
+			message: '#^Class App\\Models\\OpeningHour uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OpeningHour.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:calculateDiscountForOrder\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Class App\\Models\\Order uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\LoyaltyEarning\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Reservation\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:sum\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<static\(App\\Models\\Order\)\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\Order\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:items\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:promoCode\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:reservation\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:table\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Method App\\Models\\Order\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Property App\\Models\\Order\:\:\$subtotal \(float\) does not accept float\|int\|string\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Models/Order.php
+
+		-
+			message: '#^Class App\\Models\\OrderItem uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Method App\\Models\\OrderItem\:\:menuItem\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Method App\\Models\\OrderItem\:\:order\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/OrderItem.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$menuItem\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$menu_item_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Class App\\Models\\PromoCode uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:where\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\PromoCode\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:getDiscountDetailsForOrder\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:menuCategory\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:menuItem\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:usages\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Method App\\Models\\PromoCode\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 2
+			path: app/Models/PromoCode.php
+
+		-
+			message: '#^Class App\\Models\\PromoCodeUsage uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCodeUsage.php
+
+		-
+			message: '#^Method App\\Models\\PromoCodeUsage\:\:order\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCodeUsage.php
+
+		-
+			message: '#^Method App\\Models\\PromoCodeUsage\:\:promoCode\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCodeUsage.php
+
+		-
+			message: '#^Method App\\Models\\PromoCodeUsage\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/PromoCodeUsage.php
+
+		-
+			message: '#^Class App\\Models\\Reservation uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:exists\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereDate\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<App\\Models\\Order\>\:\:whereNotIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder\<static\(App\\Models\\Reservation\)\>\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.dynamicCall
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\Table\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasOne\<App\\Models\\Order\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasOne\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Method App\\Models\\Reservation\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\Reservation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Method App\\Models\\Reservation\:\:order\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasOne\<App\\Models\\Order\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasOne\<App\\Models\\Order, \$this\(App\\Models\\Reservation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Method App\\Models\\Reservation\:\:table\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\Table\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\Table, \$this\(App\\Models\\Reservation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Method App\\Models\\Reservation\:\:user\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<App\\Models\\User, \$this\(App\\Models\\Reservation\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, Carbon\\Carbon given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: app/Models/Reservation.php
+
+		-
+			message: '#^Class App\\Models\\Table uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Table.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Reservation\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Table.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/Table.php
+
+		-
+			message: '#^Method App\\Models\\Table\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\Table\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Table.php
+
+		-
+			message: '#^Method App\\Models\\Table\:\:reservations\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Reservation\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Reservation, \$this\(App\\Models\\Table\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Table.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 2
+			path: app/Models/Translation.php
+
+		-
+			message: '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+			identifier: ternary.shortNotAllowed
+			count: 2
+			path: app/Models/Translation.php
+
+		-
+			message: '#^Class App\\Models\\User uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\LoyaltyEarning\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Order\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\HasMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Generic type Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> in PHPDoc tag @return does not specify all template types of class Illuminate\\Database\\Eloquent\\Relations\\MorphMany\: TRelatedModel, TDeclaringModel$#'
+			identifier: generics.lessTypes
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:activityLogs\(\) should return Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog\> but returns Illuminate\\Database\\Eloquent\\Relations\\MorphMany\<App\\Models\\ActivityLog, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:loyaltyEarnings\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\LoyaltyEarning\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\LoyaltyEarning, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:orders\(\) should return Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Order\> but returns Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\Order, \$this\(App\\Models\\User\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:promoCodes\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\PromoCode, Illuminate\\Database\\Eloquent\\Relations\\Pivot, ''pivot''\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\PromoCode, \$this\(App\\Models\\User\), Illuminate\\Database\\Eloquent\\Relations\\Pivot, ''pivot''\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Type string in generic type Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<App\\Models\\PromoCode, Illuminate\\Database\\Eloquent\\Relations\\Pivot, string\> in PHPDoc tag @return is not subtype of template type TPivotModel of Illuminate\\Database\\Eloquent\\Relations\\Pivot \= Illuminate\\Database\\Eloquent\\Relations\\Pivot of class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\.$#'
+			identifier: generics.notSubtype
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 4
+			path: app/Services/TelegramNotifier.php
+
+		-
+			message: '#^Parameter \#2 \$replace \(array\<string, mixed\>\) of method App\\Translation\\DatabaseTranslator\:\:get\(\) should be contravariant with parameter \$replace \(array\) of method Illuminate\\Contracts\\Translation\\Translator\:\:get\(\)$#'
+			identifier: method.childParameterType
+			count: 1
+			path: app/Translation/DatabaseTranslator.php
+
+		-
+			message: '#^Parameter \#2 \$replace \(array\<string, mixed\>\) of method App\\Translation\\DatabaseTranslator\:\:get\(\) should be contravariant with parameter \$replace \(array\) of method Illuminate\\Translation\\Translator\:\:get\(\)$#'
+			identifier: method.childParameterType
+			count: 1
+			path: app/Translation/DatabaseTranslator.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\{name\: array\<string, string\>, description\?\: array\<string, string\>, allergens\?\: array\<string, string\>, price\: float\|int, image_path\?\: string\} is not subtype of native type \(non\-empty\-array\<literal\-string&lowercase\-string&non\-falsy\-string, \(non\-empty\-array\<literal\-string&lowercase\-string&non\-falsy\-string, literal\-string\>&oversized\-array\)\|float\|literal\-string\>&oversized\-array\)\|bool\|int\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: database/seeders/MenuSeeder.php
