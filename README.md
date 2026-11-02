@@ -1,264 +1,72 @@
-# Perigeebar (Laravel) — Deploy & Run Guide (Docker)
+# Perigee Lounge
 
+A website and management system for a fictional hookah lounge. Guests browse the menu and book tables, order from their table by QR code, and collect loyalty points. Staff run orders, reservations and promo codes, and admins manage users, tables and translations. The site is available in English, Latvian and Russian.
 
-## 1) Установка Docker и Docker Compose
+![Home page](docs/screenshots/home.png)
 
+| Menu | Table ordering on a phone | Staff reservations |
+|---|---|---|
+| ![Menu](docs/screenshots/menu.png) | ![Table ordering](docs/screenshots/table-phone.png) | ![Staff reservations](docs/screenshots/staff-reservations.png) |
 
-### 1.2 Установить Docker (официально)
+## Features
 
-```bash
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl gnupg
+**Guests and clients**
+- Public pages and a database-driven menu in three languages, under `/en`, `/lv` and `/ru`
+- Table reservations on a floor plan, checked against opening hours and existing bookings
+- QR table ordering with a cart
+- Loyalty balance and promo codes with QR codes
 
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+**Staff**
+- Orders, reservations and floor plan
+- Menu management with drag-and-drop sorting and image uploads
+- Promo codes with percent or fixed discounts, limited to a category or item
+- QR scanner for loyalty and promo codes
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
-| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+**Admins**
+- Dashboard with charts
+- Users, tables and opening hours
+- Translation editor and activity log
 
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
-### 1.2 Проверка
+## Stack
 
-```bash
-docker version
-docker compose version
-```
----
+Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
 
-## 2) Клонирование проекта
+## Getting started
 
-### 2.1 Создать директорию и выдать права
-
-```bash
-mkdir -p /var/www/perigee-lounge.example/public_html
-cd /var/www/perigee-lounge.example/public_html
-```
-### 2.2 Клонировать репозиторий
-```bash
-git clone <repository-url> .
-```
----
-
-## 3) Подготовка `.env`
-
-### 3.1 Скопировать `.env`
+You need PHP 8.2 or newer with the `gd` extension, Composer, and Node.js.
 
 ```bash
-cp .env.example .env
+git clone https://github.com/Bracka1337/perigee-lounge.git
+cd perigee-lounge
+composer setup
+php artisan db:seed
+composer dev
 ```
 
-### 3.2 Рекомендуемые значения `.env` для Docker
+Then open http://localhost:8000.
 
-Открой `.env` и поставь (минимум):
+Demo accounts, for local use only:
 
-```env
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@perigee.test` | `password` |
+| Staff | `staff@perigee.test` | `password` |
 
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=perigee
-DB_USERNAME=perigee
-DB_PASSWORD=perigee_pass //поменять тут и в докере
-```
----
+Register a new account to try the client side. Email is written to the log by default, so the verification link is in `storage/logs/laravel.log`.
 
-## 5) Первый запуск (с нуля)
+## How it works
 
-### 5.1 Поднять контейнеры и собрать образы
+- **Routing:** every page sits under a `{locale}` route prefix, and access is controlled by `auth`, `verified` and `role:` middleware.
+- **Translations:** interface text is stored in the database and served by a custom translator, so admins can edit it on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without changing edited ones.
+- **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
+- **Telegram:** optional staff notifications for new orders and reservations, set up with the `TELEGRAM_*` values in `.env`.
+
+## Tests
 
 ```bash
-docker compose up -d --build
+composer test
+vendor/bin/pint --test
+npm run build
 ```
 
-### 5.1 Опустить контейнеры
-
-```bash
-docker compose down -v
-```
-
-### 5.2 Собрать фронт (Vite)
-
-```bash
-docker compose run --rm node sh -lc "npm ci --include=dev && npm run build"
-
-```
-
-### 5.3 Проверить статус контейнеров
-
-```bash
-docker compose ps
-```
-
-### 5.4 Открыть сайт
-
-* Если серверный IP:
-  `http://SERVER_IP:8080`
-
----
-
-
-
-## 7) Команды для очистки кешей (Laravel)
-
-### Полная чистка кешей (рекомендуется после правок `.env`, конфигов, роутов)
-
-```bash
-docker compose exec app php artisan cache:clear
-docker compose exec app php artisan config:clear
-docker compose exec app php artisan route:clear
-docker compose exec app php artisan view:clear
-```
-
-### Сборка кешей (ускорение)
-
-```bash
-docker compose exec app php artisan config:cache
-docker compose exec app php artisan route:cache
-docker compose exec app php artisan view:cache
-```
----
-
-## 8) Логи Laravel (500 ошибки, mail log, etc.)
-
-### 8.1 Смотреть логи внутри контейнера
-
-```bash
-docker logs perigee_app
-```
-
-### 8.2 Смотреть логи внутри контейнера в реальном времени
-
-```bash
-docker logs -f perigee_app
-
-```
-
----
-
-## 9) Команды для пересборки / обновления проекта
-
-### 9.1 Обновить код из Git
-
-```bash
-git pull
-```
-
-### 9.2 Пересобрать образы и перезапустить
-
-```bash
-docker compose down
-docker compose up -d --build
-```
-
-### 9.3 Переустановить PHP зависимости (composer)
-
-```bash
-docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader
-```
-
-### 9.4 Обновить фронт (Vite)
-
-```bash
-docker compose run --rm node sh -lc "npm run build"
-```
-
-### 9.5 Прогнать миграции (если появились новые)
-
-```bash
-docker compose exec app php artisan migrate --force
-```
-
-### 9.6 Очистить кеши после деплоя
-
-```bash
-docker compose exec app php artisan config:clear
-docker compose exec app php artisan cache:clear
-docker compose exec app php artisan view:clear
-docker compose exec app php artisan route:clear
-```
-
----
-
-## 10) Полный RESET (всё с нуля, включая базу)
-
-⚠️ Это удалит базу данных и все данные (volumes).
-
-```bash
-docker compose down -v
-docker compose up -d --build
-docker compose run --rm node
-```
-
----
-
-## 11) Быстрые проверки и диагностика
-
-### 11.1 Проверить nginx конфиг
-
-```bash
-docker compose exec nginx nginx -t
-```
-
-### 11.2 Проверить, что php-fpm слушает 9000
-
-```bash
-docker compose exec app sh -lc "ss -lntp | grep 9000 || true"
-```
-
-### 11.3 Проверить доступность сайта с сервера
-
-```bash
-curl -I http://127.0.0.1:8080
-```
-
----
-
-## 12) Команды уборки Docker (если забился диск)
-
-### Удалить неиспользуемые образы/контейнеры/сети
-
-```bash
-docker system prune -af
-```
-
-### Удалить неиспользуемые volumes (ОСТОРОЖНО — может удалить нужные)
-
-```bash
-docker volume prune -f
-```
-
----
-
-## 13) “Daily” команда обслуживания (типовой деплой чеклист)
-
-```bash
-cd /var/www/perigee-lounge.example/public_html \
-&& git pull \
-&& docker compose up -d --build \
-&& docker compose run --rm node \
-&& docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader \
-&& docker compose exec app php artisan migrate --force \
-&& docker compose exec app php artisan config:clear \
-&& docker compose exec app php artisan cache:clear \
-&& docker compose exec app php artisan view:clear \
-&& docker compose exec app php artisan route:clear
-```
-
----
-
-## 14) Где меняется порт
-
-Если хочешь другой порт (например 80), поменяй в `docker-compose.yml` у nginx:
-
-```yaml
-ports:
-  - "80:80"
-```
+GitHub Actions runs these on every pull request.
