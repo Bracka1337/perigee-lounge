@@ -33,6 +33,26 @@ class Table extends Model
     ];
 
     /**
+     * Free the table unless another open order or a seated guest still holds it.
+     */
+    public function releaseIfFree(?int $exceptOrderId = null): void
+    {
+        $hasOpenOrder = Order::where('table_id', $this->id)
+            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+            ->when($exceptOrderId !== null, fn ($query) => $query->where('id', '!=', $exceptOrderId))
+            ->exists();
+
+        $hasSeatedGuest = Reservation::where('table_id', $this->id)
+            ->where('status', Reservation::STATUS_ACTIVE)
+            ->exists();
+
+        if (! $hasOpenOrder && ! $hasSeatedGuest) {
+            $this->is_occupied = false;
+            $this->save();
+        }
+    }
+
+    /**
      * Получить бронирования
      *
      * @return HasMany<Reservation, Table>
