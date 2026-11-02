@@ -53,9 +53,9 @@ class ActivityLog extends Model
     public function getActionNameAttribute(): string
     {
         return match ($this->action) {
-            'created' => 'Создано',
-            'updated' => 'Обновлено',
-            'deleted' => 'Удалено',
+            'created' => __('log-action-created'),
+            'updated' => __('log-action-updated'),
+            'deleted' => __('log-action-deleted'),
             default => $this->action,
         };
     }
@@ -65,17 +65,23 @@ class ActivityLog extends Model
      */
     public function getModelNameAttribute(): string
     {
-        $modelMap = [
-            'App\\Models\\Order' => 'Заказ',
-            'App\\Models\\MenuItem' => 'Блюдо',
-            'App\\Models\\MenuCategory' => 'Категория меню',
-            'App\\Models\\Reservation' => 'Бронирование',
-            'App\\Models\\Table' => 'Столик',
-            'App\\Models\\User' => 'Пользователь',
-            'App\\Models\\PromoCode' => 'Промокод',
-        ];
+        return self::modelLabel($this->model_type);
+    }
 
-        return $modelMap[$this->model_type] ?? class_basename($this->model_type);
+    public static function modelLabel(string $type): string
+    {
+        $key = match ($type) {
+            'App\\Models\\Order' => 'log-model-order',
+            'App\\Models\\MenuItem' => 'log-model-menu-item',
+            'App\\Models\\MenuCategory' => 'log-model-menu-category',
+            'App\\Models\\Reservation' => 'log-model-reservation',
+            'App\\Models\\Table' => 'log-model-table',
+            'App\\Models\\User' => 'log-model-user',
+            'App\\Models\\PromoCode' => 'log-model-promo-code',
+            default => null,
+        };
+
+        return $key !== null ? __($key) : class_basename($type);
     }
 
     /**

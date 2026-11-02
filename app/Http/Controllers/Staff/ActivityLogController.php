@@ -51,19 +51,7 @@ class ActivityLogController extends Controller
         // Получаем уникальные типы моделей для фильтра
         $modelTypes = ActivityLog::distinct()
             ->pluck('model_type')
-            ->mapWithKeys(function ($type) {
-                $modelMap = [
-                    'App\\Models\\Order' => 'Заказ',
-                    'App\\Models\\MenuItem' => 'Блюдо',
-                    'App\\Models\\MenuCategory' => 'Категория меню',
-                    'App\\Models\\Reservation' => 'Бронирование',
-                    'App\\Models\\Table' => 'Столик',
-                    'App\\Models\\User' => 'Пользователь',
-                    'App\\Models\\PromoCode' => 'Промокод',
-                ];
-
-                return [$type => $modelMap[$type] ?? class_basename($type)];
-            });
+            ->mapWithKeys(fn ($type) => [$type => ActivityLog::modelLabel($type)]);
 
         return view('staff.logs.index', compact('logs', 'modelTypes'));
     }

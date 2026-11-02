@@ -20,6 +20,6 @@ class RoleMiddleware
             return $next($request);
         }
 
-        abort(403, 'У вас нет доступа к этой странице.');
+        abort(403, __('error-no-access'));
     }
 }
