@@ -3,19 +3,18 @@
 @section('content')
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2">
                 {{ __('admin-tables-title') }}
             </h1>
-            <p class="text-xs md:text-sm text-white/70">
+            <p class="text-xs md:text-sm text-ink-muted">
                 {{ __('admin-tables-subtitle') }}
             </p>
         </div>
 
 <a href="{{ route('admin.tables.create', ['locale' => app()->getLocale()]) }}"
    class="inline-flex justify-center items-center gap-2 px-4 py-2 rounded-full border border-red-500/70
-          bg-red-600/80 text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-white
-          shadow-[0_0_12px_rgba(248,113,113,0.7)]
-          hover:bg-red-500 transition">
+          bg-nebula text-xs md:text-xs text-on-nebula
+          hover:bg-ink transition">
     <x-icon category="System" name="Window" class="w-5 h-5"/>
     <span>{{ __('admin-tables-create-button') }}</span>
 </a>
@@ -24,7 +23,7 @@
 
     @if (session('status'))
         <div class="mb-6 bg-emerald-950/60 border border-emerald-500/70 text-emerald-100 text-xs md:text-sm rounded-xl px-4 py-3">
-            <p class="font-semibold mb-1 text-[11px] tracking-wide uppercase text-emerald-200">
+            <p class="font-semibold mb-1 text-xs tracking-wide uppercase text-emerald-200">
                 {{ __('admin-tables-alert-success-title') }}
             </p>
             <p>{{ session('status') }}</p>
@@ -33,18 +32,19 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-6 mb-8">
         {{-- PLAN --}}
-        <div class="rounded-2xl border border-white/10 bg-black/70 p-4 overflow-hidden">
+        <div class="rounded-2xl border border-line bg-ground/70 p-4 overflow-hidden">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                <h2 class="text-xs uppercase tracking-[0.22em] text-white/60">
+                <h2 class="text-xs text-ink-muted">
                     {{ __('admin-tables-plan-title') }}
                 </h2>
-                <p class="text-[11px] text-white/40">
+                <p class="text-xs text-ink-muted">
                     {{ __('admin-tables-plan-help') }}
                 </p>
             </div>
 
-            <div id="tables-plan"
-                 class="relative w-full aspect-[16/14] bg-gradient-to-br from-zinc-900 via-black to-zinc-900 rounded-2xl overflow-hidden border border-white/10">
+            <div class="overflow-x-auto">
+<div id="tables-plan"
+                 class="relative w-full min-w-[640px] aspect-[16/14] bg-surface rounded-2xl overflow-hidden border border-line">
                 @foreach($tables as $table)
                     <div class="absolute js-table-item"
                          data-id="{{ $table->id }}"
@@ -61,8 +61,8 @@
                              height: {{ $table->height }}px;
                              transform: translate(-50%, -50%) rotate({{ $table->rotation }}deg);
                          ">
-                        <div class="relative w-full h-full rounded-xl border text-[10px] text-center flex flex-col items-center justify-center cursor-move table-inner
-                                    {{ $table->is_active ? 'border-white/70 bg-white/10' : 'border-red-500/50 bg-red-950/30 opacity-50' }}"
+                        <div class="relative w-full h-full rounded-xl border text-xs text-center flex flex-col items-center justify-center cursor-move table-inner
+                                    {{ $table->is_active ? 'border-line-strong bg-line' : 'border-red-500/50 bg-red-950/30 opacity-50' }}"
                              @if(!$table->is_active)
                                  style="background: repeating-linear-gradient(45deg, rgba(153, 27, 27, 0.3), rgba(153, 27, 27, 0.3) 10px, transparent 10px, transparent 20px), rgba(153, 27, 27, 0.2);"
                              @endif>
@@ -71,17 +71,18 @@
                                 <span class="text-[8px] text-red-300 font-bold mt-1">INACTIVE</span>
                             @endif
 
-                            <div class="absolute -right-1 -bottom-1 w-3 h-3 rounded-full bg-white shadow cursor-nwse-resize js-resize-handle"></div>
+                            <div class="absolute -right-1 -bottom-1 w-3 h-3 rounded-full bg-ink shadow cursor-nwse-resize js-resize-handle"></div>
                             <div class="absolute left-1/2 -top-3 -translate-x-1/2 w-3 h-3 rounded-full bg-red-400 shadow cursor-crosshair js-rotate-handle"></div>
                         </div>
                     </div>
                 @endforeach
             </div>
+</div>
 
             <div class="mt-4 flex justify-end">
                 <button type="button" id="save-layout"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/60
-                               text-[11px] uppercase tracking-[0.22em] text-white/80 hover:bg-white/10 hover:text-white transition">
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-soft hover:bg-line hover:text-ink transition">
                     <x-icon category="System" name="Save" class="w-5 h-5 shrink-0"/>
                     <span class="leading-none">{{ __('admin-tables-plan-save-button') }}</span>
                 </button>
@@ -96,8 +97,8 @@
         </div>
 
         {{-- OPENING HOURS --}}
-        <div class="rounded-2xl border border-white/10 bg-black/70 p-4 overflow-hidden">
-            <h2 class="text-xs uppercase tracking-[0.22em] text-white/60 mb-3">
+        <div class="rounded-2xl border border-line bg-ground/70 p-4 overflow-hidden">
+            <h2 class="text-xs text-ink-muted mb-3">
                 {{ __('admin-tables-opening-hours-title') }}
             </h2>
 
@@ -118,8 +119,8 @@
                 @foreach($weekdays as $dayIndex => $label)
                     @php $row = $hours[$dayIndex] ?? null; @endphp
 
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-[11px] min-w-0">
-                        <div class="sm:w-20 text-white/70 shrink-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-xs min-w-0">
+                        <div class="sm:w-20 text-ink-muted shrink-0">
                             {{ $label }}
                         </div>
 
@@ -127,29 +128,29 @@
                             <input type="checkbox"
                                    name="hours[{{ $dayIndex }}][is_open]"
                                    value="1"
-                                   class="w-4 h-4 rounded border-white/40 bg-black/60"
+                                   class="w-4 h-4 rounded border-line-strong bg-ground/60"
                                    {{ $row && $row->is_open ? 'checked' : '' }}>
-                            <span class="text-white/50">{{ __('admin-tables-opening-hours-open') }}</span>
+                            <span class="text-ink-muted">{{ __('admin-tables-opening-hours-open') }}</span>
                         </div>
 
                         <div class="flex items-center gap-2 min-w-0 w-full sm:w-auto">
                             <input type="time"
                                    name="hours[{{ $dayIndex }}][opens_at]"
                                    value="{{ $row && $row->opens_at ? \Illuminate\Support\Str::of($row->opens_at)->substr(0,5) : '' }}"
-                                   class="min-w-0 w-full sm:w-24 bg-black/60 border border-white/20 rounded-lg px-2 py-1 text-xs text-white">
-                            <span class="text-white/40 shrink-0">—</span>
+                                   class="min-w-0 w-full sm:w-24 bg-ground/60 border border-line rounded-lg px-2 py-1 text-xs text-ink">
+                            <span class="text-ink-muted shrink-0">—</span>
                             <input type="time"
                                    name="hours[{{ $dayIndex }}][closes_at]"
                                    value="{{ $row && $row->closes_at ? \Illuminate\Support\Str::of($row->closes_at)->substr(0,5) : '' }}"
-                                   class="min-w-0 w-full sm:w-24 bg-black/60 border border-white/20 rounded-lg px-2 py-1 text-xs text-white">
+                                   class="min-w-0 w-full sm:w-24 bg-ground/60 border border-line rounded-lg px-2 py-1 text-xs text-ink">
                         </div>
                     </div>
                 @endforeach
 
                 <div class="pt-3">
                     <button type="submit"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/60
-                                   text-[11px] uppercase tracking-[0.22em] text-white/80 hover:bg-white/10 hover:text-white transition">
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-line-strong
+                                   text-xs text-ink-soft hover:bg-line hover:text-ink transition">
                         <x-icon category="System" name="Save" class="w-5 h-5 shrink-0"/>
                         <span class="leading-none">{{ __('admin-tables-opening-hours-save-button') }}</span>
                     </button>
@@ -159,31 +160,31 @@
     </div>
 
     {{-- TABLES LIST --}}
-    <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+    <div class="bg-surface border border-line rounded-2xl overflow-hidden">
         {{-- MOBILE --}}
         <div class="md:hidden p-4 space-y-3">
             @forelse($tables as $table)
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3">
+                <div class="rounded-2xl bg-ground/40 border border-line px-4 py-3">
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <div class="font-medium text-white truncate">{{ $table->name }}</div>
-                            <div class="text-[11px] text-white/60">
+                            <div class="font-medium text-ink truncate">{{ $table->name }}</div>
+                            <div class="text-xs text-ink-muted">
                                 {{ $table->is_active ? __('admin-tables-status-active') : __('admin-tables-status-inactive') }}
                             </div>
-                            <div class="mt-2 text-[11px] text-white/60">
-                                <span class="text-white/40 uppercase tracking-[0.16em]">{{ __('admin-tables-capacity-label') }}</span>:
-                                <span class="text-white/80">{{ $table->capacity }}</span>
+                            <div class="mt-2 text-xs text-ink-muted">
+                                <span class="text-ink-muted">{{ __('admin-tables-capacity-label') }}</span>:
+                                <span class="text-ink-soft">{{ $table->capacity }}</span>
                             </div>
-                            <div class="text-[11px] text-white/50">
-                                <span class="text-white/40 uppercase tracking-[0.16em]">W/H/Rot</span>:
+                            <div class="text-xs text-ink-muted">
+                                <span class="text-ink-muted">W/H/Rot</span>:
                                 {{ $table->width }} × {{ $table->height }} / {{ $table->rotation }}°
                             </div>
                         </div>
 
                         <div class="shrink-0 flex items-center gap-2">
                             <a href="{{ route('admin.tables.edit', ['locale' => app()->getLocale(), 'table' => $table]) }}"
-                               class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/25
-                                      text-white/80 hover:text-white hover:border-white/60 hover:bg-white/5 transition"
+                               class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-line
+                                      text-ink-soft hover:text-ink hover:border-line-strong hover:bg-surface transition"
                                title="{{ __('admin-tables-edit-button') }}">
                                 <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
                                 <span class="sr-only">{{ __('admin-tables-edit-button') }}</span>
@@ -208,7 +209,7 @@
                     </div>
                 </div>
             @empty
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-4 py-6 text-center text-white/50 text-sm">
+                <div class="rounded-2xl bg-ground/40 border border-line px-4 py-6 text-center text-ink-muted text-sm">
                     {{ __('admin-tables-empty') }}
                 </div>
             @endforelse
@@ -217,7 +218,7 @@
         {{-- DESKTOP --}}
         <div class="hidden md:block">
             <table class="w-full text-sm">
-                <thead class="bg-white/5 text-xs uppercase tracking-[0.18em] text-white/60">
+                <thead class="bg-surface text-xs text-ink-muted">
                 <tr>
                     <th class="px-5 py-3 text-left">{{ __('admin-tables-list-title') }}</th>
                     <th class="px-5 py-3 text-left">{{ __('admin-tables-capacity-label') }}</th>
@@ -228,29 +229,29 @@
 
                 <tbody>
                 @forelse($tables as $table)
-                    <tr class="border-t border-white/10 hover:bg-white/5 transition">
+                    <tr class="border-t border-line hover:bg-surface transition">
                         <td class="px-5 py-3 align-top">
-                            <div class="font-medium text-white">
+                            <div class="font-medium text-ink">
                                 {{ $table->name }}
                             </div>
-                            <div class="text-xs text-white/50">
+                            <div class="text-xs text-ink-muted">
                                 {{ $table->is_active ? __('admin-tables-status-active') : __('admin-tables-status-inactive') }}
                             </div>
                         </td>
 
-                        <td class="px-5 py-3 align-top text-white/80">
+                        <td class="px-5 py-3 align-top text-ink-soft">
                             {{ $table->capacity }}
                         </td>
 
-                        <td class="px-5 py-3 align-top text-white/70 text-xs">
+                        <td class="px-5 py-3 align-top text-ink-muted text-xs">
                             {{ $table->width }} × {{ $table->height }} / {{ $table->rotation }}°
                         </td>
 
                         <td class="px-5 py-3 align-top">
                             <div class="flex justify-end items-center gap-2">
                                 <a href="{{ route('admin.tables.edit', ['locale' => app()->getLocale(), 'table' => $table]) }}"
-                                   class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/25
-                                          text-white/80 hover:text-white hover:border-white/60 hover:bg-white/5 transition"
+                                   class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-line
+                                          text-ink-soft hover:text-ink hover:border-line-strong hover:bg-surface transition"
                                    title="{{ __('admin-tables-edit-button') }}">
                                     <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
                                     <span class="sr-only">{{ __('admin-tables-edit-button') }}</span>
@@ -276,7 +277,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-5 py-6 text-center text-white/50">
+                        <td colspan="4" class="px-5 py-6 text-center text-ink-muted">
                             {{ __('admin-tables-empty') }}
                         </td>
                     </tr>
@@ -287,38 +288,37 @@
     </div>
 
     <div id="deleteTableModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
-        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-ground/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-ground/95 border border-red-500/50 rounded-2xl p-6">
             <div class="mb-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
                     <span class="text-red-400 text-lg">!</span>
                 </div>
-                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                <h2 class="text-base md:text-lg font-semibold text-ink tracking-wide">
                     {{ __('admin-tables-delete-modal-title') }}
                 </h2>
             </div>
 
-            <p class="text-sm text-white/70 mb-4">
+            <p class="text-sm text-ink-muted mb-4">
                 {{ __('admin-tables-delete-modal-text-prefix') }}
-                <span id="deleteTableName" class="font-semibold text-white"></span>?
+                <span id="deleteTableName" class="font-semibold text-ink"></span>?
             </p>
-            <p class="text-xs text-white/40 mb-5">
+            <p class="text-xs text-ink-muted mb-5">
                 {{ __('admin-tables-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
                 <button type="button"
                         id="deleteTableCancelBtn"
-                        class="px-5 py-2 rounded-full border border-white/30
-                               text-[11px] tracking-[0.22em] uppercase text-white/70
-                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                        class="px-5 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-muted
+                               hover:text-ink hover:border-line-strong hover:bg-surface transition">
                     {{ __('admin-tables-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteTableConfirmBtn"
                         class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
-                               text-[11px] tracking-[0.22em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     {{ __('admin-tables-delete-modal-confirm') }}
                 </button>

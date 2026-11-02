@@ -7,10 +7,10 @@
 
     <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2">
                 {{ __('admin-users-title') }}
             </h1>
-            <p class="text-xs md:text-sm text-white/70">
+            <p class="text-xs md:text-sm text-ink-muted">
                 {{ __('admin-users-subtitle') }}
             </p>
         </div>
@@ -18,9 +18,8 @@
         @if(Route::has('admin.users.create'))
 <a href="{{ route('admin.users.create') }}"
    class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-red-500/70
-          bg-red-600/80 text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-white
-          shadow-[0_0_12px_rgba(248,113,113,0.7)]
-          hover:bg-red-500 transition"
+          bg-nebula text-xs md:text-xs text-on-nebula
+          hover:bg-ink transition"
    aria-label="{{ __('admin-users-create-button') }}">
     <x-icon category="Edit" name="Add_Plus_Circle" class="w-5 h-5"/>
     <span>{{ __('admin-users-create-button') }}</span>
@@ -31,7 +30,7 @@
 
     @if (session('status'))
         <div class="mb-6 bg-emerald-950/60 border border-emerald-500/70 text-emerald-100 text-xs md:text-sm rounded-xl px-4 py-3">
-            <p class="font-semibold mb-1 text-[11px] tracking-wide uppercase text-emerald-200">
+            <p class="font-semibold mb-1 text-xs tracking-wide uppercase text-emerald-200">
                 {{ __('admin-users-alert-success-title') }}
             </p>
             <p>{{ session('status') }}</p>
@@ -40,7 +39,7 @@
 
     @if (session('error'))
         <div class="mb-6 bg-red-950/60 border border-red-500/70 text-red-100 text-xs md:text-sm rounded-xl px-4 py-3">
-            <p class="font-semibold mb-1 text-[11px] tracking-wide uppercase text-red-200">
+            <p class="font-semibold mb-1 text-xs tracking-wide uppercase text-red-200">
                 {{ __('admin-users-alert-error-title') }}
             </p>
             <p>{{ session('error') }}</p>
@@ -59,12 +58,11 @@
 
         @foreach($filters as $value => $label)
             <a href="{{ route('admin.users.index', array_merge(request()->except('page'), ['role' => $value])) }}"
-               class="px-3 md:px-4 py-1.5 rounded-full border text-[10px] md:text-[11px]
-                      tracking-[0.18em] md:tracking-[0.22em] uppercase transition
+               class="px-3 md:px-4 py-1.5 rounded-full border text-xs md:text-xs md: transition
                       @if($currentFilter === $value)
-                          bg-red-600/90 border-red-400 text-white shadow-[0_0_10px_rgba(248,113,113,0.8)]
+                          bg-nebula border-nebula text-on-nebula
                       @else
-                          bg-white/5 border-white/20 text-white/60 hover:bg-white/10 hover:text-white
+                          bg-surface border-line text-ink-muted hover:bg-line hover:text-ink
                       @endif">
                 {{ $label }}
             </a>
@@ -77,7 +75,7 @@
                 @php
                     if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
                         $roleLabelKey = 'admin-users-role-label-admin';
-                        $roleColor = 'bg-red-600/80 border-red-400 text-red-50';
+                        $roleColor = 'bg-nebula border-nebula text-red-50';
                     } elseif (method_exists($user, 'isWorker') && $user->isWorker()) {
                         $roleLabelKey = 'admin-users-role-label-staff';
                         $roleColor = 'bg-emerald-600/70 border-emerald-400 text-emerald-50';
@@ -87,37 +85,37 @@
                     }
                 @endphp
 
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-4 py-3">
+                <div class="rounded-2xl bg-ground/40 border border-line px-4 py-3">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <div class="font-medium text-white text-sm">
+                            <div class="font-medium text-ink text-sm">
                                 {{ $user->name ?? '—' }}
                             </div>
-                            <div class="text-[11px] text-white/60 break-all">
+                            <div class="text-xs text-ink-muted break-all">
                                 {{ $user->email }}
                             </div>
                             @if(!empty($user->phone))
-                                <div class="text-[11px] text-white/40 mt-0.5">
+                                <div class="text-xs text-ink-muted mt-0.5">
                                     {{ $user->phone }}
                                 </div>
                             @endif
                         </div>
 
-                        <span class="inline-flex items-center px-3 py-1 rounded-full border text-[9px] uppercase tracking-[0.18em] {{ $roleColor }}">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full border text-xs {{ $roleColor }}">
                             {{ __($roleLabelKey) }}
                         </span>
                     </div>
 
-                    <div class="mt-3 text-xs text-white/60 flex flex-wrap items-center gap-2">
+                    <div class="mt-3 text-xs text-ink-muted flex flex-wrap items-center gap-2">
                         @if($user->created_at)
                             <span class="inline-flex items-center gap-1">
-                                <span class="text-white/40 uppercase tracking-[0.16em]">{{ __('admin-users-created-at-label') }}</span>
+                                <span class="text-ink-muted">{{ __('admin-users-created-at-label') }}</span>
                                 <span>{{ $user->created_at->format('d.m.Y') }}</span>
-                                <span class="text-white/40">/</span>
+                                <span class="text-ink-muted">/</span>
                                 <span>{{ $user->created_at->format('H:i') }}</span>
                             </span>
                         @else
-                            <span class="text-white/40">{{ __('admin-users-created-at-empty') }}</span>
+                            <span class="text-ink-muted">{{ __('admin-users-created-at-empty') }}</span>
                         @endif
                     </div>
 
@@ -125,8 +123,8 @@
                         @if(Route::has('admin.users.show') && method_exists($user, 'isClient') && $user->isClient())
                             <a href="{{ route('admin.users.show', $user) }}"
                                class="flex-1 min-w-[120px] inline-flex justify-center items-center gap-2 px-3 py-1.5 rounded-full
-                                      text-[10px] tracking-[0.18em] uppercase text-white/80 hover:text-white
-                                      border border-white/25 hover:border-white/60 hover:bg-white/5 transition">
+                                      text-xs text-ink-soft hover:text-ink
+                                      border border-line hover:border-line-strong hover:bg-surface transition">
                                 <x-icon category="Interface" name="External_Link" class="w-5 h-5"/>
                             </a>
                         @endif
@@ -134,8 +132,8 @@
                         @if(Route::has('admin.users.edit'))
                             <a href="{{ route('admin.users.edit', $user) }}"
                                class="flex-1 min-w-[120px] inline-flex justify-center items-center gap-2 px-3 py-1.5 rounded-full
-                                      text-[10px] tracking-[0.18em] uppercase text-white/80 hover:text-white
-                                      border border-white/25 hover:border-white/60 hover:bg-white/5 transition">
+                                      text-xs text-ink-soft hover:text-ink
+                                      border border-line hover:border-line-strong hover:bg-surface transition">
                                 <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
                                 {{-- {{ __('admin-users-edit-button') }} --}}
                             </a>
@@ -150,7 +148,7 @@
                                 @method('DELETE')
                                 <button type="button"
                                         class="w-full inline-flex justify-center items-center gap-2 px-3 py-1.5 rounded-full
-                                               text-[10px] tracking-[0.18em] uppercase text-red-300 hover:text-red-100
+                                               text-xs text-red-300 hover:text-red-100
                                                border border-red-500/70 hover:border-red-400 hover:bg-red-500/20
                                                transition js-delete-user-btn"
                                         data-user-name="{{ $user->name ?? $user->email }}"
@@ -164,7 +162,7 @@
                     </div>
                 </div>
             @empty
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-4 py-6 text-center text-white/50 text-sm">
+                <div class="rounded-2xl bg-ground/40 border border-line px-4 py-6 text-center text-ink-muted text-sm">
                     {{ __('admin-users-empty') }}
                 </div>
             @endforelse
@@ -175,7 +173,7 @@
                 @php
                     if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
                         $roleLabelKey = 'admin-users-role-label-admin';
-                        $roleColor = 'bg-red-600/80 border-red-400 text-red-50';
+                        $roleColor = 'bg-nebula border-nebula text-red-50';
                     } elseif (method_exists($user, 'isWorker') && $user->isWorker()) {
                         $roleLabelKey = 'admin-users-role-label-staff';
                         $roleColor = 'bg-emerald-600/70 border-emerald-400 text-emerald-50';
@@ -185,37 +183,37 @@
                     }
                 @endphp
 
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-5 py-4 hover:bg-white/5 transition">
+                <div class="rounded-2xl bg-ground/40 border border-line px-5 py-4 hover:bg-surface transition">
                     <div class="flex items-start justify-between gap-6">
                         <div class="min-w-0">
                             <div class="flex items-center gap-3">
-                                <div class="font-semibold text-white truncate">
+                                <div class="font-semibold text-ink truncate">
                                     {{ $user->name ?? '—' }}
                                 </div>
 
-                                <span class="inline-flex items-center px-3 py-1 rounded-full border text-[10px] uppercase tracking-[0.2em] {{ $roleColor }}">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full border text-xs {{ $roleColor }}">
                                     {{ __($roleLabelKey) }}
                                 </span>
                             </div>
 
-                            <div class="mt-1 text-xs text-white/60 break-all">
+                            <div class="mt-1 text-xs text-ink-muted break-all">
                                 {{ $user->email }}
                             </div>
 
                             @if(!empty($user->phone))
-                                <div class="mt-1 text-xs text-white/40">
+                                <div class="mt-1 text-xs text-ink-muted">
                                     {{ $user->phone }}
                                 </div>
                             @endif
 
-                            <div class="mt-3 text-xs text-white/50">
-                                <span class="uppercase tracking-[0.18em] text-white/40">{{ __('admin-users-created-at-label') }}</span>
+                            <div class="mt-3 text-xs text-ink-muted">
+                                <span class="text-ink-muted">{{ __('admin-users-created-at-label') }}</span>
                                 @if($user->created_at)
-                                    <span class="text-white/70 ml-1">{{ $user->created_at->format('d.m.Y') }}</span>
-                                    <span class="text-white/40">/</span>
-                                    <span class="text-white/50">{{ $user->created_at->format('H:i') }}</span>
+                                    <span class="text-ink-muted ml-1">{{ $user->created_at->format('d.m.Y') }}</span>
+                                    <span class="text-ink-muted">/</span>
+                                    <span class="text-ink-muted">{{ $user->created_at->format('H:i') }}</span>
                                 @else
-                                    <span class="text-white/40 ml-1">—</span>
+                                    <span class="text-ink-muted ml-1">—</span>
                                 @endif
                             </div>
                         </div>
@@ -223,18 +221,18 @@
                         <div class="shrink-0 flex items-center gap-2">
                             @if(Route::has('admin.users.show') && method_exists($user, 'isClient') && $user->isClient())
                                 <a href="{{ route('admin.users.show', $user) }}"
-                                   class="h-9 inline-flex items-center justify-center gap-2 px-4 rounded-full border border-white/25
-                                          text-[10px] tracking-[0.18em] uppercase text-white/80 hover:text-white
-                                          hover:border-white/60 hover:bg-white/5 transition">
+                                   class="h-9 inline-flex items-center justify-center gap-2 px-4 rounded-full border border-line
+                                          text-xs text-ink-soft hover:text-ink
+                                          hover:border-line-strong hover:bg-surface transition">
                                     <x-icon category="Interface" name="External_Link" class="w-5 h-5"/>
                                 </a>
                             @endif
 
                             @if(Route::has('admin.users.edit'))
                                 <a href="{{ route('admin.users.edit', $user) }}"
-                                   class="h-9 inline-flex items-center justify-center gap-2 px-4 rounded-full border border-white/25
-                                          text-[10px] tracking-[0.18em] uppercase text-white/80 hover:text-white
-                                          hover:border-white/60 hover:bg-white/5 transition">
+                                   class="h-9 inline-flex items-center justify-center gap-2 px-4 rounded-full border border-line
+                                          text-xs text-ink-soft hover:text-ink
+                                          hover:border-line-strong hover:bg-surface transition">
                                     <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
                                     {{-- {{ __('admin-users-edit-button') }} --}}
                                 </a>
@@ -248,7 +246,7 @@
                                     @method('DELETE')
                                     <button type="button"
                                             class="h-9 inline-flex items-center justify-center gap-2 px-4 rounded-full border border-red-500/70
-                                                   text-[10px] tracking-[0.18em] uppercase text-red-300 hover:text-red-100
+                                                   text-xs text-red-300 hover:text-red-100
                                                    hover:border-red-400 hover:bg-red-500/20 transition js-delete-user-btn"
                                             data-user-name="{{ $user->name ?? $user->email }}"
                                             data-user-email="{{ $user->email }}"
@@ -262,7 +260,7 @@
                     </div>
                 </div>
             @empty
-                <div class="rounded-2xl bg-black/40 border border-white/10 px-5 py-10 text-center text-white/50">
+                <div class="rounded-2xl bg-ground/40 border border-line px-5 py-10 text-center text-ink-muted">
                     {{ __('admin-users-empty') }}
                 </div>
             @endforelse
@@ -282,43 +280,43 @@
                 if ($current >= $last - 2) { $end = $last; $start = max(1, $last - 4); }
             @endphp
 
-            <div class="rounded-2xl bg-white/5 border border-white/10 overflow-hidden mt-6">
-                <div class="px-4 md:px-5 py-3 bg-black/60">
+            <div class="rounded-2xl bg-surface border border-line overflow-hidden mt-6">
+                <div class="px-4 md:px-5 py-3 bg-ground/60">
 
                     {{-- MOBILE --}}
                     <div class="sm:hidden flex items-center justify-between gap-3">
                         {{-- Prev --}}
                         @if ($p->onFirstPage())
                             <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl
-                                         bg-black/30 border border-white/10 text-white/25 cursor-not-allowed">
+                                         bg-ground/30 border border-line text-ink-muted cursor-not-allowed">
                                 ‹
                             </span>
                         @else
                             <a href="{{ $p->previousPageUrl() }}"
                                class="inline-flex items-center justify-center w-10 h-10 rounded-xl
-                                      bg-black/40 border border-white/15 text-white/70
-                                      hover:bg-white/10 hover:text-white hover:border-white/35 transition">
+                                      bg-ground/40 border border-line text-ink-muted
+                                      hover:bg-line hover:text-ink hover:border-line-strong transition">
                                 ‹
                             </a>
                         @endif
 
                         {{-- Center --}}
                         <div class="flex flex-col items-center leading-tight">
-                            <div class="text-[10px] tracking-[0.22em] uppercase text-white/40">PAGE</div>
-                            <div class="text-sm font-semibold text-white">{{ $current }} / {{ $last }}</div>
+                            <div class="text-xs text-ink-muted">PAGE</div>
+                            <div class="text-sm font-semibold text-ink">{{ $current }} / {{ $last }}</div>
                         </div>
 
                         {{-- Next --}}
                         @if ($p->hasMorePages())
                             <a href="{{ $p->nextPageUrl() }}"
                                class="inline-flex items-center justify-center w-10 h-10 rounded-xl
-                                      bg-black/40 border border-white/15 text-white/70
-                                      hover:bg-white/10 hover:text-white hover:border-white/35 transition">
+                                      bg-ground/40 border border-line text-ink-muted
+                                      hover:bg-line hover:text-ink hover:border-line-strong transition">
                                 ›
                             </a>
                         @else
                             <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl
-                                         bg-black/30 border border-white/10 text-white/25 cursor-not-allowed">
+                                         bg-ground/30 border border-line text-ink-muted cursor-not-allowed">
                                 ›
                             </span>
                         @endif
@@ -326,22 +324,22 @@
 
                     {{-- DESKTOP --}}
                     <div class="hidden sm:flex items-center justify-between gap-4">
-                        <div class="text-sm text-white/60">
+                        <div class="text-sm text-ink-muted">
                             {!! __('pagination-showing') !!}
-                            <span class="font-medium text-white/80">{{ $p->firstItem() }}</span>
+                            <span class="font-medium text-ink-soft">{{ $p->firstItem() }}</span>
                             {!! __('pagination-to') !!}
-                            <span class="font-medium text-white/80">{{ $p->lastItem() }}</span>
+                            <span class="font-medium text-ink-soft">{{ $p->lastItem() }}</span>
                             {!! __('pagination-of') !!}
-                            <span class="font-medium text-white/80">{{ $p->total() }}</span>
+                            <span class="font-medium text-ink-soft">{{ $p->total() }}</span>
                             {!! __('pagination-results') !!}
                         </div>
 
-                        <div class="inline-flex items-center rounded-2xl overflow-hidden bg-black/40 border border-white/15">
+                        <div class="inline-flex items-center rounded-2xl overflow-hidden bg-ground/40 border border-line">
 
                             {{-- Prev --}}
                             @if ($p->onFirstPage())
                                 <span class="inline-flex items-center justify-center px-3 py-2
-                                             bg-black/30 border-r border-white/10 text-white/25 cursor-not-allowed">
+                                             bg-ground/30 border-r border-line text-ink-muted cursor-not-allowed">
                                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M12.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L8.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
                                     </svg>
@@ -349,9 +347,9 @@
                             @else
                                 <a href="{{ $p->previousPageUrl() }}"
                                    class="group inline-flex items-center justify-center px-3 py-2
-                                          bg-black/40 border-r border-white/15 text-white/70
-                                          hover:bg-white/10 hover:text-white transition">
-                                    <svg class="w-5 h-5 text-white/60 group-hover:text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                          bg-ground/40 border-r border-line text-ink-muted
+                                          hover:bg-line hover:text-ink transition">
+                                    <svg class="w-5 h-5 text-ink-muted group-hover:text-ink" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M12.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L8.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
                                     </svg>
                                 </a>
@@ -360,13 +358,13 @@
                             {{-- First + dots --}}
                             @if ($start > 1)
                                 <a href="{{ $p->url(1) }}"
-                                   class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15
-                                          text-white/70 hover:text-white hover:bg-white/10 transition">
+                                   class="inline-flex items-center justify-center px-4 py-2 border-r border-line
+                                          text-ink-muted hover:text-ink hover:bg-line transition">
                                     1
                                 </a>
 
                                 @if ($start > 2)
-                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15 text-white/40 select-none">
+                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-line text-ink-muted select-none">
                                         …
                                     </span>
                                 @endif
@@ -375,14 +373,14 @@
                             {{-- Window pages --}}
                             @for ($page = $start; $page <= $end; $page++)
                                 @if ($page == $current)
-                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15
-                                                 bg-red-600/80 text-red-100 font-semibold">
+                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-line
+                                                 bg-nebula text-red-100 font-semibold">
                                         {{ $page }}
                                     </span>
                                 @else
                                     <a href="{{ $p->url($page) }}"
-                                       class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15
-                                              text-white/70 hover:text-white hover:bg-white/10 transition">
+                                       class="inline-flex items-center justify-center px-4 py-2 border-r border-line
+                                              text-ink-muted hover:text-ink hover:bg-line transition">
                                         {{ $page }}
                                     </a>
                                 @endif
@@ -391,14 +389,14 @@
                             {{-- Dots + last --}}
                             @if ($end < $last)
                                 @if ($end < $last - 1)
-                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15 text-white/40 select-none">
+                                    <span class="inline-flex items-center justify-center px-4 py-2 border-r border-line text-ink-muted select-none">
                                         …
                                     </span>
                                 @endif
 
                                 <a href="{{ $p->url($last) }}"
-                                   class="inline-flex items-center justify-center px-4 py-2 border-r border-white/15
-                                          text-white/70 hover:text-white hover:bg-white/10 transition">
+                                   class="inline-flex items-center justify-center px-4 py-2 border-r border-line
+                                          text-ink-muted hover:text-ink hover:bg-line transition">
                                     {{ $last }}
                                 </a>
                             @endif
@@ -407,14 +405,14 @@
                             @if ($p->hasMorePages())
                                 <a href="{{ $p->nextPageUrl() }}"
                                    class="group inline-flex items-center justify-center px-3 py-2
-                                          bg-black/40 text-white/70 hover:bg-white/10 hover:text-white transition">
-                                    <svg class="w-5 h-5 text-white/60 group-hover:text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                          bg-ground/40 text-ink-muted hover:bg-line hover:text-ink transition">
+                                    <svg class="w-5 h-5 text-ink-muted group-hover:text-ink" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
                                 </a>
                             @else
                                 <span class="inline-flex items-center justify-center px-3 py-2
-                                             bg-black/30 text-white/25 cursor-not-allowed">
+                                             bg-ground/30 text-ink-muted cursor-not-allowed">
                                     <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M7.293 4.293a1 1 0 011.414 0l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414-1.414L11.586 10 7.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                                     </svg>
@@ -430,38 +428,37 @@
     </div>
 
     <div id="deleteUserModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
-        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-ground/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-ground/95 border border-red-500/50 rounded-2xl p-6">
             <div class="mb-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
                     <span class="text-red-400 text-lg">!</span>
                 </div>
-                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                <h2 class="text-base md:text-lg font-semibold text-ink tracking-wide">
                     {{ __('admin-users-delete-modal-title') }}
                 </h2>
             </div>
 
-            <p class="text-sm text-white/70 mb-4">
+            <p class="text-sm text-ink-muted mb-4">
                 {{ __('admin-users-delete-modal-text-prefix') }}
-                <span id="deleteUserName" class="font-semibold text-white"></span>?
+                <span id="deleteUserName" class="font-semibold text-ink"></span>?
             </p>
-            <p class="text-xs text-white/40 mb-5">
+            <p class="text-xs text-ink-muted mb-5">
                 {{ __('admin-users-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
                 <button type="button"
                         id="deleteUserCancelBtn"
-                        class="px-5 py-2 rounded-full border border-white/30
-                               text-[11px] tracking-[0.22em] uppercase text-white/70
-                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                        class="px-5 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-muted
+                               hover:text-ink hover:border-line-strong hover:bg-surface transition">
                     {{ __('admin-users-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteUserConfirmBtn"
                         class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
-                               text-[11px] tracking-[0.22em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     {{ __('admin-users-delete-modal-confirm') }}
                 </button>

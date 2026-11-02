@@ -14,14 +14,14 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-black text-white">
+<body class="bg-ground text-ink">
 
 <div class="min-h-screen flex flex-col">
 
     @include('admin.partials.header')
 
     <main class="flex-1 pt-20 pb-10">
-        <div class="max-w-6xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-6">
             @yield('content')
         </div>
     </main>

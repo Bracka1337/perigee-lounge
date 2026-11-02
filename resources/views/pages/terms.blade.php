@@ -1,83 +1,63 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="w-full min-h-screen bg-gradient-to-b from-black via-[#050816] to-black text-white pt-24 pb-16 overflow-x-hidden">
+    <div class="w-full min-h-screen bg-ground text-ink pt-24 pb-16 overflow-x-hidden">
 
-        <div class="max-w-6xl mx-auto px-6">
-
-            <div class="relative mb-12 text-center">
-                <div class="absolute inset-x-0 -top-10 h-32 bg-gradient-to-b from-white/15 via-white/5 to-transparent blur-3xl opacity-50"></div>
-
-                <div class="relative inline-flex flex-col items-center gap-1 mb-4">
-                    <p class="text-[10px] tracking-[0.35em] uppercase text-white/60">
-                        {{__('perigee-rest-name')}}
-                    </p>
-                    <h1 class="logo-font text-4xl md:text-5xl drop-shadow-[0_0_14px_rgba(255,255,255,0.9)]">
-                        {{__('perigee-name')}}
-                    </h1>
-                </div>
-
-                <p class="text-xs uppercase tracking-[0.25em] text-white/50 mb-2">
-                    {{ __('page-terms-title') }}
-                </p>
-
-                <p class="text-sm text-white/50">
-                    {{ __('page-updated-label') }}: {{ now()->translatedFormat('d F Y') }}
-                </p>
-            </div>
+        <div class="mx-auto max-w-4xl px-6">
+            <x-page-header :eyebrow="__('perigee-rest-name')" :title="__('page-terms-title')" :lead="__('page-updated-label').': '.now()->translatedFormat('d F Y')" />
 
             <div class="grid gap-8 md:gap-10">
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-2-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-2-text') }}
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-3-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-3-text') }}
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-4-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-4-text') }}
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-5-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-5-text') }}
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-6-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-6-text') }}
                     </p>
                 </section>
 
-                <section class="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 via-black/80 to-black p-6 md:p-7 shadow-[0_18px_45px_rgba(0,0,0,0.9)]">
+                <section class="rounded-2xl border border-line bg-surface p-6 md:p-7">
                     <h2 class="text-lg md:text-xl font-semibold tracking-wide mb-3">
                         {{ __('terms-section-7-title') }}
                     </h2>
-                    <p class="text-sm md:text-base text-white/70">
+                    <p class="text-sm md:text-base text-ink-muted">
                         {{ __('terms-section-7-text') }}
                     </p>
                 </section>

@@ -2,13 +2,13 @@
 
 @section('client-header')
     <div class="mb-10">
-        <p class="text-xs tracking-[0.35em] uppercase text-white/60 mb-3">
+        <p class="text-xs text-ink-muted mb-3">
             {{ __('client-reservations-badge') }}
         </p>
-        <h1 class="logo-font text-3xl md:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+        <h1 class="logo-font text-3xl md:text-4xl mb-2">
             {{ __('client-reservations-title') }}
         </h1>
-        <p class="text-sm md:text-base text-white/70">
+        <p class="text-sm md:text-base text-ink-muted">
             {{ __('client-reservations-subtitle') }}
         </p>
     </div>
@@ -42,9 +42,9 @@
     @endphp
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/60 overflow-hidden min-w-0">
+        <div class="lg:col-span-2 rounded-2xl border border-line bg-surface p-4  overflow-hidden min-w-0">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3 min-w-0">
-                <h2 class="min-w-0 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-white/60 whitespace-normal break-words inline-flex items-center gap-2">
+                <h2 class="min-w-0 text-xs sm:text-xs text-ink-muted whitespace-normal break-words inline-flex items-center gap-2">
                     <x-icon category="Calendar" name="Calendar_Days" class="w-5 h-5 shrink-0"/>
                     {{ __('client-reservations-plan-title', ['date' => $date->format('d.m.Y')]) }}
                 </h2>
@@ -54,12 +54,13 @@
                            id="clientPlanDateInput"
                            name="date"
                            value="{{ $date->toDateString() }}"
-                           class="block w-full min-w-0 max-w-full appearance-none bg-black/60 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70">
+                           class="block w-full min-w-0 max-w-full appearance-none bg-ground/60 border border-line rounded-xl px-3 py-1.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong">
                 </form>
             </div>
 
-            <div id="clientFloorPlan"
-                 class="relative w-full aspect-[16/14] rounded-2xl border border-white/15 bg-black/70 overflow-hidden select-none">
+            <div class="overflow-x-auto">
+<div id="clientFloorPlan"
+                 class="relative w-full min-w-[640px] aspect-[16/14] rounded-2xl border border-line bg-ground/70 overflow-hidden select-none">
                 <!-- Floor Plan Zones -->
                 <x-floor-plan-zones />
 
@@ -79,14 +80,14 @@
                         $statusClass = match($status) {
                             'active'  => 'bg-emerald-500/80 border-emerald-300',
                             'pending' => 'bg-sky-500/80 border-sky-300',
-                            default   => 'bg-white/10 border-white/70',
+                            default   => 'bg-line border-line-strong',
                         };
 
                         $disabled = $status !== 'free' || !$table->is_active;
                     @endphp
 
                     <button type="button"
-                            class="js-client-table absolute flex flex-col items-center justify-center rounded-xl border text-[11px] text-white {{ $statusClass }}"
+                            class="js-client-table absolute flex flex-col items-center justify-center rounded-xl border text-xs text-ink {{ $statusClass }}"
                             data-id="{{ $table->id }}"
                             data-name="{{ $table->name }}"
                             data-capacity="{{ $table->capacity }}"
@@ -102,14 +103,15 @@
                                 transform: translate(-50%, -50%) rotate({{ $table->rotation }}deg);
                                 opacity: {{ $table->is_active ? '1' : '0.3' }};
                             ">
-                        <div class="text-white font-semibold text-[10px] md:text-[11px] leading-tight max-w-full px-1 truncate text-center">
+                        <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                             {{ $table->name }}
                         </div>
                     </button>
                 @endforeach
             </div>
+</div>
 
-            <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-[10px] uppercase tracking-[0.18em] text-white/60">
+            <div class="mt-4 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-xs text-ink-muted">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
                     <span>{{ __('client-reservations-legend-active') }}</span>
@@ -119,14 +121,14 @@
                     <span>{{ __('client-reservations-legend-pending') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-white/30"></span>
+                    <span class="w-3 h-3 rounded-full bg-line"></span>
                     <span>{{ __('client-reservations-legend-free') }}</span>
                 </div>
             </div>
 
-            <div class="mt-3 pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-[10px] uppercase tracking-[0.18em] text-white/50">
+            <div class="mt-3 pt-3 border-t border-line flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 text-xs text-ink-muted">
                 <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded bg-purple-500/30 border border-purple-400/40"></span>
+                    <span class="w-3 h-3 rounded bg-nebula/15 border border-nebula"></span>
                     <span>{{ __('floor-plan-zone-terrace') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -148,8 +150,8 @@
             </div>
         </div>
 
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/60 overflow-hidden min-w-0">
-            <h2 class="text-xs uppercase tracking-[0.22em] text-white/60 mb-3 inline-flex items-center gap-2">
+        <div class="rounded-2xl border border-line bg-surface p-4  overflow-hidden min-w-0">
+            <h2 class="text-xs text-ink-muted mb-3 inline-flex items-center gap-2">
                 <x-icon category="Interface" name="Book" class="w-5 h-5"/>
                 {{ __('client-reservations-sidebar-title') }}
             </h2>
@@ -161,12 +163,12 @@
                 @csrf
                 <input type="hidden" name="table_id" id="client_table_id" value="{{ old('table_id') }}">
 
-                <div class="text-xs text-white/70 mb-1" id="clientSelectedTableLabel">
+                <div class="text-xs text-ink-muted mb-1" id="clientSelectedTableLabel">
                     {{ __('client-reservations-selected-table-empty') }}
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                    <label class="block text-xs text-ink-muted">
                         {{ __('client-reservations-field-date') }}
                     </label>
                     <div class="relative flex items-center gap-2">
@@ -174,10 +176,10 @@
                                id="clientDateInput"
                                name="date"
                                value="{{ old('date', $date->toDateString()) }}"
-                               class="block w-full min-w-0 max-w-full appearance-none bg-black/60 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70">
+                               class="block w-full min-w-0 max-w-full appearance-none bg-ground/60 border border-line rounded-xl px-3 py-1.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong">
 
                         <button type="button"
-                                class="hidden md:inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:outline-none focus:ring-1 focus:ring-white/40"
+                                class="hidden md:inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-line border border-line text-ink hover:bg-line focus:outline-none focus:ring-1 focus:ring-line-strong"
                                 aria-label="{{ __('client-reservations-field-date') }}"
                                 onclick="openInputPicker('clientDateInput')"
                                 title="{{ __('client-reservations-field-date') }}">
@@ -187,7 +189,7 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                    <label class="block text-xs text-ink-muted">
                         {{ __('client-reservations-field-time') }}
                     </label>
                     <div class="relative flex items-center gap-2">
@@ -196,30 +198,30 @@
                                id="clientTimeInput"
                                name="time"
                                value="{{ old('time', '19:00') }}"
-                               class="block w-full min-w-0 max-w-full appearance-none bg-black/60 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70 md:hidden">
+                               class="block w-full min-w-0 max-w-full appearance-none bg-ground/60 border border-line rounded-xl px-3 py-1.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong md:hidden">
 
                         <!-- Desktop segmented time (HH:MM) -->
                         <div class="hidden md:flex items-center gap-2 w-full">
-                            <div class="flex items-center w-full min-w-0 appearance-none bg-black/60 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white focus-within:outline-none focus-within:ring-1 focus-within:ring-white/70">
+                            <div class="flex items-center w-full min-w-0 appearance-none bg-ground/60 border border-line rounded-xl px-3 py-1.5 text-xs text-ink focus-within:outline-none focus-within:ring-1 focus-within:ring-line-strong">
                                 <input type="text"
                                     id="clientTimeHours"
                                     inputmode="numeric"
                                     maxlength="2"
                                     placeholder="HH"
-                                    class="w-10 bg-transparent text-white text-xs text-center px-0 py-0 leading-none focus:outline-none"
+                                    class="w-10 bg-transparent text-ink text-xs text-center px-0 py-0 leading-none focus:outline-none"
                                     aria-label="Hours">
-                                <span class="text-white/60 select-none">:</span>
+                                <span class="text-ink-muted select-none">:</span>
                                 <input type="text"
                                     id="clientTimeMinutes"
                                     inputmode="numeric"
                                     maxlength="2"
                                     placeholder="MM"
-                                    class="w-10 bg-transparent text-white text-xs text-center px-0 py-0 leading-none focus:outline-none"
+                                    class="w-10 bg-transparent text-ink text-xs text-center px-0 py-0 leading-none focus:outline-none"
                                     aria-label="Minutes">
                             </div>
 
                             <button type="button"
-                                    class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:outline-none focus:ring-1 focus:ring-white/40"
+                                    class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-xl bg-line border border-line text-ink hover:bg-line focus:outline-none focus:ring-1 focus:ring-line-strong"
                                     aria-label="{{ __('client-reservations-field-time') }}"
                                     onclick="focusSegmentedTime()"
                                     title="{{ __('client-reservations-field-time') }}">
@@ -231,7 +233,7 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-[11px] uppercase tracking-[0.22em] text-white/60">
+                    <label class="block text-xs text-ink-muted">
                         {{ __('client-reservations-field-guests') }}
                     </label>
                     <input type="number"
@@ -239,43 +241,43 @@
                            value="{{ old('guests_count', 2) }}"
                            min="1"
                            max="20"
-                           class="block w-full min-w-0 max-w-full appearance-none bg-black/60 border border-white/20 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-white/70">
+                           class="block w-full min-w-0 max-w-full appearance-none bg-ground/60 border border-line rounded-xl px-3 py-1.5 text-xs text-ink focus:outline-none focus:ring-1 focus:ring-line-strong">
                 </div>
 
-                <p class="text-[10px] text-white/50">
+                <p class="text-xs text-ink-muted">
                     {{ __('client-reservations-rules') }}
                 </p>
 
                 <button type="submit"
-                        class="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-white/70 text-[11px] uppercase tracking-[0.22em] text-white hover:bg-white hover:text-black transition">
+                        class="w-full mt-2 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-line-strong text-xs text-ink hover:bg-ink hover:text-on-nebula transition">
                     <x-icon category="Edit" name="Add_Plus_Circle" class="w-5 h-5"/>
                     {{ __('client-reservations-submit') }}
                 </button>
             </form>
 
             <div class="mt-6">
-                <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2 inline-flex items-center gap-2">
+                <h3 class="text-xs text-ink-muted mb-2 inline-flex items-center gap-2">
                     <x-icon category="Calendar" name="Calendar_Days" class="w-5 h-5"/>
                     {{ __('client-reservations-my-title') }}
                 </h3>
 
                 <div class="space-y-4 max-h-64 overflow-y-auto pr-1">
                     @forelse($myReservations as $res)
-<div class="rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-xs text-white/80">
+<div class="rounded-xl bg-ground/40 border border-line px-3 py-2 text-xs text-ink-soft">
     <div class="min-w-0">
-        <div class="text-[11px] text-white/60 whitespace-nowrap">
+        <div class="text-xs text-ink-muted whitespace-nowrap">
             {{ $res->start_at->format('d.m.Y H:i') }}
         </div>
 
-        <div class="mt-0.5 text-white whitespace-nowrap">
+        <div class="mt-0.5 text-ink whitespace-nowrap">
             {{ __('client-reservations-table-label') }} {{ $res->table->name ?? '#' }}
         </div>
 
-        <div class="text-[11px] text-white/60 whitespace-nowrap">
+        <div class="text-xs text-ink-muted whitespace-nowrap">
             {{ __('client-reservations-guests-label') }}: {{ $res->guests_count }}
         </div>
 
-        <div class="mt-1 text-[10px] text-white/50 leading-snug whitespace-normal">
+        <div class="mt-1 text-xs text-ink-muted leading-snug whitespace-normal">
             {{ __('client-reservations-status-label') }}:
             <span class="break-words">
                 {{ __('client-reservations-status-'.$res->status) }}
@@ -291,12 +293,12 @@
                 <button type="submit"
                         class="inline-flex items-center gap-1.5
                                px-3 py-1.5 rounded-full
-                               border border-red-400/35 bg-black/30 text-red-200
+                               border border-red-400/35 bg-ground/30 text-red-200
                                hover:bg-red-500/15 hover:border-red-300/50
                                active:scale-[0.98] transition
                                whitespace-nowrap">
                     <x-icon category="Edit" name="Close_Circle" class="w-4 h-4"/>
-                    <span class="text-[10px] uppercase tracking-[0.18em] leading-none">
+                    <span class="text-xs leading-none">
                         {{ __('client-reservations-cancel-button') }}
                     </span>
                 </button>
@@ -306,7 +308,7 @@
 </div>
 
                     @empty
-                        <p class="text-xs text-white/60">
+                        <p class="text-xs text-ink-muted">
                             {{ __('client-reservations-my-empty') }}
                         </p>
                     @endforelse
@@ -333,10 +335,10 @@
                     if (disabled) return;
 
                     if (selectedBtn && selectedBtn !== btn) {
-                        selectedBtn.classList.remove('ring-2', 'ring-white');
+                        selectedBtn.classList.remove('ring-2', 'ring-line-strong');
                     }
 
-                    btn.classList.add('ring-2', 'ring-white');
+                    btn.classList.add('ring-2', 'ring-line-strong');
                     selectedBtn = btn;
 
                     const id = btn.dataset.id;

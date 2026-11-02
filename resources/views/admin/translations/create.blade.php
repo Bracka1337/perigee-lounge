@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="mb-8">
-        <h1 class="logo-font text-3xl md:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+        <h1 class="logo-font text-3xl md:text-4xl mb-2">
             {{ __('admin-translations-create-title') }}
         </h1>
-        <p class="text-sm text-white/70">
+        <p class="text-sm text-ink-muted">
             {{ __('admin-translations-create-subtitle') }}
         </p>
     </div>
@@ -17,18 +17,18 @@
             </p>
             <ul class="list-disc list-inside space-y-1">
                 @foreach ($errors->all() as $error)
-                    <li class="text-[13px]">{{ $error }}</li>
+                    <li class="text-sm">{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
     @endif
 
-    <div class="bg-white/5 border border-white/10 rounded-2xl px-6 py-6 md:px-8 md:py-7 max-w-3xl">
+    <div class="bg-surface border border-line rounded-2xl px-6 py-6 md:px-8 md:py-7 max-w-3xl">
         <form action="{{ route('admin.translations.store') }}" method="POST" class="space-y-6">
             @csrf
 
             <div class="space-y-1.5">
-                <label for="key" class="block text-xs uppercase tracking-[0.25em] text-white/60">
+                <label for="key" class="block text-xs text-ink-muted">
                     {{ __('admin-translations-field-key') }}
                 </label>
                 <input
@@ -36,7 +36,7 @@
                     id="key"
                     name="key"
                     value="{{ old('key') }}"
-                    class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2.5 text-sm text-white
+                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink
                            focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
                     placeholder="{{ __('admin-translations-field-key-placeholder') }}"
                     required
@@ -46,13 +46,13 @@
             <div class="flex flex-wrap gap-2 mb-2" id="tr-lang-tabs">
                 @foreach($locales as $locale)
                     <button type="button"
-                            class="lang-tab-item inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] uppercase tracking-[0.18em]
-                                   {{ $loop->first ? 'bg-red-600/80 text-white border-red-400 shadow-[0_0_10px_rgba(248,113,113,0.45)]' : 'bg-black/40 text-white/60 border-white/30 hover:text-white' }}"
+                            class="lang-tab-item inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs
+                                   {{ $loop->first ? 'bg-nebula text-on-nebula border-nebula' : 'bg-ground/40 text-on-nebula-muted border-line-strong hover:text-on-nebula' }}"
                             data-locale="{{ $locale }}">
                         <span>{{ strtoupper($locale) }}</span>
 
                         @if($locale === $default)
-                            <span class="text-[10px] text-emerald-300/80">
+                            <span class="text-xs text-emerald-300/80">
                                 {{ __('admin-translations-lang-main-label') }}
                             </span>
                         @endif
@@ -62,9 +62,9 @@
 
             <div class="space-y-3">
                 @foreach($locales as $locale)
-                    <div class="lang-panel-item border border-white/15 rounded-2xl bg-black/40 p-4 {{ !$loop->first ? 'hidden' : '' }}"
+                    <div class="lang-panel-item border border-line rounded-2xl bg-ground/40 p-4 {{ !$loop->first ? 'hidden' : '' }}"
                          data-locale="{{ $locale }}">
-                        <div class="text-[11px] uppercase tracking-[0.22em] text-white/40 mb-3">
+                        <div class="text-xs text-ink-muted mb-3">
                             {{ strtoupper($locale) }}
                             @if($locale === $default)
                                 <span class="ml-2 text-emerald-300/80">
@@ -74,13 +74,13 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs mb-1 text-white/70">
+                            <label class="block text-xs mb-1 text-ink-muted">
                                 {{ __('admin-translations-field-text') }}
                             </label>
                             <textarea
                                 name="value[{{ $locale }}]"
                                 rows="3"
-                                class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-sm text-white
+                                class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-sm text-ink
                                        focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
                             >{{ old("value.$locale") }}</textarea>
                         </div>
@@ -96,8 +96,7 @@
                 <button type="submit"
                         class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full
                                border border-red-500/80 bg-red-600/80
-                               text-[11px] tracking-[0.25em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     <x-icon category="Interface" name="Save" class="w-5 h-5 shrink-0"/>
                     <span>{{ __('admin-translations-create-submit') }}</span>
@@ -105,8 +104,8 @@
 
 <a href="{{ route('admin.translations.index') }}"
    class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full
-          border border-white/30 text-[11px] tracking-[0.25em] uppercase text-white/70
-          hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+          border border-line-strong text-xs text-ink-muted
+          hover:text-ink hover:border-line-strong hover:bg-surface transition">
     <svg class="w-5 h-5 shrink-0" viewBox="0 0 20 20" fill="none" aria-hidden="true">
         <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
@@ -129,12 +128,12 @@
                     const locale = tab.dataset.locale;
 
                     tabs.forEach(t => {
-                        t.classList.remove('bg-red-600/80', 'text-white', 'border-red-400', 'shadow-[0_0_10px_rgba(248,113,113,0.45)]');
-                        t.classList.add('bg-black/40', 'text-white/60', 'border-white/30');
+                        t.classList.remove('bg-nebula', 'text-on-nebula', 'border-nebula', '');
+                        t.classList.add('bg-ground/40', 'text-ink-muted', 'border-line-strong');
                     });
 
-                    tab.classList.add('bg-red-600/80', 'text-white', 'border-red-400', 'shadow-[0_0_10px_rgba(248,113,113,0.45)]');
-                    tab.classList.remove('bg-black/40', 'text-white/60', 'border-white/30');
+                    tab.classList.add('bg-nebula', 'text-on-nebula', 'border-nebula', '');
+                    tab.classList.remove('bg-ground/40', 'text-ink-muted', 'border-line-strong');
 
                     panels.forEach(panel => {
                         panel.classList.toggle('hidden', panel.dataset.locale !== locale);

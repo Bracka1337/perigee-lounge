@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="w-full bg-black text-white min-h-screen pt-28 pb-16">
+    <div class="w-full bg-ground text-ink min-h-screen pt-28 pb-16">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="max-w-xl mx-auto rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8 shadow-xl shadow-black/70">
-                <p class="text-[10px] tracking-[0.35em] uppercase text-white/60 mb-3">
+            <div class="max-w-xl mx-auto rounded-2xl border border-line bg-surface p-6 md:p-8 ">
+                <p class="text-xs text-ink-muted mb-3">
                     {{ __('perigee-rest-name') }}
                 </p>
 
-                <h1 class="logo-font text-2xl md:text-3xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+                <h1 class="logo-font text-2xl md:text-3xl mb-2">
                     {{ __('perigee-name') }}
                 </h1>
 
-                <p class="text-xs md:text-sm text-white/70 mb-6">
+                <p class="text-xs md:text-sm text-ink-muted mb-6">
                     {{ __('perigee-verif-email') }}
                 </p>
 
@@ -32,7 +32,7 @@
                     <form method="POST" action="{{ route('verification.send') }}" class="w-full md:w-auto">
                         @csrf
                         <button type="submit"
-                                class="w-full md:w-auto inline-flex items-center justify-center rounded-full border border-white/80 px-5 py-2.5 text-[11px] md:text-[12px] uppercase tracking-[0.22em] text-white hover:bg-white hover:text-black transition">
+                                class="w-full md:w-auto inline-flex items-center justify-center rounded-full border border-line-strong px-5 py-2.5 text-xs md:text-xs text-ink hover:bg-ink hover:text-on-nebula transition">
                             {{ __('verif-resend-button') }}
                         </button>
                     </form>
@@ -40,13 +40,13 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full md:w-auto text-center md:text-right">
                         @csrf
                         <button type="submit"
-                                class="text-[11px] md:text-xs tracking-[0.2em] uppercase text-white/50 hover:text-white underline decoration-white/40 hover:decoration-white transition">
+                                class="text-xs md:text-xs text-ink-muted hover:text-ink underline transition">
                             {{ __('header-logout') }}
                         </button>
                     </form>
                 </div>
 
-                <p class="mt-6 text-[11px] text-white/40">
+                <p class="mt-6 text-xs text-ink-muted">
                     {{ __('verif-email-spam') }}
                 </p>
             </div>
