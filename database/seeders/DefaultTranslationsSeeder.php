@@ -9,10 +9,39 @@ class DefaultTranslationsSeeder extends Seeder
 {
     public function run(): void
     {
+        foreach ($this->items() as $key => $values) {
+            Translation::updateOrCreate(
+                ['key' => $key],
+                ['value' => $this->normalize($key, $values)]
+            );
+
+            Translation::forgetCache($key);
+        }
+    }
+
+    /**
+     * @param  array<string, string>  $values
+     * @return array<string, string>
+     */
+    public function normalize(string $key, array $values): array
+    {
         $locales = config('site.locales', ['ru']);
         $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $value = [];
 
-        $items = [
+        foreach ($locales as $locale) {
+            $value[$locale] = $values[$locale] ?? $values[$default] ?? $key;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function items(): array
+    {
+        return [
             'header-home' => [
                 'en' => 'Home',
                 'lv' => 'Sākums',
@@ -4963,6 +4992,121 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Atpakaļ',
                 'ru' => 'Назад',
             ],
+            'common-guest' => [
+                'en' => 'Guest',
+                'lv' => 'Viesis',
+                'ru' => 'Гость',
+            ],
+            'common-add' => [
+                'en' => 'Add',
+                'lv' => 'Pievienot',
+                'ru' => 'Добавить',
+            ],
+            'common-categories' => [
+                'en' => 'Categories',
+                'lv' => 'Kategorijas',
+                'ru' => 'Категории',
+            ],
+            'common-search-items' => [
+                'en' => 'Search items',
+                'lv' => 'Meklēt ēdienus',
+                'ru' => 'Поиск по блюдам',
+            ],
+            'common-back-to-top' => [
+                'en' => 'Back to top',
+                'lv' => 'Uz augšu',
+                'ru' => 'Вернуться в начало',
+            ],
+            'staff-menu-back-to-top' => [
+                'en' => 'Back to top',
+                'lv' => 'Uz augšu',
+                'ru' => 'Вернуться в начало',
+            ],
+            'error-no-access' => [
+                'en' => 'You do not have access to this page.',
+                'lv' => 'Jums nav piekļuves šai lapai.',
+                'ru' => 'У вас нет доступа к этой странице.',
+            ],
+            'table-not-found' => [
+                'en' => 'Table not found',
+                'lv' => 'Galds nav atrasts',
+                'ru' => 'Стол не найден',
+            ],
+            'table-unavailable' => [
+                'en' => 'This table is not available for ordering',
+                'lv' => 'Šis galds nav pieejams pasūtīšanai',
+                'ru' => 'Стол недоступен для заказа',
+            ],
+            'table-occupied' => [
+                'en' => 'This table is already taken by another guest',
+                'lv' => 'Šo galdu jau aizņēmis cits viesis',
+                'ru' => 'Этот стол уже занят другим клиентом',
+            ],
+            'table-no-open-order' => [
+                'en' => 'There is no open order for this table',
+                'lv' => 'Šim galdam nav atvērta pasūtījuma',
+                'ru' => 'Нет открытого заказа для этого стола',
+            ],
+            'order-sent-to-waiter' => [
+                'en' => 'Your order was sent to the waiter',
+                'lv' => 'Pasūtījums nosūtīts viesmīlim',
+                'ru' => 'Заказ отправлен официанту',
+            ],
+            'staff-order-item-added' => [
+                'en' => 'Item added to the order',
+                'lv' => 'Pozīcija pievienota pasūtījumam',
+                'ru' => 'Позиция добавлена в заказ',
+            ],
+            'log-action-created' => [
+                'en' => 'Created',
+                'lv' => 'Izveidots',
+                'ru' => 'Создано',
+            ],
+            'log-action-updated' => [
+                'en' => 'Updated',
+                'lv' => 'Atjaunināts',
+                'ru' => 'Обновлено',
+            ],
+            'log-action-deleted' => [
+                'en' => 'Deleted',
+                'lv' => 'Dzēsts',
+                'ru' => 'Удалено',
+            ],
+            'log-model-order' => [
+                'en' => 'Order',
+                'lv' => 'Pasūtījums',
+                'ru' => 'Заказ',
+            ],
+            'log-model-menu-item' => [
+                'en' => 'Menu item',
+                'lv' => 'Ēdiens',
+                'ru' => 'Блюдо',
+            ],
+            'log-model-menu-category' => [
+                'en' => 'Menu category',
+                'lv' => 'Ēdienkartes kategorija',
+                'ru' => 'Категория меню',
+            ],
+            'log-model-reservation' => [
+                'en' => 'Reservation',
+                'lv' => 'Rezervācija',
+                'ru' => 'Бронирование',
+            ],
+            'log-model-table' => [
+                'en' => 'Table',
+                'lv' => 'Galds',
+                'ru' => 'Столик',
+            ],
+            'log-model-user' => [
+                'en' => 'User',
+                'lv' => 'Lietotājs',
+                'ru' => 'Пользователь',
+            ],
+            'log-model-promo-code' => [
+                'en' => 'Promo code',
+                'lv' => 'Promo kods',
+                'ru' => 'Промокод',
+            ],
 
             // Navigation
             'nav-dashboard' => [
@@ -5266,19 +5410,5 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'С уважением',
             ],
         ];
-        foreach ($items as $key => $values) {
-            $value = [];
-
-            foreach ($locales as $locale) {
-                $value[$locale] = $values[$locale] ?? $values[$default] ?? $key;
-            }
-
-            Translation::updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
-            );
-
-            Translation::forgetCache($key);
-        }
     }
 }

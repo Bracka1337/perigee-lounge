@@ -37,6 +37,7 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
     0) php artisan db:seed --force || true ;;
     ''|*[!0-9]*) echo "Skipping seed, could not read the user count: $user_count" ;;
   esac
+  php artisan translations:sync || true
 fi
 
 exec "$@"
