@@ -20,7 +20,7 @@
         <input
             id="itemsSearch"
             type="search"
-            placeholder="Поиск по блюдам"
+            placeholder="{{ __('common-search-items') }}"
             class="w-full bg-transparent outline-none text-sm text-white placeholder:text-white/50"
             autocomplete="off"
             spellcheck="false"
@@ -45,7 +45,7 @@
 
     {{-- Категории: desktop sidebar --}}
     <aside class="hidden md:block md:w-1/4 bg-white/5 border border-white/10 rounded-2xl p-4">
-        <h2 class="text-xs uppercase tracking-[0.2em] text-white/60 mb-3">Категории</h2>
+        <h2 class="text-xs uppercase tracking-[0.2em] text-white/60 mb-3">{{ __('common-categories') }}</h2>
         <ul class="space-y-2 text-sm text-white/80" id="categoryList">
             @foreach ($categories as $category)
                 @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
@@ -95,7 +95,7 @@
                         <input type="hidden" name="menu_item_id" value="{{ $item->id }}">
                         <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-sm text-emerald-100 transition">
                             <x-icon category="Shopping" name="Shopping_Cart_01" class="w-4 h-4"/>
-                            <span>Добавить</span>
+                            <span>{{ __('common-add') }}</span>
                         </button>
                     </form>
                 </div>
@@ -108,7 +108,7 @@
     id="backToTop"
     type="button"
     class="hidden fixed bottom-6 right-6 z-40 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white p-3 shadow-lg backdrop-blur"
-    aria-label="Вернуться в начало"
+    aria-label="{{ __('common-back-to-top') }}"
 >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
         <path d="M12 5l7 7m-7-7L5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>

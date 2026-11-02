@@ -89,7 +89,7 @@
 
             @auth
                 <span class="text-[11px] text-white/40 ml-2 whitespace-nowrap">
-                    {{ auth()->user()->name ?? 'Администратор' }}
+                    {{ auth()->user()->name }}
                 </span>
 
                 <form method="POST" action="{{ route('logout') }}" class="ml-2">
@@ -170,7 +170,7 @@
             @auth
                 <span class="mt-2 inline-flex items-center gap-2 text-[11px] text-white/40 break-words">
                     <x-icon category="User" name="User_01" class="w-5 h-5 shrink-0"/>
-                    {{ auth()->user()->name ?? 'Администратор' }}
+                    {{ auth()->user()->name }}
                 </span>
 
                 <form method="POST" action="{{ route('logout') }}" class="mt-2">
