@@ -92,6 +92,11 @@ class MenuCategoryController extends Controller
 
     public function destroy(string $locale, MenuCategory $menuCategory): RedirectResponse
     {
+        if ($menuCategory->items()->whereHas('orderItems')->exists()) {
+            return redirect()->route('staff.menu-categories.index')
+                ->with('error', __('staff-menu-category-delete-blocked'));
+        }
+
         $menuCategory->delete();
 
         return redirect()->route('staff.menu-categories.index')

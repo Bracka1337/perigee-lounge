@@ -31,6 +31,18 @@
         font-family: var(--font-sans);
     }
 
+    button,
+    select,
+    textarea,
+    input:not([type='checkbox'], [type='radio'], [type='hidden'], [type='file']) {
+        min-height: 2.75rem;
+    }
+
+    option {
+        background-color: var(--color-surface);
+        color: var(--color-ink);
+    }
+
     :focus-visible {
         outline: 2px solid var(--color-nebula);
         outline-offset: 2px;

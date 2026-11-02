@@ -2,13 +2,13 @@
 
 @section('client-header')
     <div class="mb-10">
-        <p class="text-xs tracking-[0.35em] uppercase text-white/60 mb-3">
+        <p class="text-xs text-ink-muted mb-3">
             {{ __('client-loyalty-badge') }}
         </p>
-        <h1 class="logo-font text-3xl md:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+        <h1 class="logo-font text-3xl md:text-4xl mb-2">
             {{ __('client-loyalty-title') }}
         </h1>
-        <p class="text-sm md:text-base text-white/70">
+        <p class="text-sm md:text-base text-ink-muted">
             {{ __('client-loyalty-subtitle') }}
         </p>
     </div>
@@ -16,48 +16,43 @@
 
 @section('client-content')
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/60 flex flex-col items-center justify-center overflow-hidden">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-3 text-center inline-flex items-center gap-2">
+        <div class="min-w-0 rounded-2xl border border-line bg-surface p-5  flex flex-col items-center justify-center overflow-hidden">
+            <p class="text-xs text-ink-muted mb-3 text-center inline-flex items-center gap-2">
                 <x-icon category="System" name="Qr_Code" class="w-5 h-5"/>
                 {{ __('client-loyalty-qr-label') }}
             </p>
 
             <div class="w-full flex justify-center py-6">
-                <div class="relative rounded-3xl p-6 bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_55px_rgba(255,255,255,0.12)]">
-                    <div class="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-red-400/20 via-red-600/15 to-transparent blur-3xl"></div>
+                <div class="relative rounded-2xl p-6 bg-surface backdrop-blur-xl border border-line">
 
                     <div id="perigee-qr-wrap" class="relative w-[220px] h-[220px] rounded-2xl overflow-hidden">
                         <div id="perigee-qr"
                              class="w-[220px] h-[220px]"
                              data-qr='@json($qrData)'
                              data-logo="{{ asset('images/logo.png') }}"></div>
-
-                        <div class="pointer-events-none absolute inset-0"
-                             style="background: radial-gradient(circle at center, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.00) 34%, rgba(0,0,0,0.22) 48%, rgba(0,0,0,0.00) 72%);">
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <p class="mt-3 text-xs text-white/60 text-center max-w-sm">
+            <p class="mt-3 text-xs text-ink-muted text-center max-w-sm">
                 {{ __('client-loyalty-qr-hint') }}
             </p>
         </div>
 
-        <div class="min-w-0 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/60 flex flex-col justify-between overflow-hidden">
+        <div class="min-w-0 rounded-2xl border border-line bg-surface p-5  flex flex-col justify-between overflow-hidden">
             <div>
-                <h2 class="text-xs uppercase tracking-[0.25em] text-white/60 mb-2 inline-flex items-center gap-2">
+                <h2 class="text-xs text-ink-muted mb-2 inline-flex items-center gap-2">
                     <x-icon category="User" name="User_01" class="w-5 h-5"/>
                     {{ __('client-loyalty-card-title') }}
                 </h2>
 
-                <p class="text-sm text-white/80 mb-4">
+                <p class="text-sm text-ink-soft mb-4">
                     {{ __('client-loyalty-card-text') }}
                 </p>
 
-                <div class="rounded-2xl bg-black/50 border border-white/20 px-4 py-3 text-xs text-white overflow-hidden">
+                <div class="rounded-2xl bg-ground/50 border border-line px-4 py-3 text-xs text-ink overflow-hidden">
                     <div class="flex items-center justify-between gap-3 mb-2 min-w-0">
-                        <span class="text-[11px] text-white/60 inline-flex items-center gap-2">
+                        <span class="text-xs text-ink-muted inline-flex items-center gap-2">
                             <x-icon category="User" name="User_01" class="w-4 h-4"/>
                             {{ __('client-loyalty-card-holder') }}
                         </span>
@@ -68,14 +63,14 @@
 
 <div class="mb-2 min-w-0">
     <div class="flex items-start justify-between gap-3 min-w-0">
-        <span class="text-[11px] text-white/60 inline-flex items-center gap-2 shrink-0">
+        <span class="text-xs text-ink-muted inline-flex items-center gap-2 shrink-0">
             <x-icon category="System" name="Qr_Code" class="w-4 h-4"/>
             {{ __('client-loyalty-card-code') }}
         </span>
 
         <div class="relative max-w-[60%] min-w-0 group">
-            <div class="absolute inset-y-0 left-0 w-6 pointer-events-none bg-gradient-to-r from-black/40 to-transparent"></div>
-            <div class="absolute inset-y-0 right-0 w-6 pointer-events-none bg-gradient-to-l from-black/40 to-transparent"></div>
+            <div class="absolute inset-y-0 left-0 w-6 pointer-events-none bg-gradient-to-r from-ground to-transparent"></div>
+            <div class="absolute inset-y-0 right-0 w-6 pointer-events-none bg-gradient-to-l from-ground to-transparent"></div>
 
             <div class="loyalty-code-scroll min-w-0 overflow-x-auto whitespace-nowrap text-right font-mono tracking-tight cursor-grab hide-scrollbar"
                  style="font-size: clamp(8px, 2.6vw, 14px);">
@@ -87,7 +82,7 @@
 
 
                     <div class="flex items-center justify-between gap-3 min-w-0">
-                        <span class="text-[11px] text-white/60 inline-flex items-center gap-2">
+                        <span class="text-xs text-ink-muted inline-flex items-center gap-2">
                             <x-icon category="Finance" name="Euro" class="w-4 h-4"/>
                             {{ __('client-loyalty-card-balance') }}
                         </span>
@@ -99,15 +94,15 @@
 
                 @if($earnings->isNotEmpty())
                     <div class="mt-4">
-                        <h3 class="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-2 inline-flex items-center gap-2">
+                        <h3 class="text-xs text-ink-muted mb-2 inline-flex items-center gap-2">
                             <x-icon category="Interface" name="Book" class="w-5 h-5"/>
                             {{ __('client-loyalty-history-title') }}
                         </h3>
 
-                        <div class="max-h-40 overflow-y-auto overflow-x-hidden pr-1 space-y-1 text-xs text-white/80">
+                        <div class="max-h-40 overflow-y-auto overflow-x-hidden pr-1 space-y-1 text-xs text-ink-soft">
                             @foreach($earnings as $earning)
                                 <div class="flex items-start justify-between gap-3 min-w-0">
-                                    <div class="text-white/70 min-w-0 break-words">
+                                    <div class="text-ink-muted min-w-0 break-words">
                                         {{ $earning->created_at->format('d.m.Y H:i') }}
                                         @if($earning->order)
                                             · #{{ $earning->order->id }}
@@ -129,13 +124,13 @@
                         </div>
                     </div>
                 @else
-                    <p class="mt-4 text-[11px] text-white/45">
+                    <p class="mt-4 text-xs text-ink-muted">
                         {{ __('client-loyalty-history-empty') }}
                     </p>
                 @endif
             </div>
 
-            <p class="mt-4 text-[11px] text-white/45">
+            <p class="mt-4 text-xs text-ink-muted">
                 {{ __('client-loyalty-earn-rule') }}
             </p>
         </div>

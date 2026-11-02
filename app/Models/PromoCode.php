@@ -188,7 +188,7 @@ class PromoCode extends Model
         }
 
         if ($this->discount_type === 'percent') {
-            $discount = $eligible * ($this->discount_value / 100);
+            $discount = min($eligible, $eligible * ($this->discount_value / 100));
         } else {
             $discount = $this->discount_value;
             if ($discount > $eligible) {
@@ -225,7 +225,7 @@ class PromoCode extends Model
         $discount = 0;
         if ($eligible > 0) {
             if ($this->discount_type === 'percent') {
-                $discount = $eligible * ($this->discount_value / 100);
+                $discount = min($eligible, $eligible * ($this->discount_value / 100));
             } else {
                 $discount = $this->discount_value;
                 if ($discount > $eligible) {

@@ -418,9 +418,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'hello@perigee-lounge.example',
             ],
             'contacts-social-title' => [
-                'en' => 'we on social networks',
-                'lv' => 'mēs sociālajos tīklos',
-                'ru' => 'мы в соцсетях',
+                'en' => 'We on social networks',
+                'lv' => 'Mēs sociālajos tīklos',
+                'ru' => 'Мы в соцсетях',
             ],
             'contacts-instagram-title' => [
                 'en' => 'Instagram',
@@ -493,9 +493,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Войти',
             ],
             'log-in-title' => [
-                'en' => 'ENTER PERIGEE',
-                'lv' => 'IEEJ KOSMOSS',
-                'ru' => 'ВХОД В PERIGEE',
+                'en' => 'Enter Perigee',
+                'lv' => 'Ieej kosmoss',
+                'ru' => 'Вход в Perigee',
             ],
             'log-in-content' => [
                 'en' => 'Log in to your account to manage your bookings and track your bonuses.',
@@ -518,9 +518,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Зарегистрироваться',
             ],
             'register-in-title' => [
-                'en' => 'CLIENT REGISTRATION',
-                'lv' => 'KLIENTA REĢISTRĀCIJA',
-                'ru' => 'РЕГИСТРАЦИЯ КЛИЕНТА',
+                'en' => 'Client registration',
+                'lv' => 'Klienta reģistrācija',
+                'ru' => 'Регистрация клиента',
             ],
             'register-in-content' => [
                 'en' => 'Create an account to book tables and earn points.',
@@ -528,9 +528,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Создайте аккаунт, чтобы бронировать столики и копить бонусы.',
             ],
             'register-in-button' => [
-                'en' => 'REGISTER',
-                'lv' => 'REĢISTRĒTIES',
-                'ru' => 'ЗАРЕГИСТРИРОВАТЬСЯ',
+                'en' => 'Register',
+                'lv' => 'Reģistrēties',
+                'ru' => 'Зарегистрироваться',
             ],
             'yes-account' => [
                 'en' => 'Already have an account?',
@@ -563,14 +563,14 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Для регистрации вам должно быть не менее 20 лет',
             ],
             'register-password-confirm' => [
-                'en' => 'PASSWORD CONFIRMATION',
-                'lv' => 'PAROLES APSTIPRINĀJUMS',
-                'ru' => 'ПОДТВЕРЖДЕНИЕ ПАРОЛЯ',
+                'en' => 'Password confirmation',
+                'lv' => 'Paroles apstiprinājums',
+                'ru' => 'Подтверждение пароля',
             ],
             'forgot-password-recovery' => [
-                'en' => 'access restoration',
-                'lv' => 'piekļuves atjaunošana',
-                'ru' => 'восстановление доступа',
+                'en' => 'Access restoration',
+                'lv' => 'Piekļuves atjaunošana',
+                'ru' => 'Восстановление доступа',
             ],
             'forgot-password-content' => [
                 'en' => 'Enter your email and we will send you a link to reset your password.',
@@ -578,9 +578,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Введите email, и мы отправим ссылку для сброса пароля.',
             ],
             'recovery-button' => [
-                'en' => 'SEND RESET LINK',
-                'lv' => 'SŪTĪT ATJAUNOŠANAS SAITI',
-                'ru' => 'ОТПРАВИТЬ ССЫЛКУ ДЛЯ СБРОСА',
+                'en' => 'Send reset link',
+                'lv' => 'Sūtīt atjaunošanas saiti',
+                'ru' => 'Отправить ссылку для сброса',
             ],
             'reset-password-title' => [
                 'en' => 'Reset Password',
@@ -763,9 +763,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'admin-dashboard-top-promos-subtitle' => [
-                'en' => 'by discount amount',
-                'lv' => 'pēc atlaides summas',
-                'ru' => 'по сумме скидки',
+                'en' => 'By discount amount',
+                'lv' => 'Pēc atlaides summas',
+                'ru' => 'По сумме скидки',
             ],
 
             'admin-dashboard-top-clients' => [
@@ -775,9 +775,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'admin-dashboard-top-clients-subtitle' => [
-                'en' => 'by order amount',
-                'lv' => 'pēc pasūtījuma summas',
-                'ru' => 'по сумме заказов',
+                'en' => 'By order amount',
+                'lv' => 'Pēc pasūtījuma summas',
+                'ru' => 'По сумме заказов',
             ],
 
             'admin-dashboard-table-code' => [
@@ -1518,9 +1518,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'staff-header-badge' => [
-                'en' => 'staff panel',
-                'lv' => 'personāla panelis',
-                'ru' => 'панель персонала',
+                'en' => 'Staff panel',
+                'lv' => 'Personāla panelis',
+                'ru' => 'Панель персонала',
             ],
             'staff-header-dashboard-link' => [
                 'en' => 'Dashboard',
@@ -1577,9 +1577,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Категория',
             ],
             'staff-menu-category-badge-special' => [
-                'en' => 'special offer',
-                'lv' => 'īpašais piedāvājums',
-                'ru' => 'спецпредложение',
+                'en' => 'Special offer',
+                'lv' => 'Īpašais piedāvājums',
+                'ru' => 'Спецпредложение',
             ],
             'staff-menu-category-edit-button' => [
                 'en' => 'Edit',
@@ -1874,12 +1874,24 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Позиция удалена.',
             ],
 
+            'staff-menu-item-delete-blocked' => [
+                'en' => 'This item appears in orders, so it cannot be deleted. Hide it instead.',
+                'lv' => 'Šī pozīcija ir pasūtījumos, tāpēc to nevar dzēst. Tā vietā paslēpiet to.',
+                'ru' => 'Эта позиция есть в заказах, поэтому её нельзя удалить. Вместо этого скройте её.',
+            ],
+
+            'staff-menu-category-delete-blocked' => [
+                'en' => 'This category has items that appear in orders, so it cannot be deleted. Hide it instead.',
+                'lv' => 'Šajā kategorijā ir pozīcijas, kas ir pasūtījumos, tāpēc to nevar dzēst. Tā vietā paslēpiet to.',
+                'ru' => 'В этой категории есть позиции из заказов, поэтому её нельзя удалить. Вместо этого скройте её.',
+            ],
+
             // --- Client area: dashboard ---
 
             'client-dashboard-badge' => [
-                'en' => 'client panel',
-                'lv' => 'klienta panelis',
-                'ru' => 'панель клиента',
+                'en' => 'Client panel',
+                'lv' => 'Klienta panelis',
+                'ru' => 'Панель клиента',
             ],
             'client-dashboard-title' => [
                 'en' => 'Welcome, :name',
@@ -1944,9 +1956,9 @@ class DefaultTranslationsSeeder extends Seeder
             // --- Client area: profile header ---
 
             'client-profile-badge' => [
-                'en' => 'client profile',
-                'lv' => 'klienta profils',
-                'ru' => 'профиль клиента',
+                'en' => 'Client profile',
+                'lv' => 'Klienta profils',
+                'ru' => 'Профиль клиента',
             ],
             'client-profile-title' => [
                 'en' => 'Profile settings',
@@ -2062,9 +2074,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Управляйте столами, количеством мест и планом зала.',
             ],
             'admin-tables-create-button' => [
-                'en' => 'add table',
-                'lv' => 'pievienot galdiņu',
-                'ru' => 'добавить стол',
+                'en' => 'Add table',
+                'lv' => 'Pievienot galdiņu',
+                'ru' => 'Добавить стол',
             ],
             'admin-tables-alert-success-title' => [
                 'en' => 'Tables updated',
@@ -2077,9 +2089,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'План зала (вид сверху)',
             ],
             'admin-tables-save-layout-button' => [
-                'en' => 'save layout',
-                'lv' => 'saglabāt plānu',
-                'ru' => 'сохранить план',
+                'en' => 'Save layout',
+                'lv' => 'Saglabāt plānu',
+                'ru' => 'Сохранить план',
             ],
             'admin-tables-plan-help' => [
                 'en' => 'Drag tables to arrange the hall layout. Changes are visible to staff and clients.',
@@ -2097,24 +2109,24 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Мест',
             ],
             'admin-tables-status-active' => [
-                'en' => 'active',
-                'lv' => 'aktīvs',
-                'ru' => 'активен',
+                'en' => 'Active',
+                'lv' => 'Aktīvs',
+                'ru' => 'Активен',
             ],
             'admin-tables-status-inactive' => [
-                'en' => 'inactive',
-                'lv' => 'neaktīvs',
-                'ru' => 'неактивен',
+                'en' => 'Inactive',
+                'lv' => 'Neaktīvs',
+                'ru' => 'Неактивен',
             ],
             'admin-tables-edit-button' => [
-                'en' => 'edit',
-                'lv' => 'rediģēt',
-                'ru' => 'редактировать',
+                'en' => 'Edit',
+                'lv' => 'Rediģēt',
+                'ru' => 'Редактировать',
             ],
             'admin-tables-delete-button' => [
-                'en' => 'delete',
-                'lv' => 'dzēst',
-                'ru' => 'удалить',
+                'en' => 'Delete',
+                'lv' => 'Dzēst',
+                'ru' => 'Удалить',
             ],
             'admin-tables-delete-confirm' => [
                 'en' => 'Delete this table? Reservations history will be lost.',
@@ -2233,14 +2245,14 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Стол активен и виден',
             ],
             'admin-tables-create-submit' => [
-                'en' => 'create table',
-                'lv' => 'izveidot galdiņu',
-                'ru' => 'создать стол',
+                'en' => 'Create table',
+                'lv' => 'Izveidot galdiņu',
+                'ru' => 'Создать стол',
             ],
             'admin-tables-cancel-button' => [
-                'en' => 'cancel',
-                'lv' => 'atcelt',
-                'ru' => 'отменить',
+                'en' => 'Cancel',
+                'lv' => 'Atcelt',
+                'ru' => 'Отменить',
             ],
             'admin-tables-edit-title' => [
                 'en' => 'Edit table',
@@ -2253,9 +2265,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Изменить параметры стола: :name',
             ],
             'admin-tables-save-button' => [
-                'en' => 'save changes',
-                'lv' => 'saglabāt izmaiņas',
-                'ru' => 'сохранить изменения',
+                'en' => 'Save changes',
+                'lv' => 'Saglabāt izmaiņas',
+                'ru' => 'Сохранить изменения',
             ],
 
             'staff-header-reservations-link' => [
@@ -2275,9 +2287,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Управляйте бронями столов, гостями без брони и телефонными заказами.',
             ],
             'staff-reservations-date-apply' => [
-                'en' => 'show',
-                'lv' => 'parādīt',
-                'ru' => 'показать',
+                'en' => 'Show',
+                'lv' => 'Parādīt',
+                'ru' => 'Показать',
             ],
             'staff-reservations-plan-title' => [
                 'en' => 'Hall plan for :date',
@@ -2290,24 +2302,24 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'гостей',
             ],
             'staff-reservations-legend-occupied' => [
-                'en' => 'occupied',
-                'lv' => 'aizņemts',
-                'ru' => 'занят',
+                'en' => 'Occupied',
+                'lv' => 'Aizņemts',
+                'ru' => 'Занят',
             ],
             'staff-reservations-legend-confirmed' => [
-                'en' => 'confirmed',
-                'lv' => 'apstiprināta',
-                'ru' => 'подтверждена',
+                'en' => 'Confirmed',
+                'lv' => 'Apstiprināta',
+                'ru' => 'Подтверждена',
             ],
             'staff-reservations-legend-pending' => [
-                'en' => 'pending (awaiting guest)',
-                'lv' => 'gaida viesi',
-                'ru' => 'ожидает гостя',
+                'en' => 'Pending (awaiting guest)',
+                'lv' => 'Gaida viesi',
+                'ru' => 'Ожидает гостя',
             ],
             'staff-reservations-legend-free' => [
-                'en' => 'free',
-                'lv' => 'brīvs',
-                'ru' => 'свободен',
+                'en' => 'Free',
+                'lv' => 'Brīvs',
+                'ru' => 'Свободен',
             ],
             'staff-reservations-sidebar-title' => [
                 'en' => 'New reservation',
@@ -2365,9 +2377,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Телефон гостя',
             ],
             'staff-reservations-submit' => [
-                'en' => 'create reservation',
-                'lv' => 'izveidot rezervāciju',
-                'ru' => 'создать бронь',
+                'en' => 'Create reservation',
+                'lv' => 'Izveidot rezervāciju',
+                'ru' => 'Создать бронь',
             ],
             'staff-reservations-list-title' => [
                 'en' => 'Reservations for this day',
@@ -2431,9 +2443,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'План зала на :date',
             ],
             'client-reservations-date-apply' => [
-                'en' => 'show',
-                'lv' => 'parādīt',
-                'ru' => 'показать',
+                'en' => 'Show',
+                'lv' => 'Parādīt',
+                'ru' => 'Показать',
             ],
             'client-reservations-guests-short' => [
                 'en' => 'guests',
@@ -2441,29 +2453,29 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'гостей',
             ],
             'client-reservations-status-busy' => [
-                'en' => 'busy',
-                'lv' => 'aizņemts',
-                'ru' => 'занят',
+                'en' => 'Busy',
+                'lv' => 'Aizņemts',
+                'ru' => 'Занят',
             ],
             'client-reservations-legend-occupied' => [
-                'en' => 'occupied',
-                'lv' => 'aizņemts',
-                'ru' => 'занят',
+                'en' => 'Occupied',
+                'lv' => 'Aizņemts',
+                'ru' => 'Занят',
             ],
             'client-reservations-legend-confirmed' => [
-                'en' => 'confirmed',
-                'lv' => 'apstiprināta',
-                'ru' => 'подтверждена',
+                'en' => 'Confirmed',
+                'lv' => 'Apstiprināta',
+                'ru' => 'Подтверждена',
             ],
             'client-reservations-legend-pending' => [
-                'en' => 'pending',
-                'lv' => 'gaida viesi',
-                'ru' => 'ожидает гостя',
+                'en' => 'Pending',
+                'lv' => 'Gaida viesi',
+                'ru' => 'Ожидает гостя',
             ],
             'client-reservations-legend-free' => [
-                'en' => 'free',
-                'lv' => 'brīvs',
-                'ru' => 'свободен',
+                'en' => 'Free',
+                'lv' => 'Brīvs',
+                'ru' => 'Свободен',
             ],
             'client-reservations-sidebar-title' => [
                 'en' => 'Reservation details',
@@ -2501,9 +2513,9 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Количество гостей',
             ],
             'client-reservations-submit' => [
-                'en' => 'confirm reservation',
-                'lv' => 'apstiprināt rezervāciju',
-                'ru' => 'подтвердить бронь',
+                'en' => 'Confirm reservation',
+                'lv' => 'Apstiprināt rezervāciju',
+                'ru' => 'Подтвердить бронь',
             ],
             'client-reservations-my-title' => [
                 'en' => 'Your recent reservations',
@@ -2557,9 +2569,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'staff-reservations-legend-active' => [
-                'en' => 'active',
-                'lv' => 'aktīvs',
-                'ru' => 'активен',
+                'en' => 'Active',
+                'lv' => 'Aktīvs',
+                'ru' => 'Активен',
             ],
 
             'staff-reservations-status-label' => [
@@ -2630,9 +2642,9 @@ class DefaultTranslationsSeeder extends Seeder
             // --- Client: reservations (new legends, statuses, cancel button) ---
 
             'client-reservations-legend-active' => [
-                'en' => 'guest at the table',
-                'lv' => 'viesis pie galdiņa',
-                'ru' => 'гость за столом',
+                'en' => 'Guest at the table',
+                'lv' => 'Viesis pie galdiņa',
+                'ru' => 'Гость за столом',
             ],
 
             'client-reservations-status-active-short' => [
@@ -2786,9 +2798,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'admin-tables-plan-save-button' => [
-                'en' => 'save layout',
-                'lv' => 'saglabāt plānu',
-                'ru' => 'сохранить план',
+                'en' => 'Save layout',
+                'lv' => 'Saglabāt plānu',
+                'ru' => 'Сохранить план',
             ],
             'admin-tables-opening-hours-updated' => [
                 'en' => 'Opening hours have been updated.',

@@ -7,17 +7,17 @@
 @section('content')
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h1 class="logo-font text-3xl md:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+            <h1 class="logo-font text-3xl md:text-4xl mb-2">
                 {{ __('staff-menu-title') }}
             </h1>
-            <p class="text-sm text-white/70">
+            <p class="text-sm text-ink-muted">
                 {{ __('staff-menu-subtitle') }}
             </p>
         </div>
 
         <div class="flex gap-2">
             <a href="{{ route('staff.menu-categories.create') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/60 text-[11px] tracking-[0.18em] uppercase hover:bg-white hover:text-black transition">
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-line-strong text-xs hover:bg-ink hover:text-on-nebula transition">
                 {{-- + {{ __('staff-menu-add-category-button') }} --}}
                 <x-icon category="Edit" name="List_Add" class="w-5 h-5"/>
             </a>
@@ -30,23 +30,29 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div role="alert" class="mb-4 text-xs text-red-200 border border-red-500/60 bg-red-500/10 px-4 py-2 rounded-lg">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div id="menuCategories"
          class="space-y-4"
          data-sort-url="{{ route('staff.menu.sort') }}">
 
         @forelse($categories as $category)
             @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
-            <div class="border border-white/15 rounded-2xl bg-white/5 shadow-lg shadow-black/50 p-4"
+            <div class="border border-line rounded-2xl bg-surface  p-4"
                  data-category-id="{{ $category->id }}">
                 <div class="flex items-center justify-between gap-3 mb-3 cursor-move handle-category">
                     <div>
                         <h2 class="text-sm font-semibold flex items-center gap-2">
-                            <span class="inline-block w-2 h-2 rounded-full bg-white/70"></span>
-                            {{ $category->name[$locale] }}
+                            <span class="inline-block w-2 h-2 rounded-full bg-line"></span>
+                            {{ $category->t('name') }}
 
                             @if($category->is_special)
-                                <span class="ml-1 px-2 py-0.5 rounded-full border border-purple-400/70
-                     text-[10px] uppercase tracking-[0.18em] text-purple-200">
+                                <span class="ml-1 px-2 py-0.5 rounded-full border border-nebula
+                     text-xs text-nebula">
                                     {{ __('staff-menu-category-badge-special') }}
                                 </span>
                             @endif
@@ -59,14 +65,14 @@
                         </h2>
 
                         @if($category->description)
-                            <p class="text-xs text-white/60 mt-1">
-                                {{ $category->description[$locale] }}
+                            <p class="text-xs text-ink-muted mt-1">
+                                {{ $category->t('description') }}
                             </p>
                         @endif
                     </div>
-                    <div class="flex items-center gap-2 text-[11px]">
+                    <div class="flex items-center gap-2 text-xs">
                         <a href="{{ route('staff.menu-categories.edit', $category) }}"
-                           class="px-3 py-1 rounded-full border border-white/40 hover:bg-white hover:text-black transition">
+                           class="px-3 py-1 rounded-full border border-line-strong hover:bg-ink hover:text-on-nebula transition">
                             {{-- {{ __('staff-menu-category-edit-button') }} --}}
                             <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
                         </a>
@@ -75,7 +81,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="button"
-                                    class="px-3 py-1 rounded-full border border-red-400/70 text-red-300 hover:bg-red-500 hover:text-white hover:border-red-500 transition js-delete-category-btn"
+                                    class="px-3 py-1 rounded-full border border-red-400/70 text-red-300 hover:bg-red-500 hover:text-ink hover:border-red-500 transition js-delete-category-btn"
                                     data-category-name="{{ $catName }}"
                                     data-form-id="delete-category-{{ $category->id }}">
                                 <x-icon category="Interface" name="Trash_Empty" class="w-5 h-5"/>
@@ -86,11 +92,11 @@
                 </div>
 
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-[11px] uppercase tracking-[0.18em] text-white/50">
+                    <h3 class="text-xs text-ink-muted">
                         {{ __('staff-menu-items-heading') }}
                     </h3>
                     <a href="{{ route('staff.menu-items.create', ['category_id' => $category->id]) }}"
-                       class="text-[11px] uppercase tracking-[0.18em] text-white/70 hover:text-white">
+                       class="text-xs text-ink-muted hover:text-ink">
                         {{-- + {{ __('staff-menu-items-add-button') }} --}}
                         <x-icon category="Edit" name="Add_Row" class="w-6 h-6"/>
                     </a>
@@ -98,18 +104,18 @@
 
                 <div class="space-y-2" data-items-container>
                     @foreach($category->items as $item)
-                        <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-black/40 border border-white/10 cursor-move handle-item"
+                        <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-ground/40 border border-line cursor-move handle-item"
                              data-item-id="{{ $item->id }}">
                             <div class="flex items-center gap-3">
                                 @if($item->image_path)
                                     <img src="{{ asset('storage/'.$item->image_path) }}"
-                                         alt="{{ $item->name[$locale] }}"
+                                         alt="{{ $item->t('name') }}"
                                          class="w-10 h-10 rounded-lg object-cover">
                                 @endif
 
                                 <div>
                                     <div class="text-xs font-medium flex items-center gap-2">
-                                        {{ $item->name[$locale] }}
+                                        {{ $item->t('name') }}
                                             @if(!$item->is_available)
                                                 <span class="inline-flex items-center text-amber-400">
                                                     <x-icon category="Warning" name="Stop_Sign" class="w-5 h-5"/>
@@ -118,20 +124,20 @@
                                             @endif
                                     </div>
                                     @if($item->description)
-                                        <div class="text-[11px] text-white/50 line-clamp-2">
-                                            {{ $item->description[$locale] }}
+                                        <div class="text-xs text-ink-muted line-clamp-2">
+                                            {{ $item->t('description') }}
                                         </div>
                                     @endif
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-1.5">
-                                <span class="text-sm text-white/80 whitespace-nowrap">
+                                <span class="text-sm text-ink-soft whitespace-nowrap">
                                     {{ number_format($item->price, 2, '.', ' ') }} €
                                 </span>
 
                                 <a href="{{ route('staff.menu-items.edit', $item) }}"
-                                   class="text-[11px] uppercase tracking-[0.18em] text-white/70 hover:text-white">
+                                   class="text-xs text-ink-muted hover:text-ink">
                                     {{-- {{ __('staff-menu-item-edit-button') }} --}}
                                     <x-icon category="Edit" name="Edit_Pencil_Line_01" class="w-5 h-5"/>
                                 </a>
@@ -141,9 +147,8 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="button"
-                                                class="px-3 py-1 rounded-full border border-red-400/70 text-[11px]
-                                                       tracking-[0.18em] uppercase text-red-300
-                                                       hover:bg-red-500 hover:text-white hover:border-red-500 transition
+                                                class="px-3 py-1 rounded-full border border-red-400/70 text-xs text-red-300
+                                                       hover:bg-red-500 hover:text-ink hover:border-red-500 transition
                                                        whitespace-normal sm:whitespace-nowrap js-delete-item-btn"
                                                 data-item-name="{{ $item->name[$locale] ?? ($item->name['ru'] ?? reset($item->name) ?? '') }}"
                                                 data-form-id="delete-item-{{ $item->id }}">
@@ -157,13 +162,13 @@
                 </div>
 
                 @if($category->items->isEmpty())
-                    <p class="text-[11px] text-white/40 mt-2">
+                    <p class="text-xs text-ink-muted mt-2">
                         {{ __('staff-menu-category-empty-items') }}
                     </p>
                 @endif
             </div>
         @empty
-            <p class="text-sm text-white/60">
+            <p class="text-sm text-ink-muted">
                 {{ __('staff-menu-empty-categories') }}
             </p>
         @endforelse
@@ -172,7 +177,7 @@
     <button
         id="backToTop"
         type="button"
-        class="hidden fixed bottom-16 md:bottom-8 right-5 md:right-6 z-40 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white p-3 shadow-lg backdrop-blur"
+        class="hidden fixed bottom-16 md:bottom-8 right-5 md:right-6 z-40 rounded-full bg-line hover:bg-line border border-line text-ink p-3  backdrop-blur"
         aria-label="{{ __('staff-menu-back-to-top', [], $locale) }}">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
             <path d="M12 5l7 7m-7-7L5 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -181,38 +186,37 @@
     </button>
 
     <div id="deleteCategoryModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
-        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-ground/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-ground/95 border border-red-500/50 rounded-2xl p-6">
             <div class="mb-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
                     <span class="text-red-400 text-lg">!</span>
                 </div>
-                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                <h2 class="text-base md:text-lg font-semibold text-ink tracking-wide">
                     {{ __('staff-menu-category-delete-modal-title') }}
                 </h2>
             </div>
 
-            <p class="text-sm text-white/70 mb-4">
+            <p class="text-sm text-ink-muted mb-4">
                 {{ __('staff-menu-category-delete-modal-text-prefix') }}
-                <span id="deleteCategoryName" class="font-semibold text-white"></span>?
+                <span id="deleteCategoryName" class="font-semibold text-ink"></span>?
             </p>
-            <p class="text-xs text-white/40 mb-5">
+            <p class="text-xs text-ink-muted mb-5">
                 {{ __('staff-menu-category-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
                 <button type="button"
                         id="deleteCategoryCancelBtn"
-                        class="px-5 py-2 rounded-full border border-white/30
-                               text-[11px] tracking-[0.22em] uppercase text-white/70
-                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                        class="px-5 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-muted
+                               hover:text-ink hover:border-line-strong hover:bg-surface transition">
                     {{ __('staff-menu-category-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteCategoryConfirmBtn"
                         class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
-                               text-[11px] tracking-[0.22em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     {{ __('staff-menu-category-delete-modal-confirm') }}
                 </button>
@@ -221,38 +225,37 @@
     </div>
 
     <div id="deleteItemModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
-        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-ground/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-ground/95 border border-red-500/50 rounded-2xl p-6">
             <div class="mb-3 flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
                     <span class="text-red-400 text-lg">!</span>
                 </div>
-                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                <h2 class="text-base md:text-lg font-semibold text-ink tracking-wide">
                     {{ __('staff-menu-item-delete-modal-title') }}
                 </h2>
             </div>
 
-            <p class="text-sm text-white/70 mb-4">
+            <p class="text-sm text-ink-muted mb-4">
                 {{ __('staff-menu-item-delete-modal-text-prefix') }}
-                <span id="deleteItemName" class="font-semibold text-white"></span>?
+                <span id="deleteItemName" class="font-semibold text-ink"></span>?
             </p>
-            <p class="text-xs text-white/40 mb-5">
+            <p class="text-xs text-ink-muted mb-5">
                 {{ __('staff-menu-item-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
                 <button type="button"
                         id="deleteItemCancelBtn"
-                        class="px-5 py-2 rounded-full border border-white/30
-                               text-[11px] tracking-[0.22em] uppercase text-white/70
-                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                        class="px-5 py-2 rounded-full border border-line-strong
+                               text-xs text-ink-muted
+                               hover:text-ink hover:border-line-strong hover:bg-surface transition">
                     {{ __('staff-menu-item-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteItemConfirmBtn"
                         class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
-                               text-[11px] tracking-[0.22em] uppercase text-white
-                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               text-xs text-ink
                                hover:bg-red-500 transition">
                     {{ __('staff-menu-item-delete-modal-confirm') }}
                 </button>
@@ -262,7 +265,7 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    @vite('resources/js/vendor/sortable.js')
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
