@@ -36,7 +36,7 @@
             <span class="font-display text-lg font-medium tracking-wide">perigee</span>
         </a>
 
-        <nav aria-label="Main" class="hidden items-center gap-7 text-sm lg:flex">
+        <nav class="hidden items-center gap-7 text-sm lg:flex">
             @foreach ($navLinks as $link)
                 <a href="{{ route($link['route'], ['locale' => $currentLocale]) }}"
                    @if ($routeName === $link['route']) aria-current="page" @endif
@@ -49,7 +49,7 @@
                 @foreach ($availableLocales as $loc)
                     <a href="{{ $localeUrl($loc) }}" lang="{{ $loc }}"
                        @if ($loc === $currentLocale) aria-current="true" @endif
-                       class="flex min-h-11 min-w-8 items-center justify-center transition hover:text-ink {{ $loc === $currentLocale ? 'font-bold text-ink' : '' }}">
+                       class="flex min-h-11 min-w-11 items-center justify-center transition hover:text-ink {{ $loc === $currentLocale ? 'font-bold text-ink' : '' }}">
                         {{ strtoupper($loc) }}
                     </a>
                 @endforeach
@@ -73,7 +73,7 @@
             @endguest
         </nav>
 
-        <button id="navToggle" type="button" aria-controls="navMenu" aria-expanded="false" aria-label="Menu"
+        <button id="navToggle" type="button" aria-controls="navMenu" aria-expanded="false" aria-label="{{ __('header-menu') }}"
                 class="flex h-11 w-11 items-center justify-center rounded-full border border-line-strong lg:hidden">
             <svg aria-hidden="true" class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
                 <path d="M3 6h14M3 14h14"/>
@@ -82,7 +82,7 @@
     </div>
 
     <div id="navMenu" class="hidden max-h-[calc(100svh-68px)] overflow-y-auto border-t border-line bg-ground lg:hidden">
-        <nav aria-label="Mobile" class="flex flex-col gap-1 px-4 py-4 sm:px-6">
+        <nav class="flex flex-col gap-1 px-4 py-4 sm:px-6">
             @foreach ($navLinks as $link)
                 <a href="{{ route($link['route'], ['locale' => $currentLocale]) }}"
                    class="flex min-h-11 items-center {{ $routeName === $link['route'] ? 'text-ink' : 'text-ink-soft' }}">
@@ -125,10 +125,21 @@
             const toggle = document.getElementById('navToggle');
             const menu = document.getElementById('navMenu');
 
-            toggle?.addEventListener('click', () => {
-                const isOpen = menu.classList.toggle('hidden') === false;
+            const setOpen = (isOpen) => {
+                menu.classList.toggle('hidden', !isOpen);
                 toggle.setAttribute('aria-expanded', String(isOpen));
+            };
+
+            toggle?.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+                    setOpen(false);
+                    toggle.focus();
+                }
             });
+
+            window.addEventListener('pageshow', () => setOpen(false));
         });
     </script>
 @endpush
