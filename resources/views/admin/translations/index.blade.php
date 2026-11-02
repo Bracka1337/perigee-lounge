@@ -58,16 +58,16 @@
                     <span class="text-red-400 text-lg">!</span>
                 </div>
                 <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
-                    {{ __('admin-translations-delete-modal-title') ?? 'Confirm deletion' }}
+                    {{ __('admin-translations-delete-modal-title') }}
                 </h2>
             </div>
 
             <p class="text-sm text-white/70 mb-4">
-                {{ __('admin-translations-delete-modal-text-prefix') ?? 'Delete translation key' }}
+                {{ __('admin-translations-delete-modal-text-prefix') }}
                 <span id="deleteTranslationKey" class="font-semibold text-white break-all"></span>?
             </p>
             <p class="text-xs text-white/40 mb-5">
-                {{ __('admin-translations-delete-modal-text-note') ?? 'This action cannot be undone.' }}
+                {{ __('admin-translations-delete-modal-text-note') }}
             </p>
 
             <div class="flex flex-wrap justify-end gap-3">
@@ -76,7 +76,7 @@
                         class="px-5 py-2 rounded-full border border-white/30
                                text-[11px] tracking-[0.22em] uppercase text-white/70
                                hover:text-white hover:border-white/70 hover:bg-white/5 transition">
-                    {{ __('admin-translations-delete-modal-cancel') ?? 'Cancel' }}
+                    {{ __('admin-translations-delete-modal-cancel') }}
                 </button>
                 <button type="button"
                         id="deleteTranslationConfirmBtn"
@@ -84,7 +84,7 @@
                                text-[11px] tracking-[0.22em] uppercase text-white
                                shadow-[0_0_14px_rgba(248,113,113,0.7)]
                                hover:bg-red-500 transition">
-                    {{ __('admin-translations-delete-modal-confirm') ?? 'Delete' }}
+                    {{ __('admin-translations-delete-modal-confirm') }}
                 </button>
             </div>
         </div>

@@ -35,7 +35,7 @@
 
                     @if($updatedAtStr)
                         <div class="mt-1 text-[11px] text-white/40">
-                            {{ __('admin-translations-updated-at-label') ?? 'Updated' }}: {{ $updatedAtStr }}
+                            {{ __('admin-translations-updated-at-label') }}: {{ $updatedAtStr }}
                         </div>
                     @endif
                 </div>
@@ -50,7 +50,7 @@
                                   rounded-full border border-white/25
                                   text-white/70 hover:text-white hover:border-white/60 hover:bg-white/5 transition">
                             <x-icon category="Edit" name="Edit_Pencil_02" class="w-5 h-5"/>
-                            {{-- {{ __('admin-translations-edit-button') ?? 'Edit' }} --}}
+                            {{-- {{ __('admin-translations-edit-button') }} --}}
                         </a>
                     @endif
 
@@ -67,7 +67,7 @@
                                     data-key="{{ $key }}"
                                     data-form-id="delete-translation-{{ $id }}">
                                 <x-icon category="Interface" name="Trash_Empty" class="w-5 h-5"/>
-                                {{-- {{ __('admin-translations-delete-button') ?? 'Delete' }} --}}
+                                {{-- {{ __('admin-translations-delete-button') }} --}}
                             </button>
                         </form>
                     @endif
@@ -90,7 +90,7 @@
 
                             @if($isDefault)
                                 <span class="text-[9px] uppercase tracking-[0.18em] text-emerald-200/80">
-                                    {{ __('admin-translations-default-badge') ?? 'default' }}
+                                    {{ __('admin-translations-default-badge') }}
                                 </span>
                             @endif
                         </div>
@@ -100,7 +100,7 @@
                                 {{ \Illuminate\Support\Str::limit($val, 160) }}
                             @else
                                 <span class="text-white/35">
-                                    {{ __('admin-translations-empty-value') ?? '—' }}
+                                    {{ __('admin-translations-empty-value') }}
                                 </span>
                             @endif
                         </div>
@@ -110,7 +110,7 @@
         </div>
     @empty
         <div class="rounded-2xl bg-white/5 border border-white/10 px-4 py-8 text-center text-white/50 text-sm">
-            {{ __('admin-translations-empty') ?? 'Empty' }}
+            {{ __('admin-translations-empty') }}
         </div>
     @endforelse
 

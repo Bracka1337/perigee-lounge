@@ -186,7 +186,7 @@
                                         {{ number_format($item->total_price, 2, '.', ' ') }} €
                                     </div>
                                     @if($isEligible)
-                                        <div class="text-emerald-300 text-[10px]">✓ {{ __('staff-orders-with-discount') ?? 'Скидка' }}</div>
+                                        <div class="text-emerald-300 text-[10px]">✓ {{ __('staff-orders-with-discount') }}</div>
                                     @endif
                                 </div>
                             </div>
