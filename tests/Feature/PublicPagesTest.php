@@ -17,6 +17,13 @@ test('home page renders translated copy for each locale', function (string $loca
     ['ru', 'Ближайшая точка к тишине.'],
 ]);
 
+test('footer has no placeholder address link', function () {
+    $this->get('/en')
+        ->assertOk()
+        ->assertSee('12 Example Street, Exampleville')
+        ->assertDontSee('href="#"', false);
+});
+
 test('about page renders its sections', function () {
     $this->get('/en/about')
         ->assertOk()

@@ -30,7 +30,13 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
   fi
   php artisan storage:link || true
   php artisan migrate --force || true
-  php artisan db:seed --force || true
+  # Seed only a database with no users, so restarts keep passwords and edits.
+  # DatabaseSeeder runs in one transaction, so an interrupted seed leaves no users and retries.
+  user_count="$(php artisan tinker --execute='echo App\Models\User::count();' 2>&1 | tail -n 1)"
+  case "$user_count" in
+    0) php artisan db:seed --force || true ;;
+    ''|*[!0-9]*) echo "Skipping seed, could not read the user count: $user_count" ;;
+  esac
 fi
 
 exec "$@"

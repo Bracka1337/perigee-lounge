@@ -47,6 +47,12 @@ test('regular menu has no cart controls', function () {
         ->assertDontSee('name="menu_item_id"', false);
 });
 
+test('menu dialog image has no empty source', function () {
+    $this->get('/en/menu')
+        ->assertOk()
+        ->assertDontSee('src=""', false);
+});
+
 test('unavailable items cannot be opened', function () {
     MenuItem::query()->update(['is_available' => false]);
 
