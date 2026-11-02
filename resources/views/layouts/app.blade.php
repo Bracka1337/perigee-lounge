@@ -80,15 +80,15 @@
     <link rel="manifest" href="{{ asset('/site.webmanifest') }}" />
     
     <!-- Дополнительные метатеги для поисковых систем -->
-    <meta name="msapplication-TileColor" content="#000000" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="msapplication-TileColor" content="#07080F" />
+    <meta name="theme-color" content="#07080F" />
     
     <!-- Schema.org для Google -->
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
         "@@type": "Restaurant",
-        "name": "Perigee Bar",
+        "name": "{{ config('app.name') }}",
         "image": "{{ $image }}",
         "logo": "{{ asset('images/logo.png') }}",
         "url": "{{ config('app.url') }}",
@@ -99,7 +99,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
+<body class="antialiased">
 
 
 @include('partials.header')
