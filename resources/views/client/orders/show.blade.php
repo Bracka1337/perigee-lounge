@@ -18,9 +18,9 @@
     <div class="w-full">
         <a href="{{ route('client.orders.index', ['locale' => app()->getLocale()]) }}"
            class="inline-flex items-center text-xs text-white/70 hover:text-white transition-colors mb-6"
-           title="{{ __('client-orders-back-tooltip') ?? 'К списку заказов' }}"
-           aria-label="{{ __('client-orders-back-tooltip') ?? 'К списку заказов' }}">
-            <img src="{{ asset('icons/coolicons/Arrow/Chevron_Left_MD.svg') }}" alt="{{ __('client-orders-back-tooltip') ?? 'К списку заказов' }}" class="h-5 w-5 opacity-90 invert" />
+           title="{{ __('client-orders-back-tooltip') }}"
+           aria-label="{{ __('client-orders-back-tooltip') }}">
+            <img src="{{ asset('icons/coolicons/Arrow/Chevron_Left_MD.svg') }}" alt="{{ __('client-orders-back-tooltip') }}" class="h-5 w-5 opacity-90 invert" />
             <span class="ml-2">{{ __('client-orders-back-to-list') }}</span>
         </a>
 
@@ -65,7 +65,7 @@
                                     {{ number_format($item->total_price, 2, '.', ' ') }} €
                                 </div>
                                 @if($isEligible)
-                                    <div class="text-emerald-300 text-[10px] whitespace-nowrap">✓ {{ __('client-orders-with-discount') ?? 'Скидка' }}</div>
+                                    <div class="text-emerald-300 text-[10px] whitespace-nowrap">✓ {{ __('client-orders-with-discount') }}</div>
                                 @endif
                             </div>
                         </div>
@@ -75,7 +75,7 @@
 
             <div class="mt-4 border-t border-white/10 pt-3">
                 <div class="flex items-center justify-between pt-2">
-                    <div class="text-[11px] text-white/60">{{ __('client-orders-total-label') ?? 'Итого' }}</div>
+                    <div class="text-[11px] text-white/60">{{ __('client-orders-total-label') }}</div>
                     <div class="text-base text-white">{{ number_format($order->total, 2, '.', ' ') }} €</div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                     <a href="{{ route('client.table.menu', ['locale' => app()->getLocale(), 'code' => $order->table->name]) }}"
                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/60 bg-white/5 hover:bg-white/15 text-[11px] uppercase tracking-[0.18em] text-white/90 transition">
                         <img src="{{ asset('icons/coolicons/Interface/Shopping_Cart_01.svg') }}" alt="" class="w-4 h-4 invert opacity-80">
-                        <span>{{ __('client-orders-order-again') ?? 'Заказать ещё' }}</span>
+                        <span>{{ __('client-orders-order-again') }}</span>
                     </a>
                 </div>
             @endif        </div>

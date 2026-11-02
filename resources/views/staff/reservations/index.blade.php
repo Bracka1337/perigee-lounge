@@ -354,7 +354,7 @@
                                     {{ __('staff-reservations-table-label') }} {{ $res->table->name ?? '#' }}
                                 </div>
                                 <div class="text-[11px] text-white/60 truncate">
-                                    {{ $res->guest_name ?? ($res->user->name ?? 'Гость') }}
+                                    {{ $res->guest_name ?? ($res->user->name ?? __('common-guest')) }}
                                 </div>
                                 <div class="mt-1 text-[10px] text-white/50">
                                     {{ __('staff-reservations-status-label') }}:

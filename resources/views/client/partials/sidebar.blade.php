@@ -44,7 +44,7 @@
                class="flex items-center gap-2 px-3 py-2 rounded-2xl
                @if (request()->routeIs('client.promo-codes.*')) bg-white/15 border border-white/30 @else hover:bg-white/10 @endif">
                 <x-icon category="Interface" name="Ticket_Voucher" class="w-5 h-5 text-white/80 shrink-0"/>
-                <span>{{ __('client-sidebar-promo-codes', [], app()->getLocale()) ?? 'Промокоды' }}</span>
+                <span>{{ __('client-sidebar-promo-codes') }}</span>
             </a>
         </nav>
     </div>

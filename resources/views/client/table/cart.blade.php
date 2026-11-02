@@ -11,7 +11,7 @@ $locale = app()->getLocale();
             <a href="{{ route('client.table.menu', ['locale' => $locale, 'code' => $code]) }}"
                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-sm text-white/80 transition">
                 <img src="{{ asset('icons/coolicons/Arrow/Chevron_Left.svg') }}" alt="" class="w-4 h-4 invert opacity-80">
-                <span>{{ __('menu-back') ?? 'Назад к меню' }}</span>
+                <span>{{ __('menu-back') }}</span>
             </a>
         </div>
 
@@ -28,7 +28,7 @@ $locale = app()->getLocale();
         @endif
 
         <div class="mb-12">
-            <h1 class="logo-font text-4xl md:text-5xl mb-2 drop-shadow-[0_0_14px_rgba(255,255,255,0.9)]">{{ __('cart-title') ?? 'Корзина' }}</h1>
+            <h1 class="logo-font text-4xl md:text-5xl mb-2 drop-shadow-[0_0_14px_rgba(255,255,255,0.9)]">{{ __('cart-title') }}</h1>
             <p class="text-base text-white/70">{{ $table->name }}</p>
         </div>
 
@@ -108,7 +108,7 @@ $locale = app()->getLocale();
                 <div class="rounded-2xl border border-white/20 bg-white/5 p-6">
                     <div class="mb-6">
                         <div class="flex items-center justify-between">
-                            <span class="text-base font-semibold text-white">{{ __('cart-total') ?? 'Итого:' }}</span>
+                            <span class="text-base font-semibold text-white">{{ __('cart-total') }}</span>
                             <span class="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{{ number_format($cartTotal, 2, '.', ' ') }} €</span>
                         </div>
                     </div>
@@ -119,7 +119,7 @@ $locale = app()->getLocale();
                                 class="w-full px-6 py-3 rounded-full border border-white/80 bg-white/10 hover:bg-white/20 text-xs uppercase tracking-[0.2em] text-white transition drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">
                             <span class="flex items-center justify-center gap-2">
                                 <img src="{{ asset('icons/coolicons/Interface/Check_Big.svg') }}" alt="" class="w-5 h-5 invert">
-                                {{ __('cart-confirm') ?? 'Подтвердить заказ' }}
+                                {{ __('cart-confirm') }}
                             </span>
                         </button>
                     </form>
@@ -128,12 +128,12 @@ $locale = app()->getLocale();
         @else
             <div class="rounded-2xl border border-white/10 bg-white/5 p-12 md:p-16 text-center">
                 <img src="{{ asset('icons/coolicons/Interface/Shopping_Cart_01.svg') }}" alt="" class="w-16 h-16 mx-auto mb-6 invert opacity-30">
-                <h2 class="text-2xl font-semibold text-white mb-2">{{ __('cart-empty') ?? 'Корзина пуста' }}</h2>
-                <p class="text-white/60 mb-6">{{ __('cart-add-dishes') ?? 'Добавьте блюда из меню' }}</p>
+                <h2 class="text-2xl font-semibold text-white mb-2">{{ __('cart-empty') }}</h2>
+                <p class="text-white/60 mb-6">{{ __('cart-add-dishes') }}</p>
                 <a href="{{ route('client.table.menu', ['locale' => $locale, 'code' => $code]) }}"
                    class="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-white/80 bg-white/10 hover:bg-white/20 text-xs uppercase tracking-[0.2em] text-white transition drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">
                     <img src="{{ asset('icons/coolicons/Edit/Add_Plus.svg') }}" alt="" class="w-5 h-5 invert">
-                    {{ __('cart-to-menu') ?? 'К меню' }}
+                    {{ __('cart-to-menu') }}
                 </a>
             </div>
         @endif
