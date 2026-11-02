@@ -27,7 +27,7 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         // Check if user is already bound to another table
@@ -57,12 +57,12 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         if (! $table->is_active) {
             return redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Стол недоступен для заказа');
+                ->with('error', __('table-unavailable'));
         }
 
         if (auth()->check()) {
@@ -79,7 +79,7 @@ class ClientTableOrderController extends Controller
 
             if ($order !== null && $order->user_id !== null && $order->user_id !== auth()->id()) {
                 return redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code])
-                    ->with('error', 'Этот стол уже занят другим клиентом');
+                    ->with('error', __('table-occupied'));
             }
         }
 
@@ -114,7 +114,7 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         $cartKey = $this->cartKey($table->id);
@@ -162,12 +162,12 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         if (! $table->is_active) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Стол недоступен для заказа');
+                ->with('error', __('table-unavailable'));
         }
 
         // Check if user is already bound to another table
@@ -183,7 +183,7 @@ class ClientTableOrderController extends Controller
         $cart = session()->get($cartKey, []);
         if (empty($cart)) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Корзина пуста');
+                ->with('error', __('cart-empty'));
         }
 
         $orderableItems = MenuItem::with('category')->findMany(array_keys($cart))
@@ -204,7 +204,7 @@ class ClientTableOrderController extends Controller
 
         if ($order === null) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Нет открытого заказа для этого стола');
+                ->with('error', __('table-no-open-order'));
         }
 
         // Allow both guest and authenticated users to add items
@@ -212,7 +212,7 @@ class ClientTableOrderController extends Controller
         // For authenticated: link order to current user
         if ($order->user_id !== null && auth()->check() && $order->user_id !== auth()->id()) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Этот стол уже занят другим клиентом');
+                ->with('error', __('table-occupied'));
         }
 
         if (auth()->check() && $order->user_id === null) {
@@ -253,10 +253,10 @@ class ClientTableOrderController extends Controller
         // Redirect to order details if user is verified, otherwise to menu
         if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
             return redirect()->route('client.orders.show', ['locale' => $locale, 'order' => $order])
-                ->with('success', 'Заказ отправлен официанту');
+                ->with('success', __('order-sent-to-waiter'));
         } else {
             return redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code])
-                ->with('success', 'Заказ отправлен официанту');
+                ->with('success', __('order-sent-to-waiter'));
         }
     }
 
@@ -268,7 +268,7 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         $cartKey = $this->cartKey($table->id);
@@ -294,7 +294,7 @@ class ClientTableOrderController extends Controller
         $table = $this->resolveTableFromCode($code);
         if ($table === null) {
             return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
+                ->with('error', __('table-not-found'));
         }
 
         $cartKey = $this->cartKey($table->id);
@@ -304,123 +304,6 @@ class ClientTableOrderController extends Controller
         session()->put($cartKey, $cart);
 
         return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code]);
-    }
-
-    /**
-     * Show client catalog identical to staff to add items directly into the open order.
-     */
-    public function orderCatalog(string $locale, string $code): View|RedirectResponse
-    {
-        if (! auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        $table = $this->resolveTableFromCode($code);
-        if ($table === null) {
-            return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол не найден');
-        }
-
-        if (! $table->is_active) {
-            return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол недоступен для заказа');
-        }
-
-        // Check if user is already bound to another table
-        $boundToAnother = $this->checkUserBoundToAnotherTable(auth()->id(), $table->id);
-        if ($boundToAnother !== null) {
-            return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', __('error-already-bound-to-table', ['table' => $boundToAnother]));
-        }
-
-        $order = Order::where('table_id', $table->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
-            ->first();
-
-        if ($order === null) {
-            return redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code])
-                ->with('error', 'Нет открытого заказа для этого стола');
-        }
-
-        if ($order->user_id === null) {
-            $order->user_id = auth()->id();
-            $order->save();
-        }
-
-        $categories = MenuCategory::with('items')->ordered()->get();
-
-        return view('client.table.catalog', [
-            'order' => $order,
-            'categories' => $categories,
-            'code' => $code,
-        ]);
-    }
-
-    /**
-     * Add item to order from client catalog.
-     */
-    public function orderAddItem(Request $request, string $locale, string $code): RedirectResponse
-    {
-        if (! auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        $table = $this->resolveTableFromCode($code);
-        if ($table === null || ! $table->is_active) {
-            return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', 'Стол недоступен для заказа');
-        }
-
-        // Check if user is already bound to another table
-        $boundToAnother = $this->checkUserBoundToAnotherTable(auth()->id(), $table->id);
-        if ($boundToAnother !== null) {
-            return redirect()->route('menu', ['locale' => $locale])
-                ->with('error', __('error-already-bound-to-table', ['table' => $boundToAnother]));
-        }
-
-        $order = Order::where('table_id', $table->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
-            ->firstOrFail();
-
-        if ($order->status !== Order::STATUS_OPEN) {
-            return back()->with('error', 'Заказ закрыт для изменений');
-        }
-
-        $data = $request->validate([
-            'menu_item_id' => ['required', 'exists:menu_items,id'],
-            'quantity' => ['nullable', 'integer', 'min:1'],
-        ]);
-
-        $qty = (int) ($data['quantity'] ?? 1);
-
-        $existing = $order->items()->where('menu_item_id', $data['menu_item_id'])->first();
-        if ($existing !== null) {
-            $existing->quantity += $qty;
-            $existing->total_price = $existing->unit_price * $existing->quantity;
-            $existing->save();
-        } else {
-            $item = MenuItem::findOrFail($data['menu_item_id']);
-            OrderItem::create([
-                'order_id' => $order->id,
-                'menu_item_id' => $item->id,
-                'quantity' => $qty,
-                'unit_price' => $item->price,
-                'total_price' => $item->price * $qty,
-            ]);
-        }
-
-        $order->recalculateTotals();
-        $order->source = $order->source ?: 'qr';
-        $order->save();
-
-        try {
-            TelegramNotifier::notifyNewOrder($order);
-        } catch (\Throwable $e) {
-            \Log::warning('Telegram notifyNewOrder failed: '.$e->getMessage());
-        }
-
-        return redirect()->route('client.table.order.catalog', ['locale' => $locale, 'code' => $code])
-            ->with('success', 'Позиция добавлена');
     }
 
     protected function resolveTableFromCode(string $code): ?Table

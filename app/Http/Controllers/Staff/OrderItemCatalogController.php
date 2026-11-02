@@ -54,6 +54,6 @@ class OrderItemCatalogController extends Controller
 
         return redirect()
             ->route('staff.orders.show', $order)
-            ->with('success', 'Позиция добавлена в заказ');
+            ->with('success', __('staff-order-item-added'));
     }
 }

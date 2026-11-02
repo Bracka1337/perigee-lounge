@@ -39,9 +39,9 @@
                             </div>
                             <a href="{{ route('client.orders.show', ['locale' => app()->getLocale(), 'order' => $order]) }}"
                                class="shrink-0 inline-flex items-center justify-center rounded-full hover:bg-white/10 transition-colors p-2"
-                               title="{{ __('client-orders-view-tooltip') ?? 'Посмотреть заказ' }}"
-                               aria-label="{{ __('client-orders-view-tooltip') ?? 'Посмотреть заказ' }}">
-                                <img src="{{ asset('icons/coolicons/Interface/External_Link.svg') }}" alt="{{ __('client-orders-view-tooltip') ?? 'Посмотреть заказ' }}" class="h-5 w-5 opacity-90 invert" />
+                               title="{{ __('client-orders-view-tooltip') }}"
+                               aria-label="{{ __('client-orders-view-tooltip') }}">
+                                <img src="{{ asset('icons/coolicons/Interface/External_Link.svg') }}" alt="{{ __('client-orders-view-tooltip') }}" class="h-5 w-5 opacity-90 invert" />
                             </a>
                         </div>
                     </div>

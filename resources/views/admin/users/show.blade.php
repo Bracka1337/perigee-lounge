@@ -126,7 +126,7 @@
                             @endif
                         </div>
                         <div class="text-xs text-white/50">
-                            @if($promo->scope === 'all') На всё @elseif($promo->scope === 'item') На блюдо @elseif($promo->scope === 'category') На категорию @endif
+                            {{ __('staff-promo-scope-'.$promo->scope) }}
                         </div>
                     </div>
                 @empty
