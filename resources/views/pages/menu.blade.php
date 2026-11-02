@@ -139,7 +139,7 @@
 
     <dialog id="menu-item-modal" aria-labelledby="menu-item-modal-name"
             class="m-auto w-[min(32rem,calc(100vw-2rem))] rounded-2xl border border-line-strong bg-surface p-0 text-ink backdrop:bg-ground/80">
-        <img id="menu-item-modal-image" src="" alt="" class="hidden h-52 w-full object-cover">
+        <img id="menu-item-modal-image" alt="" class="hidden h-52 w-full object-cover">
 
         <div class="p-6">
             <p id="menu-item-modal-category" class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-nebula"></p>
