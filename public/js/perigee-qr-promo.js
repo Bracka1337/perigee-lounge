@@ -42,20 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
           type: "linear",
           rotation: 90,
           colorStops: [
-            { offset: 0, color: "#B9A5FF" },
-            { offset: 1, color: "#F2F1F7" }
+            { offset: 0, color: "#0B0C16" },
+            { offset: 1, color: "#0B0C16" }
           ]
         }
       },
 
-      backgroundOptions: { color: "rgba(0,0,0,0.55)" },
+      backgroundOptions: { color: "#F2F1F7" },
 
       cornersSquareOptions: {
         type: "extra-rounded",
-        color: "rgba(255,255,255,0.95)"
+        color: "#0B0C16"
       },
 
-      cornersDotOptions: { type: "dot", color: "#B9A5FF" },
+      cornersDotOptions: { type: "dot", color: "#0B0C16" },
 
       image: el.dataset.logo,
       imageOptions: {

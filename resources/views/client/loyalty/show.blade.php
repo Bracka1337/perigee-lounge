@@ -30,10 +30,6 @@
                              class="w-[220px] h-[220px]"
                              data-qr='@json($qrData)'
                              data-logo="{{ asset('images/logo.png') }}"></div>
-
-                        <div class="pointer-events-none absolute inset-0"
-                             style="background: radial-gradient(circle at center, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.00) 34%, rgba(0,0,0,0.22) 48%, rgba(0,0,0,0.00) 72%);">
-                        </div>
                     </div>
                 </div>
             </div>

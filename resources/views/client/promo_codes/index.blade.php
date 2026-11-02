@@ -112,10 +112,6 @@
                          data-qr="{{ $qrValue }}"
                          data-logo="{{ asset('images/logo.png') }}"
                          id="{{ $qrId }}"></div>
-
-                    <div class="pointer-events-none absolute inset-0"
-                         style="background: radial-gradient(circle at center, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.00) 34%, rgba(0,0,0,0.22) 48%, rgba(0,0,0,0.00) 72%);">
-                    </div>
                 </div>
             </div>
         </button>
@@ -221,10 +217,6 @@
 
             <div class="relative w-[min(72vw,360px)] aspect-square rounded-2xl overflow-hidden">
                 <div id="promo-modal-qr" class="w-full h-full" data-logo="{{ asset('images/logo.png') }}"></div>
-
-                <div class="pointer-events-none absolute inset-0"
-                     style="background: radial-gradient(circle at center, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.00) 34%, rgba(0,0,0,0.25) 48%, rgba(0,0,0,0.00) 72%);">
-                </div>
             </div>
 
             <button type="button"
@@ -277,20 +269,20 @@
                             type: "linear",
                             rotation: 90,
                             colorStops: [
-                                { offset: 0, color: "#B9A5FF" },
-                                { offset: 1, color: "#F2F1F7" }
+                                { offset: 0, color: "#0B0C16" },
+                                { offset: 1, color: "#0B0C16" }
                             ]
                         }
                     },
 
-                    backgroundOptions: { color: "rgba(0,0,0,0.55)" },
+                    backgroundOptions: { color: "#F2F1F7" },
 
                     cornersSquareOptions: {
                         type: "extra-rounded",
-                        color: "rgba(255,255,255,0.95)"
+                        color: "#0B0C16"
                     },
 
-                    cornersDotOptions: { type: "dot", color: "#B9A5FF" },
+                    cornersDotOptions: { type: "dot", color: "#0B0C16" },
 
                     image: el.dataset.logo,
                     imageOptions: {
