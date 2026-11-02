@@ -15,6 +15,18 @@
 @endsection
 
 @section('client-content')
+    @if (session('success'))
+        <div role="status" class="mb-6 rounded-xl border border-emerald-500/60 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div role="alert" class="mb-6 rounded-xl border border-red-500/60 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="w-full">
         <a href="{{ route('client.orders.index', ['locale' => app()->getLocale()]) }}"
            class="inline-flex items-center text-xs text-ink-muted hover:text-ink transition-colors mb-6"

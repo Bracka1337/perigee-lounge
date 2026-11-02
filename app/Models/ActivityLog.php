@@ -53,9 +53,9 @@ class ActivityLog extends Model
     public function getActionNameAttribute(): string
     {
         return match ($this->action) {
-            'created' => __('log-action-created'),
-            'updated' => __('log-action-updated'),
-            'deleted' => __('log-action-deleted'),
+            'created' => __('logs-action-created'),
+            'updated' => __('logs-action-updated'),
+            'deleted' => __('logs-action-deleted'),
             default => $this->action,
         };
     }
@@ -68,20 +68,20 @@ class ActivityLog extends Model
         return self::modelLabel($this->model_type);
     }
 
-    public static function modelLabel(string $type): string
+    public static function modelLabel(?string $type): string
     {
         $key = match ($type) {
-            'App\\Models\\Order' => 'log-model-order',
-            'App\\Models\\MenuItem' => 'log-model-menu-item',
-            'App\\Models\\MenuCategory' => 'log-model-menu-category',
-            'App\\Models\\Reservation' => 'log-model-reservation',
-            'App\\Models\\Table' => 'log-model-table',
-            'App\\Models\\User' => 'log-model-user',
-            'App\\Models\\PromoCode' => 'log-model-promo-code',
+            'App\\Models\\Order' => 'logs-model-order',
+            'App\\Models\\MenuItem' => 'logs-model-menuitem',
+            'App\\Models\\MenuCategory' => 'logs-model-menucategory',
+            'App\\Models\\Reservation' => 'logs-model-reservation',
+            'App\\Models\\Table' => 'logs-model-table',
+            'App\\Models\\User' => 'logs-model-user',
+            'App\\Models\\PromoCode' => 'logs-model-promocode',
             default => null,
         };
 
-        return $key !== null ? __($key) : class_basename($type);
+        return $key !== null ? __($key) : class_basename($type ?? '');
     }
 
     /**
