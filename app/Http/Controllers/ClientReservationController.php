@@ -26,12 +26,7 @@ class ClientReservationController extends Controller
 
         $user = $request->user();
 
-        $dateParam = $request->query('date');
-        if ($dateParam === null || $dateParam === '' || (is_array($dateParam) && count($dateParam) === 0)) {
-            $dateParam = Carbon::now()->toDateString();
-        }
-
-        $date = Carbon::parse($dateParam)->startOfDay();
+        $date = $this->dateFilter($request);
 
         $tables = Table::where('is_active', true)
             ->orderBy('id')
@@ -78,7 +73,7 @@ class ClientReservationController extends Controller
 
         $data = $request->validate([
             'table_id' => ['required', 'exists:tables,id'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date_format:Y-m-d'],
             'time' => ['required', 'date_format:H:i'],
             'guests_count' => ['required', 'integer', 'min:1', 'max:20'],
         ]);
