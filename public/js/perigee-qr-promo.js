@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
           type: "linear",
           rotation: 90,
           colorStops: [
-            { offset: 0, color: "rgba(231, 98, 98, 0.95)" },
-            { offset: 1, color: "rgba(255, 251, 251, 0.9)" }
+            { offset: 0, color: "#B9A5FF" },
+            { offset: 1, color: "#F2F1F7" }
           ]
         }
       },
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         color: "rgba(255,255,255,0.95)"
       },
 
-      cornersDotOptions: { type: "dot", color: "#db3b3d" },
+      cornersDotOptions: { type: "dot", color: "#B9A5FF" },
 
       image: el.dataset.logo,
       imageOptions: {
