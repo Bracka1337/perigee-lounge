@@ -4,7 +4,11 @@
     <div class="mx-auto max-w-7xl px-6 py-10 text-sm text-ink-muted">
         <div class="flex flex-wrap items-center justify-between gap-x-12 gap-y-3">
             <span class="font-display text-ink">perigee</span>
-            <a href="{{ __('contacts-adress-link') }}" class="flex min-h-11 items-center transition hover:text-ink">{{ __('contacts-adress-content') }}</a>
+            @if (str_starts_with(__('contacts-adress-link'), 'https://'))
+                <a href="{{ __('contacts-adress-link') }}" target="_blank" rel="noopener" class="flex min-h-11 items-center transition hover:text-ink">{{ __('contacts-adress-content') }}</a>
+            @else
+                <span>{{ __('contacts-adress-content') }}</span>
+            @endif
             <a href="tel:{{ __('contacts-phone-content') }}" class="flex min-h-11 items-center transition hover:text-ink">{{ __('contacts-phone-content') }}</a>
             <a href="mailto:{{ __('contacts-email-content') }}" class="flex min-h-11 items-center transition hover:text-ink">{{ __('contacts-email-content') }}</a>
         </div>
