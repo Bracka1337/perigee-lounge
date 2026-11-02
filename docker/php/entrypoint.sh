@@ -30,7 +30,11 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
   fi
   php artisan storage:link || true
   php artisan migrate --force || true
-  php artisan db:seed --force || true
+  # Seed only an empty database, so restarts keep passwords and edited content.
+  user_count="$(php artisan tinker --execute='echo App\Models\User::count();' 2>/dev/null | tail -n 1)"
+  if [ "$user_count" = "0" ]; then
+    php artisan db:seed --force || true
+  fi
 fi
 
 exec "$@"
