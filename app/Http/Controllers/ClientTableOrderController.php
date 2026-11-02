@@ -88,6 +88,10 @@ class ClientTableOrderController extends Controller
             'quantity' => ['nullable', 'integer', 'min:1', 'max:99'],
         ]);
 
+        if (! MenuItem::with('category')->findOrFail($data['menu_item_id'])->isOrderable()) {
+            return back()->with('error', __('menu-unavailable'));
+        }
+
         $qty = (int) ($data['quantity'] ?? 1);
         $cartKey = $this->cartKey($table->id);
         $cart = session()->get($cartKey, []);
@@ -175,6 +179,18 @@ class ClientTableOrderController extends Controller
         if (empty($cart)) {
             return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
                 ->with('error', 'Корзина пуста');
+        }
+
+        $orderableIds = MenuItem::with('category')->findMany(array_keys($cart))
+            ->filter(fn (MenuItem $item) => $item->isOrderable())
+            ->modelKeys();
+        $orderableCart = array_intersect_key($cart, array_flip($orderableIds));
+
+        if (count($orderableCart) !== count($cart)) {
+            session()->put($cartKey, $orderableCart);
+
+            return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
+                ->with('error', __('menu-unavailable'));
         }
 
         $order = Order::where('table_id', $table->id)

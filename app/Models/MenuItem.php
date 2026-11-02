@@ -52,6 +52,11 @@ class MenuItem extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function isOrderable(): bool
+    {
+        return ($this->is_available ?? true) && ($this->category?->is_available ?? true);
+    }
+
     public function getFormattedPriceAttribute(): string
     {
         return number_format((float) $this->price, 2, '.', ' ').' €';
