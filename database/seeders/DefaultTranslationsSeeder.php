@@ -294,7 +294,7 @@ class DefaultTranslationsSeeder extends Seeder
             ],
             'menu-back' => [
                 'en' => 'Back to menu',
-                'lv' => 'Atpakaļ uz ēdienkarte',
+                'lv' => 'Atpakaļ uz ēdienkarti',
                 'ru' => 'Назад в меню',
             ],
             'cart-title' => [
@@ -4888,109 +4888,19 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             // Profile / Laravel Breeze translations
-            'profile-information-title' => [
-                'en' => 'Profile Information',
-                'lv' => 'Profila informācija',
-                'ru' => 'Информация профиля',
-            ],
-            'profile-information-subtitle' => [
-                'en' => "Update your account's profile information and email address.",
-                'lv' => 'Atjauniniet sava konta profila informāciju un e-pasta adresi.',
-                'ru' => 'Обновите информацию вашего профиля и email адрес.',
-            ],
-            'profile-update-password-title' => [
-                'en' => 'Update Password',
-                'lv' => 'Atjaunināt paroli',
-                'ru' => 'Обновить пароль',
-            ],
-            'profile-update-password-subtitle' => [
-                'en' => 'Ensure your account is using a long, random password to stay secure.',
-                'lv' => 'Pārliecinieties, ka jūsu konts izmanto garu, nejaušu paroli, lai saglabātu drošību.',
-                'ru' => 'Убедитесь, что ваш аккаунт использует длинный случайный пароль для безопасности.',
-            ],
-            'profile-delete-account-title' => [
-                'en' => 'Delete Account',
-                'lv' => 'Dzēst kontu',
-                'ru' => 'Удалить аккаунт',
-            ],
-            'profile-delete-account-subtitle' => [
-                'en' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
-                'lv' => 'Tiklīdz jūsu konts tiks dzēsts, visi tā resursi un dati tiks neatgriezeniski dzēsti. Pirms konta dzēšanas, lūdzu, lejupielādējiet visus datus vai informāciju, ko vēlaties saglabāt.',
-                'ru' => 'После удаления аккаунта все его данные будут безвозвратно удалены. Перед удалением аккаунта скачайте все данные, которые хотите сохранить.',
-            ],
-            'profile-delete-account-confirm' => [
-                'en' => 'Are you sure you want to delete your account?',
-                'lv' => 'Vai tiešām vēlaties dzēst savu kontu?',
-                'ru' => 'Вы уверены, что хотите удалить свой аккаунт?',
-            ],
-            'profile-delete-account-confirm-text' => [
-                'en' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
-                'lv' => 'Tiklīdz jūsu konts tiks dzēsts, visi tā resursi un dati tiks neatgriezeniski dzēsti. Lūdzu, ievadiet savu paroli, lai apstiprinātu konta dzēšanu.',
-                'ru' => 'После удаления аккаунта все его данные будут безвозвратно удалены. Введите пароль, чтобы подтвердить удаление аккаунта.',
-            ],
 
             // Common form labels
-            'common-name' => [
-                'en' => 'Name',
-                'lv' => 'Vārds',
-                'ru' => 'Имя',
-            ],
-            'common-email' => [
-                'en' => 'Email',
-                'lv' => 'E-pasts',
-                'ru' => 'Email',
-            ],
             'common-password' => [
                 'en' => 'Password',
                 'lv' => 'Parole',
                 'ru' => 'Пароль',
             ],
-            'common-confirm-password' => [
-                'en' => 'Confirm Password',
-                'lv' => 'Apstiprināt paroli',
-                'ru' => 'Подтвердите пароль',
-            ],
-            'common-current-password' => [
-                'en' => 'Current Password',
-                'lv' => 'Pašreizējā parole',
-                'ru' => 'Текущий пароль',
-            ],
-            'common-new-password' => [
-                'en' => 'New Password',
-                'lv' => 'Jaunā parole',
-                'ru' => 'Новый пароль',
-            ],
 
             // Common buttons
-            'common-save' => [
-                'en' => 'Save',
-                'lv' => 'Saglabāt',
-                'ru' => 'Сохранить',
-            ],
-            'common-saved' => [
-                'en' => 'Saved.',
-                'lv' => 'Saglabāts.',
-                'ru' => 'Сохранено.',
-            ],
-            'common-cancel' => [
-                'en' => 'Cancel',
-                'lv' => 'Atcelt',
-                'ru' => 'Отмена',
-            ],
             'common-confirm' => [
                 'en' => 'Confirm',
                 'lv' => 'Apstiprināt',
                 'ru' => 'Подтвердить',
-            ],
-            'common-delete' => [
-                'en' => 'Delete',
-                'lv' => 'Dzēst',
-                'ru' => 'Удалить',
-            ],
-            'common-back' => [
-                'en' => 'Back',
-                'lv' => 'Atpakaļ',
-                'ru' => 'Назад',
             ],
             'common-guest' => [
                 'en' => 'Guest',
@@ -5017,6 +4927,16 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Uz augšu',
                 'ru' => 'Вернуться в начало',
             ],
+            'common-hours-placeholder' => [
+                'en' => 'HH',
+                'lv' => 'SS',
+                'ru' => 'ЧЧ',
+            ],
+            'common-minutes-placeholder' => [
+                'en' => 'MM',
+                'lv' => 'MM',
+                'ru' => 'ММ',
+            ],
             'staff-menu-back-to-top' => [
                 'en' => 'Back to top',
                 'lv' => 'Uz augšu',
@@ -5039,7 +4959,7 @@ class DefaultTranslationsSeeder extends Seeder
             ],
             'table-occupied' => [
                 'en' => 'This table is already taken by another guest',
-                'lv' => 'Šo galdu jau aizņēmis cits viesis',
+                'lv' => 'Šo galdu jau ir aizņēmis cits viesis',
                 'ru' => 'Этот стол уже занят другим клиентом',
             ],
             'table-no-open-order' => [
@@ -5057,73 +4977,8 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Pozīcija pievienota pasūtījumam',
                 'ru' => 'Позиция добавлена в заказ',
             ],
-            'log-action-created' => [
-                'en' => 'Created',
-                'lv' => 'Izveidots',
-                'ru' => 'Создано',
-            ],
-            'log-action-updated' => [
-                'en' => 'Updated',
-                'lv' => 'Atjaunināts',
-                'ru' => 'Обновлено',
-            ],
-            'log-action-deleted' => [
-                'en' => 'Deleted',
-                'lv' => 'Dzēsts',
-                'ru' => 'Удалено',
-            ],
-            'log-model-order' => [
-                'en' => 'Order',
-                'lv' => 'Pasūtījums',
-                'ru' => 'Заказ',
-            ],
-            'log-model-menu-item' => [
-                'en' => 'Menu item',
-                'lv' => 'Ēdiens',
-                'ru' => 'Блюдо',
-            ],
-            'log-model-menu-category' => [
-                'en' => 'Menu category',
-                'lv' => 'Ēdienkartes kategorija',
-                'ru' => 'Категория меню',
-            ],
-            'log-model-reservation' => [
-                'en' => 'Reservation',
-                'lv' => 'Rezervācija',
-                'ru' => 'Бронирование',
-            ],
-            'log-model-table' => [
-                'en' => 'Table',
-                'lv' => 'Galds',
-                'ru' => 'Столик',
-            ],
-            'log-model-user' => [
-                'en' => 'User',
-                'lv' => 'Lietotājs',
-                'ru' => 'Пользователь',
-            ],
-            'log-model-promo-code' => [
-                'en' => 'Promo code',
-                'lv' => 'Promo kods',
-                'ru' => 'Промокод',
-            ],
 
             // Navigation
-            'nav-dashboard' => [
-                'en' => 'Dashboard',
-                'lv' => 'Panelis',
-                'ru' => 'Панель управления',
-            ],
-            'nav-profile' => [
-                'en' => 'Profile',
-                'lv' => 'Profils',
-                'ru' => 'Профиль',
-            ],
-            'nav-logout' => [
-                'en' => 'Log Out',
-                'lv' => 'Iziet',
-                'ru' => 'Выйти',
-            ],
 
             // Confirm password page
             'confirm-password-title' => [
@@ -5138,28 +4993,8 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             // Profile email verification
-            'profile-email-unverified' => [
-                'en' => 'Your email address is unverified.',
-                'lv' => 'Jūsu e-pasta adrese nav apstiprināta.',
-                'ru' => 'Ваш email адрес не подтверждён.',
-            ],
-            'profile-resend-verification' => [
-                'en' => 'Click here to re-send the verification email.',
-                'lv' => 'Noklikšķiniet šeit, lai atkārtoti nosūtītu verifikācijas e-pastu.',
-                'ru' => 'Нажмите здесь, чтобы повторно отправить письмо с подтверждением.',
-            ],
-            'profile-verification-link-sent' => [
-                'en' => 'A new verification link has been sent to your email address.',
-                'lv' => 'Jauna verifikācijas saite ir nosūtīta uz jūsu e-pasta adresi.',
-                'ru' => 'Новая ссылка для подтверждения отправлена на ваш email адрес.',
-            ],
 
             // Menu - add to cart (for QR table order)
-            'add-to-cart' => [
-                'en' => 'Add to cart',
-                'lv' => 'Pievienot grozam',
-                'ru' => 'Добавить',
-            ],
 
             // Admin translations
             'admin-translations-empty-value' => [
