@@ -263,7 +263,7 @@
                             inputmode="numeric"
                             maxlength="2"
                             value="{{ old('time') ? explode(':', old('time'))[0] : '19' }}"
-                            placeholder="ЧЧ"
+                            placeholder="{{ __('common-hours-placeholder') }}"
                             class="w-8 bg-transparent border-0 p-0
                                 text-xs text-ink text-center leading-none
                                 focus:outline-none focus:ring-0 appearance-none"
@@ -277,7 +277,7 @@
                             inputmode="numeric"
                             maxlength="2"
                             value="{{ old('time') ? explode(':', old('time'))[1] : '00' }}"
-                            placeholder="ММ"
+                            placeholder="{{ __('common-minutes-placeholder') }}"
                             class="w-8 bg-transparent border-0 p-0
                                 text-xs text-ink text-center leading-none
                                 focus:outline-none focus:ring-0 appearance-none"
