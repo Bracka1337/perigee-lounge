@@ -123,7 +123,7 @@ test('cart page has balanced markup', function (bool $withItem) {
     expect(substr_count($html, '<div'))->toBe(substr_count($html, '</div>'));
 })->with(['empty' => false, 'with an item' => true]);
 
-test('invalid item ids in cart urls return 404', function (string $id) {
-    $this->post("/en/menu/table-z4/cart/{$id}", ['qty' => 1])->assertNotFound();
-    $this->delete("/en/menu/table-z4/cart/{$id}")->assertNotFound();
+test('invalid item ids in cart urls are rejected without a server error', function (string $id) {
+    $this->post("/en/menu/table-z4/cart/{$id}", ['qty' => 1])->assertMethodNotAllowed();
+    $this->delete("/en/menu/table-z4/cart/{$id}")->assertMethodNotAllowed();
 })->with(['text' => 'abc', 'too long' => '99999999999999999999']);
