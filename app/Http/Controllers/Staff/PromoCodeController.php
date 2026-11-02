@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class PromoCodeController extends Controller
 {
@@ -41,7 +42,7 @@ class PromoCodeController extends Controller
             'public_code' => ['nullable', 'string', 'max:50', 'unique:promo_codes,public_code'],
             'description' => ['nullable', 'string'],
             'discount_type' => ['required', 'in:percent,fixed'],
-            'discount_value' => ['required', 'numeric', 'min:0'],
+            'discount_value' => ['required', 'numeric', 'min:0', Rule::when($request->input('discount_type') === 'percent', ['max:100'])],
             'max_uses' => ['nullable', 'integer', 'min:1'],
             'valid_from' => ['nullable', 'date'],
             'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
@@ -106,7 +107,7 @@ class PromoCodeController extends Controller
             'public_code' => ['nullable', 'string', 'max:50', 'unique:promo_codes,public_code,'.$promoCode->id],
             'description' => ['nullable', 'string'],
             'discount_type' => ['required', 'in:percent,fixed'],
-            'discount_value' => ['required', 'numeric', 'min:0'],
+            'discount_value' => ['required', 'numeric', 'min:0', Rule::when($request->input('discount_type') === 'percent', ['max:100'])],
             'max_uses' => ['nullable', 'integer', 'min:1'],
             'valid_from' => ['nullable', 'date'],
             'valid_until' => ['nullable', 'date', 'after_or_equal:valid_from'],
