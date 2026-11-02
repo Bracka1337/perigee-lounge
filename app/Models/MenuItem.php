@@ -52,6 +52,11 @@ class MenuItem extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function getFormattedPriceAttribute(): string
+    {
+        return number_format((float) $this->price, 2, '.', ' ').' €';
+    }
+
     public function getImageUrlAttribute(): ?string
     {
         $path = $this->image_path ?? $this->image ?? null;
