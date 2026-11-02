@@ -137,5 +137,6 @@ $locale = app()->getLocale();
                 </a>
             </div>
         @endif
-
+    </div>
+</div>
 @endsection
