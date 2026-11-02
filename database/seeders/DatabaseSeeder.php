@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,12 +18,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $this->call([
+        DB::transaction(fn () => $this->call([
             AdminUserSeeder::class,
             DefaultTranslationsSeeder::class,
             MenuSeeder::class,
             OpeningHoursSeeder::class,
             TableSeeder::class,
-        ]);
+        ]));
     }
 }

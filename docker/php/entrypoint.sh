@@ -30,12 +30,12 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
   fi
   php artisan storage:link || true
   php artisan migrate --force || true
-  # Seed only until seeding has finished once, so restarts keep passwords and edits.
-  # Tables are seeded last, so a count of 0 also retries an interrupted first seed.
-  table_count="$(php artisan tinker --execute='echo App\Models\Table::count();' 2>&1 | tail -n 1)"
-  case "$table_count" in
+  # Seed only a database with no users, so restarts keep passwords and edits.
+  # DatabaseSeeder runs in one transaction, so an interrupted seed leaves no users and retries.
+  user_count="$(php artisan tinker --execute='echo App\Models\User::count();' 2>&1 | tail -n 1)"
+  case "$user_count" in
     0) php artisan db:seed --force || true ;;
-    ''|*[!0-9]*) echo "Skipping seed, could not read the table count: $table_count" ;;
+    ''|*[!0-9]*) echo "Skipping seed, could not read the user count: $user_count" ;;
   esac
 fi
 
