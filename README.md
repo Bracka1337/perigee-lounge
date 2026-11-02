@@ -1,59 +1,264 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Perigeebar (Laravel) — Deploy & Run Guide (Docker)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## 1) Установка Docker и Docker Compose
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1.2 Установить Docker (официально)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
 
-## Learning Laravel
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+### 1.2 Проверка
 
-## Laravel Sponsors
+```bash
+docker version
+docker compose version
+```
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 2) Клонирование проекта
 
-### Premium Partners
+### 2.1 Создать директорию и выдать права
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+mkdir -p /var/www/perigee-lounge.example/public_html
+cd /var/www/perigee-lounge.example/public_html
+```
+### 2.2 Клонировать репозиторий
+```bash
+git clone <repository-url> .
+```
+---
 
-## Contributing
+## 3) Подготовка `.env`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3.1 Скопировать `.env`
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3.2 Рекомендуемые значения `.env` для Docker
 
-## Security Vulnerabilities
+Открой `.env` и поставь (минимум):
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
 
-## License
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=perigee
+DB_USERNAME=perigee
+DB_PASSWORD=perigee_pass //поменять тут и в докере
+```
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 5) Первый запуск (с нуля)
+
+### 5.1 Поднять контейнеры и собрать образы
+
+```bash
+docker compose up -d --build
+```
+
+### 5.1 Опустить контейнеры
+
+```bash
+docker compose down -v
+```
+
+### 5.2 Собрать фронт (Vite)
+
+```bash
+docker compose run --rm node sh -lc "npm ci --include=dev && npm run build"
+
+```
+
+### 5.3 Проверить статус контейнеров
+
+```bash
+docker compose ps
+```
+
+### 5.4 Открыть сайт
+
+* Если серверный IP:
+  `http://SERVER_IP:8080`
+
+---
+
+
+
+## 7) Команды для очистки кешей (Laravel)
+
+### Полная чистка кешей (рекомендуется после правок `.env`, конфигов, роутов)
+
+```bash
+docker compose exec app php artisan cache:clear
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan route:clear
+docker compose exec app php artisan view:clear
+```
+
+### Сборка кешей (ускорение)
+
+```bash
+docker compose exec app php artisan config:cache
+docker compose exec app php artisan route:cache
+docker compose exec app php artisan view:cache
+```
+---
+
+## 8) Логи Laravel (500 ошибки, mail log, etc.)
+
+### 8.1 Смотреть логи внутри контейнера
+
+```bash
+docker logs perigee_app
+```
+
+### 8.2 Смотреть логи внутри контейнера в реальном времени
+
+```bash
+docker logs -f perigee_app
+
+```
+
+---
+
+## 9) Команды для пересборки / обновления проекта
+
+### 9.1 Обновить код из Git
+
+```bash
+git pull
+```
+
+### 9.2 Пересобрать образы и перезапустить
+
+```bash
+docker compose down
+docker compose up -d --build
+```
+
+### 9.3 Переустановить PHP зависимости (composer)
+
+```bash
+docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader
+```
+
+### 9.4 Обновить фронт (Vite)
+
+```bash
+docker compose run --rm node sh -lc "npm run build"
+```
+
+### 9.5 Прогнать миграции (если появились новые)
+
+```bash
+docker compose exec app php artisan migrate --force
+```
+
+### 9.6 Очистить кеши после деплоя
+
+```bash
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan cache:clear
+docker compose exec app php artisan view:clear
+docker compose exec app php artisan route:clear
+```
+
+---
+
+## 10) Полный RESET (всё с нуля, включая базу)
+
+⚠️ Это удалит базу данных и все данные (volumes).
+
+```bash
+docker compose down -v
+docker compose up -d --build
+docker compose run --rm node
+```
+
+---
+
+## 11) Быстрые проверки и диагностика
+
+### 11.1 Проверить nginx конфиг
+
+```bash
+docker compose exec nginx nginx -t
+```
+
+### 11.2 Проверить, что php-fpm слушает 9000
+
+```bash
+docker compose exec app sh -lc "ss -lntp | grep 9000 || true"
+```
+
+### 11.3 Проверить доступность сайта с сервера
+
+```bash
+curl -I http://127.0.0.1:8080
+```
+
+---
+
+## 12) Команды уборки Docker (если забился диск)
+
+### Удалить неиспользуемые образы/контейнеры/сети
+
+```bash
+docker system prune -af
+```
+
+### Удалить неиспользуемые volumes (ОСТОРОЖНО — может удалить нужные)
+
+```bash
+docker volume prune -f
+```
+
+---
+
+## 13) “Daily” команда обслуживания (типовой деплой чеклист)
+
+```bash
+cd /var/www/perigee-lounge.example/public_html \
+&& git pull \
+&& docker compose up -d --build \
+&& docker compose run --rm node \
+&& docker compose exec app composer install --no-interaction --prefer-dist --optimize-autoloader \
+&& docker compose exec app php artisan migrate --force \
+&& docker compose exec app php artisan config:clear \
+&& docker compose exec app php artisan cache:clear \
+&& docker compose exec app php artisan view:clear \
+&& docker compose exec app php artisan route:clear
+```
+
+---
+
+## 14) Где меняется порт
+
+Если хочешь другой порт (например 80), поменяй в `docker-compose.yml` у nginx:
+
+```yaml
+ports:
+  - "80:80"
+```

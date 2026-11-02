@@ -1,0 +1,188 @@
+@extends('layouts.admin')
+
+@section('content')
+    <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="logo-font text-2xl md:text-3xl lg:text-4xl mb-2 drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
+                {{ __('admin-translations-title') }}
+            </h1>
+            <p class="text-xs md:text-sm text-white/70">
+                {{ __('admin-translations-subtitle') }}
+            </p>
+        </div>
+
+        <div class="flex flex-1 md:flex-none items-stretch md:items-center gap-3 flex-col md:flex-row">
+            <form method="GET" action="{{ route('admin.translations.index') }}"
+                  class="flex items-center gap-2 w-full md:w-auto">
+                <input type="text"
+                       name="q"
+                       value="{{ request('q') }}"
+                       placeholder="{{ __('admin-translations-search-placeholder') }}"
+                       class="bg-black/60 border border-white/20 rounded-full px-3 py-1.5 text-xs text-white w-full md:w-56">
+            </form>
+
+            <a href="{{ route('admin.translations.create') }}"
+               class="inline-flex justify-center items-center gap-2 px-4 py-2 rounded-full border border-red-500/70
+                      bg-red-600/80 text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-white
+                      shadow-[0_0_12px_rgba(248,113,113,0.7)] w-full md:w-auto
+                      hover:bg-red-500 transition">
+                <x-icon category="Edit" name="Add_Plus_Circle" class="w-5 h-5 shrink-0"/>
+                <span>{{ __('admin-translations-create-button') }}</span>
+            </a>
+
+        </div>
+    </div>
+
+    @if (session('status'))
+        <div class="mb-6 bg-emerald-950/60 border border-emerald-500/70 text-emerald-100 text-xs md:text-sm rounded-xl px-4 py-3">
+            <p class="font-semibold mb-1 text-[11px] tracking-wide uppercase text-emerald-200">
+                {{ __('admin-translations-alert-success-title') }}
+            </p>
+            <p>{{ session('status') }}</p>
+        </div>
+    @endif
+
+    <div id="translations-list">
+        @include('admin.translations.partials.list', [
+            'translations' => $translations,
+            'locales' => $locales,
+            'default' => $default
+        ])
+    </div>
+
+    <div id="deleteTranslationModal"
+         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
+        <div class="max-w-md w-full mx-4 bg-black/95 border border-red-500/50 rounded-2xl shadow-[0_0_40px_rgba(248,113,113,0.5)] p-6">
+            <div class="mb-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full border border-red-500/70 flex items-center justify-center">
+                    <span class="text-red-400 text-lg">!</span>
+                </div>
+                <h2 class="text-base md:text-lg font-semibold text-white tracking-wide">
+                    {{ __('admin-translations-delete-modal-title') ?? 'Confirm deletion' }}
+                </h2>
+            </div>
+
+            <p class="text-sm text-white/70 mb-4">
+                {{ __('admin-translations-delete-modal-text-prefix') ?? 'Delete translation key' }}
+                <span id="deleteTranslationKey" class="font-semibold text-white break-all"></span>?
+            </p>
+            <p class="text-xs text-white/40 mb-5">
+                {{ __('admin-translations-delete-modal-text-note') ?? 'This action cannot be undone.' }}
+            </p>
+
+            <div class="flex flex-wrap justify-end gap-3">
+                <button type="button"
+                        id="deleteTranslationCancelBtn"
+                        class="px-5 py-2 rounded-full border border-white/30
+                               text-[11px] tracking-[0.22em] uppercase text-white/70
+                               hover:text-white hover:border-white/70 hover:bg-white/5 transition">
+                    {{ __('admin-translations-delete-modal-cancel') ?? 'Cancel' }}
+                </button>
+                <button type="button"
+                        id="deleteTranslationConfirmBtn"
+                        class="px-5 py-2 rounded-full border border-red-500/80 bg-red-600/90
+                               text-[11px] tracking-[0.22em] uppercase text-white
+                               shadow-[0_0_14px_rgba(248,113,113,0.7)]
+                               hover:bg-red-500 transition">
+                    {{ __('admin-translations-delete-modal-confirm') ?? 'Delete' }}
+                </button>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.querySelector('input[name="q"]');
+            const listContainer = document.getElementById('translations-list');
+            const modal = document.getElementById('deleteTranslationModal');
+            const keySpan = document.getElementById('deleteTranslationKey');
+            const cancelBtn = document.getElementById('deleteTranslationCancelBtn');
+            const confirmBtn = document.getElementById('deleteTranslationConfirmBtn');
+            if (!input || !listContainer) return;
+
+            let timer = null;
+            let currentFormId = null;
+
+            const openModal = (key, formId) => {
+                keySpan.textContent = key || '';
+                currentFormId = formId;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            };
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                currentFormId = null;
+            };
+
+            const bindDeleteButtons = () => {
+                listContainer.querySelectorAll('.js-delete-translation-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const key = btn.getAttribute('data-key');
+                        const formId = btn.getAttribute('data-form-id');
+                        openModal(key, formId);
+                    });
+                });
+            };
+
+            bindDeleteButtons();
+
+            function fetchList(url) {
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(r => r.text())
+                .then(html => {
+                    listContainer.innerHTML = html;
+                    bindDeleteButtons();
+                })
+                .catch(console.error);
+            }
+
+            function performSearch() {
+                const q = input.value || '';
+                const url = new URL(@json(route('admin.translations.index')), window.location.origin);
+
+                if (q.length > 0) url.searchParams.set('q', q);
+                else url.searchParams.delete('q');
+
+                fetchList(url.toString());
+            }
+
+            input.addEventListener('input', () => {
+                clearTimeout(timer);
+                timer = setTimeout(performSearch, 250);
+            });
+
+            // Клики по пагинации — тоже через fetch (без перезагрузки)
+            listContainer.addEventListener('click', (e) => {
+                const a = e.target.closest('a');
+                if (!a) return;
+
+                const nav = a.closest('nav[aria-label="Pagination Navigation"]');
+                if (!nav) return;
+
+                e.preventDefault();
+                fetchList(a.href);
+            });
+
+            cancelBtn?.addEventListener('click', closeModal);
+
+            modal?.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+
+            confirmBtn?.addEventListener('click', () => {
+                if (!currentFormId) return;
+                const form = document.getElementById(currentFormId);
+                if (form) form.submit();
+            });
+        });
+    </script>
+@endpush

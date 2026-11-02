@@ -1,2 +1,6 @@
+# Временно запрещаем индексацию всего сайта
 User-agent: *
-Disallow:
+Disallow: /
+
+# Sitemap (отключен)
+# Sitemap: https://perigee-lounge.example/sitemap.xml
