@@ -84,7 +84,7 @@ class ClientTableOrderController extends Controller
         }
 
         $data = $request->validate([
-            'menu_item_id' => ['required', 'exists:menu_items,id'],
+            'menu_item_id' => ['required', 'integer', 'exists:menu_items,id'],
             'quantity' => ['nullable', 'integer', 'min:1', 'max:99'],
         ]);
 
@@ -124,9 +124,14 @@ class ClientTableOrderController extends Controller
         $cartTotal = 0;
         if (! empty($cart)) {
             $items = MenuItem::whereIn('id', array_keys($cart))->get()->keyBy('id');
+
+            // Items deleted from the menu after being added can't be shown or ordered.
+            $cart = array_intersect_key($cart, $items->all());
+            session()->put($cartKey, $cart);
+
             foreach ($cart as $menuItemId => $qty) {
                 $menuItem = $items->get((int) $menuItemId);
-                $sum = ($menuItem?->price ?? 0) * (int) $qty;
+                $sum = $menuItem->price * (int) $qty;
                 $cartTotal += $sum;
                 $cartItems[(int) $menuItemId] = [
                     'item' => $menuItem,
@@ -181,10 +186,10 @@ class ClientTableOrderController extends Controller
                 ->with('error', 'Корзина пуста');
         }
 
-        $orderableIds = MenuItem::with('category')->findMany(array_keys($cart))
+        $orderableItems = MenuItem::with('category')->findMany(array_keys($cart))
             ->filter(fn (MenuItem $item) => $item->isOrderable())
-            ->modelKeys();
-        $orderableCart = array_intersect_key($cart, array_flip($orderableIds));
+            ->keyBy('id');
+        $orderableCart = array_intersect_key($cart, $orderableItems->all());
 
         if (count($orderableCart) !== count($cart)) {
             session()->put($cartKey, $orderableCart);
@@ -217,10 +222,7 @@ class ClientTableOrderController extends Controller
 
         $newItemIds = [];
         foreach ($cart as $menuItemId => $qty) {
-            $menuItem = MenuItem::find($menuItemId);
-            if ($menuItem === null) {
-                continue;
-            }
+            $menuItem = $orderableItems->get($menuItemId);
             // Always create a new item record (don't sum with existing)
             $newItem = OrderItem::create([
                 'order_id' => $order->id,
@@ -276,14 +278,10 @@ class ClientTableOrderController extends Controller
             'qty' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
 
-        $qty = (int) $data['qty'];
-        if ($qty > 0) {
-            $cart[$itemId] = $qty;
-        } else {
-            unset($cart[$itemId]);
+        if (array_key_exists($itemId, $cart)) {
+            $cart[$itemId] = (int) $data['qty'];
+            session()->put($cartKey, $cart);
         }
-
-        session()->put($cartKey, $cart);
 
         return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code]);
     }
