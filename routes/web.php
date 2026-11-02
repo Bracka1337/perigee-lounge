@@ -94,8 +94,8 @@ Route::group([
 
     Route::middleware(['auth', 'check.table.binding'])->group(function () {
         Route::post('/menu/table-{code}/cart', [ClientTableOrderController::class, 'addToCart'])->name('client.table.cart.add');
-        Route::post('/menu/table-{code}/cart/{itemId}', [ClientTableOrderController::class, 'updateCart'])->name('client.table.cart.update');
-        Route::delete('/menu/table-{code}/cart/{itemId}', [ClientTableOrderController::class, 'removeFromCart'])->name('client.table.cart.remove');
+        Route::post('/menu/table-{code}/cart/{itemId}', [ClientTableOrderController::class, 'updateCart'])->where('itemId', '[0-9]{1,9}')->name('client.table.cart.update');
+        Route::delete('/menu/table-{code}/cart/{itemId}', [ClientTableOrderController::class, 'removeFromCart'])->where('itemId', '[0-9]{1,9}')->name('client.table.cart.remove');
         Route::post('/menu/table-{code}/confirm', [ClientTableOrderController::class, 'confirm'])->name('client.table.cart.confirm');
     });
 
