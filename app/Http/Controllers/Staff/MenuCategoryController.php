@@ -28,22 +28,22 @@ class MenuCategoryController extends Controller
         $default = config('site.default_locale', $locales[0] ?? 'ru');
 
         $data = $request->validate([
-            'name'                   => ['required', 'array'],
-            "name.$default"          => ['required', 'string', 'max:255'],
-            'name.*'                 => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'array'],
+            "name.$default" => ['required', 'string', 'max:255'],
+            'name.*' => ['nullable', 'string', 'max:255'],
 
-            'description'            => ['nullable', 'array'],
-            'description.*'          => ['nullable', 'string'],
+            'description' => ['nullable', 'array'],
+            'description.*' => ['nullable', 'string'],
 
-            'is_special'             => ['nullable', 'boolean'],
-            'is_available'           => ['nullable', 'boolean'],
+            'is_special' => ['nullable', 'boolean'],
+            'is_available' => ['nullable', 'boolean'],
         ]);
 
         $categoryData = [
-            'name'        => $data['name'],
+            'name' => $data['name'],
             'description' => $data['description'] ?? [],
-            'is_special'  => $request->boolean('is_special'),
-            'is_available'=> $request->has('is_available') ? $request->boolean('is_available') : true,
+            'is_special' => $request->boolean('is_special'),
+            'is_available' => $request->has('is_available') ? $request->boolean('is_available') : true,
         ];
 
         $maxOrder = MenuCategory::max('sort_order') ?? 0;
@@ -66,22 +66,22 @@ class MenuCategoryController extends Controller
         $default = config('site.default_locale', $locales[0] ?? 'ru');
 
         $data = $request->validate([
-            'name'                   => ['required', 'array'],
-            "name.$default"          => ['required', 'string', 'max:255'],
-            'name.*'                 => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'array'],
+            "name.$default" => ['required', 'string', 'max:255'],
+            'name.*' => ['nullable', 'string', 'max:255'],
 
-            'description'            => ['nullable', 'array'],
-            'description.*'          => ['nullable', 'string'],
+            'description' => ['nullable', 'array'],
+            'description.*' => ['nullable', 'string'],
 
-            'is_special'             => ['nullable', 'boolean'],
-            'is_available'           => ['nullable', 'boolean'],
+            'is_special' => ['nullable', 'boolean'],
+            'is_available' => ['nullable', 'boolean'],
         ]);
 
         $categoryData = [
-            'name'        => $data['name'],
+            'name' => $data['name'],
             'description' => $data['description'] ?? [],
-            'is_special'  => $request->boolean('is_special'),
-            'is_available'=> $request->boolean('is_available'),
+            'is_special' => $request->boolean('is_special'),
+            'is_available' => $request->boolean('is_available'),
         ];
 
         $menuCategory->update($categoryData);

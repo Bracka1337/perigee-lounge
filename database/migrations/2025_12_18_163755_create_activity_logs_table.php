@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->timestamp('created_at');
-            
+
             $table->index(['model_type', 'model_id']);
             $table->index('created_at');
         });

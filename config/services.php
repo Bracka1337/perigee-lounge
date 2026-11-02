@@ -41,5 +41,4 @@ return [
         'orders_chat_id' => env('TELEGRAM_ORDERS_CHAT_ID'),
     ],
 
-
 ];

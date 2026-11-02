@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('menu_categories', function (Blueprint $table) {
@@ -20,7 +21,7 @@ return new class extends Migration {
             DB::table('menu_categories')
                 ->where('id', $cat->id)
                 ->update([
-                    'name_json'        => json_encode([$default => $cat->name]),
+                    'name_json' => json_encode([$default => $cat->name]),
                     'description_json' => $cat->description
                         ? json_encode([$default => $cat->description])
                         : null,

@@ -18,8 +18,8 @@ class Translation extends Model
 
     public static function translate(string $key, ?string $default = null, ?string $locale = null): string
     {
-        $locale        = $locale ?? app()->getLocale();
-        $locales       = config('site.locales', ['ru']);
+        $locale = $locale ?? app()->getLocale();
+        $locales = config('site.locales', ['ru']);
         $defaultLocale = config('site.default_locale', $locales[0] ?? 'ru');
 
         $item = Cache::rememberForever("translation.{$key}", function () use ($key) {
@@ -45,8 +45,8 @@ class Translation extends Model
 
     public static function getValue(string $key, ?string $locale = null): ?string
     {
-        $locale        = $locale ?? app()->getLocale();
-        $locales       = config('site.locales', ['ru']);
+        $locale = $locale ?? app()->getLocale();
+        $locales = config('site.locales', ['ru']);
         $defaultLocale = config('site.default_locale', $locales[0] ?? 'ru');
 
         $item = Cache::rememberForever("translation.{$key}", function () use ($key) {
@@ -63,5 +63,4 @@ class Translation extends Model
             ?? $values[$defaultLocale]
             ?? null;
     }
-
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
 {
@@ -52,10 +52,11 @@ class ActivityLogController extends Controller
                     'App\\Models\\User' => 'Пользователь',
                     'App\\Models\\PromoCode' => 'Промокод',
                 ];
+
                 return [$type => $modelMap[$type] ?? class_basename($type)];
             });
 
-        $logsData = $logs->map(function($log) {
+        $logsData = $logs->map(function ($log) {
             return [
                 'id' => $log->id,
                 'action' => $log->action,

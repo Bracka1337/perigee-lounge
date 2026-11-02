@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\PromoCode;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\PromoCode;
 
 class PromoCodeController extends Controller
 {
@@ -38,7 +38,7 @@ class PromoCodeController extends Controller
             return back()->with('promo_error', __('client-promo-not-found'));
         }
 
-        if (!$promo->isClaimable()) {
+        if (! $promo->isClaimable()) {
             return back()->with('promo_error', __('client-promo-not-claimable'));
         }
 
@@ -51,7 +51,7 @@ class PromoCodeController extends Controller
         // separately via pivot `is_redeemed`.
         $success = $promo->claimForUser($user, true);
 
-        if (!$success) {
+        if (! $success) {
             return back()->with('promo_error', __('client-promo-not-claimable'));
         }
 

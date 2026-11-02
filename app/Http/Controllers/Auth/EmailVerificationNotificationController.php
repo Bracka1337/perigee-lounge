@@ -20,9 +20,10 @@ class EmailVerificationNotificationController extends Controller
 
         try {
             $request->user()->sendEmailVerificationNotification();
+
             return back()->with('status', 'verification-link-sent');
         } catch (\Exception $e) {
-            Log::error('Email verification resend failed for user: ' . $request->user()->id, [
+            Log::error('Email verification resend failed for user: '.$request->user()->id, [
                 'email' => $request->user()->email,
                 'error' => $e->getMessage(),
             ]);

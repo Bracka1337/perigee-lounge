@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Database\Factories\OpeningHourFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
- * @use HasFactory<\Database\Factories\OpeningHourFactory>
+ * @use HasFactory<OpeningHourFactory>
  */
 class OpeningHour extends Model
 {

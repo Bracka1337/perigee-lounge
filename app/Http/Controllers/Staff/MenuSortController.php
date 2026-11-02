@@ -16,7 +16,7 @@ class MenuSortController extends Controller
         $categories = $request->input('categories', []);
 
         foreach ($categories as $catIndex => $categoryData) {
-            if (!isset($categoryData['id']) || $categoryData['id'] === '') {
+            if (! isset($categoryData['id']) || $categoryData['id'] === '') {
                 continue;
             }
 

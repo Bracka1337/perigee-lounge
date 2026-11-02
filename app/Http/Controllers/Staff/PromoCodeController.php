@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use App\Models\PromoCode;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\PromoCode;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class PromoCodeController extends Controller
 {
@@ -103,7 +103,7 @@ class PromoCodeController extends Controller
     public function update(Request $request, string $locale, PromoCode $promoCode): RedirectResponse
     {
         $data = $request->validate([
-            'public_code' => ['nullable', 'string', 'max:50', 'unique:promo_codes,public_code,' . $promoCode->id],
+            'public_code' => ['nullable', 'string', 'max:50', 'unique:promo_codes,public_code,'.$promoCode->id],
             'description' => ['nullable', 'string'],
             'discount_type' => ['required', 'in:percent,fixed'],
             'discount_value' => ['required', 'numeric', 'min:0'],

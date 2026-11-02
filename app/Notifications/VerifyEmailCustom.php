@@ -29,7 +29,7 @@ class VerifyEmailCustom extends VerifyEmail
     {
         $locale = $notifiable->preferredLocale() ?? app()->getLocale();
         app()->setLocale($locale);
-        
+
         $url = $this->verificationUrl($notifiable);
 
         return (new MailMessage)

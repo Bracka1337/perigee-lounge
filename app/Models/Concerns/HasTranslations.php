@@ -8,13 +8,13 @@ trait HasTranslations
     {
         $value = $this->{$field} ?? null;
 
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             return $value;
         }
 
-        $locale   = app()->getLocale();
+        $locale = app()->getLocale();
         $fallback = config('app.fallback_locale');
-        $default  = config('site.default_locale', $fallback);
+        $default = config('site.default_locale', $fallback);
 
         return $value[$locale]
             ?? (($fallback !== null && $fallback !== '' && isset($value[$fallback])) ? $value[$fallback] : null)

@@ -15,7 +15,7 @@ class MenuItemController extends Controller
     public function create(Request $request): View
     {
         $categoryId = $request->get('category_id');
-        $category   = MenuCategory::findOrFail($categoryId);
+        $category = MenuCategory::findOrFail($categoryId);
 
         return view('staff.menu.create-item', compact('category'));
     }
@@ -26,30 +26,30 @@ class MenuItemController extends Controller
         $default = config('site.default_locale', $locales[0] ?? 'ru');
 
         $data = $request->validate([
-            'menu_category_id'       => ['required', 'exists:menu_categories,id'],
+            'menu_category_id' => ['required', 'exists:menu_categories,id'],
 
-            'name'                   => ['required', 'array'],
-            "name.$default"          => ['required', 'string', 'max:255'],
-            'name.*'                 => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'array'],
+            "name.$default" => ['required', 'string', 'max:255'],
+            'name.*' => ['nullable', 'string', 'max:255'],
 
-            'description'            => ['nullable', 'array'],
-            'description.*'          => ['nullable', 'string'],
+            'description' => ['nullable', 'array'],
+            'description.*' => ['nullable', 'string'],
 
-            'allergens'              => ['nullable', 'array'],
-            'allergens.*'            => ['nullable', 'string'],
+            'allergens' => ['nullable', 'array'],
+            'allergens.*' => ['nullable', 'string'],
 
-            'price'                  => ['required', 'numeric', 'min:0'],
-            'image'                  => ['nullable', 'image', 'max:2048'],
-            'is_available'           => ['nullable', 'boolean'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'is_available' => ['nullable', 'boolean'],
         ]);
 
         $itemData = [
             'menu_category_id' => $data['menu_category_id'],
-            'name'             => $data['name'],
-            'description'      => $data['description'] ?? [],
-            'allergens'        => $data['allergens'] ?? [],
-            'price'            => $data['price'],
-            'is_available'     => $request->has('is_available') ? $request->boolean('is_available') : true,
+            'name' => $data['name'],
+            'description' => $data['description'] ?? [],
+            'allergens' => $data['allergens'] ?? [],
+            'price' => $data['price'],
+            'is_available' => $request->has('is_available') ? $request->boolean('is_available') : true,
         ];
 
         if ($request->hasFile('image')) {
@@ -78,30 +78,30 @@ class MenuItemController extends Controller
         $default = config('site.default_locale', $locales[0] ?? 'ru');
 
         $data = $request->validate([
-            'menu_category_id'       => ['required', 'exists:menu_categories,id'],
+            'menu_category_id' => ['required', 'exists:menu_categories,id'],
 
-            'name'                   => ['required', 'array'],
-            "name.$default"          => ['required', 'string', 'max:255'],
-            'name.*'                 => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'array'],
+            "name.$default" => ['required', 'string', 'max:255'],
+            'name.*' => ['nullable', 'string', 'max:255'],
 
-            'description'            => ['nullable', 'array'],
-            'description.*'          => ['nullable', 'string'],
+            'description' => ['nullable', 'array'],
+            'description.*' => ['nullable', 'string'],
 
-            'allergens'              => ['nullable', 'array'],
-            'allergens.*'            => ['nullable', 'string'],
+            'allergens' => ['nullable', 'array'],
+            'allergens.*' => ['nullable', 'string'],
 
-            'price'                  => ['required', 'numeric', 'min:0'],
-            'image'                  => ['nullable', 'image', 'max:2048'],
-            'is_available'           => ['nullable', 'boolean'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
+            'is_available' => ['nullable', 'boolean'],
         ]);
 
         $itemData = [
             'menu_category_id' => $data['menu_category_id'],
-            'name'             => $data['name'],
-            'description'      => $data['description'] ?? [],
-            'allergens'        => $data['allergens'] ?? [],
-            'price'            => $data['price'],
-            'is_available'     => $request->boolean('is_available'),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? [],
+            'allergens' => $data['allergens'] ?? [],
+            'price' => $data['price'],
+            'is_available' => $request->boolean('is_available'),
         ];
 
         if ($request->hasFile('image')) {

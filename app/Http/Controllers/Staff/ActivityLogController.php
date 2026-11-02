@@ -61,6 +61,7 @@ class ActivityLogController extends Controller
                     'App\\Models\\User' => 'Пользователь',
                     'App\\Models\\PromoCode' => 'Промокод',
                 ];
+
                 return [$type => $modelMap[$type] ?? class_basename($type)];
             });
 

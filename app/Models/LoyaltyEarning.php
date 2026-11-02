@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Database\Factories\LoyaltyEarningFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @use HasFactory<\Database\Factories\LoyaltyEarningFactory>
+ * @use HasFactory<LoyaltyEarningFactory>
  */
 class LoyaltyEarning extends Model
 {

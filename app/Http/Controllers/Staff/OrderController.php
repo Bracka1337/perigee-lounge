@@ -3,22 +3,23 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Models\LoyaltyEarning;
+use App\Models\MenuCategory;
+use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PromoCode;
 use App\Models\PromoCodeUsage;
 use App\Models\Reservation;
 use App\Models\Table;
-use App\Models\MenuItem;
 use App\Models\User;
-use App\Models\LoyaltyEarning;
 use App\Notifications\OrderCompleted;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -65,7 +66,7 @@ class OrderController extends Controller
     public function create(string $locale): View
     {
         $tables = Table::where('is_active', true)->orderBy('id')->get();
-        $menuCategories = \App\Models\MenuCategory::with('items')->ordered()->get();
+        $menuCategories = MenuCategory::with('items')->ordered()->get();
 
         // Получаем зарезервированные столы на сегодня
         $reservedTableIds = Reservation::whereDate('start_at', Carbon::now()->toDateString())
@@ -133,7 +134,7 @@ class OrderController extends Controller
                 'started_at' => $now,
                 'source' => ($todayReservation?->source !== null && $todayReservation?->source !== '') ? $todayReservation->source : 'manual',
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         }
 
@@ -142,8 +143,6 @@ class OrderController extends Controller
 
         return redirect()->route('staff.orders.show', ['locale' => $locale, 'order' => $order]);
     }
-
-
 
     public function fromReservation(string $locale, Reservation $reservation): RedirectResponse
     {
@@ -159,7 +158,7 @@ class OrderController extends Controller
             return redirect()
                 ->route('staff.orders.index', [
                     'locale' => $locale,
-                    'date'   => $reservation->start_at->toDateString(),
+                    'date' => $reservation->start_at->toDateString(),
                 ])
                 ->with('error', __('staff-orders-error-table-reserved'));
         }
@@ -179,7 +178,7 @@ class OrderController extends Controller
                 if ($existingOrder->source === null || $existingOrder->source === '') {
                     $existingOrder->source = ($reservation->source !== null && $reservation->source !== '') ? $reservation->source : 'reservation';
                 }
-                if (is_null($existingOrder->user_id) && !is_null($reservation->user_id)) {
+                if (is_null($existingOrder->user_id) && ! is_null($reservation->user_id)) {
                     $existingOrder->user_id = $reservation->user_id;
                 }
                 $existingOrder->save();
@@ -188,18 +187,18 @@ class OrderController extends Controller
                 return redirect()
                     ->route('staff.orders.index', [
                         'locale' => $locale,
-                        'date'   => $reservation->start_at->toDateString(),
+                        'date' => $reservation->start_at->toDateString(),
                     ])
                     ->with('error', __('staff-orders-error-table-has-open-order'));
             }
         } else {
             $order = Order::create([
                 'reservation_id' => $reservation->id,
-                'table_id'       => $reservation->table_id,
-                'user_id'        => $reservation->user_id,
-                'status'         => Order::STATUS_OPEN,
-                'started_at'     => $now,
-                'source'         => ($reservation->source !== null && $reservation->source !== '') ? $reservation->source : 'reservation',
+                'table_id' => $reservation->table_id,
+                'user_id' => $reservation->user_id,
+                'status' => Order::STATUS_OPEN,
+                'started_at' => $now,
+                'source' => ($reservation->source !== null && $reservation->source !== '') ? $reservation->source : 'reservation',
             ]);
         }
 
@@ -213,14 +212,10 @@ class OrderController extends Controller
             ->with('success', __('staff-orders-order-created'));
     }
 
-
-
-
-
     public function show(string $locale, Order $order): View
     {
         $order->load(['items.menuItem.category', 'table', 'user', 'promoCode']);
-        $menuCategories = \App\Models\MenuCategory::with('items')->ordered()->get();
+        $menuCategories = MenuCategory::with('items')->ordered()->get();
 
         // Calculate loyalty spent (negative LoyaltyEarning entries)
         $loyaltySpent = LoyaltyEarning::where('order_id', $order->id)
@@ -354,7 +349,7 @@ class OrderController extends Controller
             ->orWhere('qr_code', $data['code'])
             ->first();
 
-        if ($promo === null || !$promo->isAvailable()) {
+        if ($promo === null || ! $promo->isAvailable()) {
             return back()->with('error', __('staff-orders-promo-invalid'));
         }
 
@@ -475,15 +470,13 @@ class OrderController extends Controller
             ->with('success', __('staff-orders-completed'));
     }
 
-
-
     public function markServed(string $locale, Order $order, OrderItem $item): RedirectResponse
     {
         if ($order->id !== $item->order_id) {
             abort(404);
         }
 
-        $item->is_served = !$item->is_served;
+        $item->is_served = ! $item->is_served;
         $item->save();
 
         $message = $item->is_served
@@ -510,7 +503,6 @@ class OrderController extends Controller
             ->with('success', __('staff-orders-cancelled'));
     }
 
-
     protected function releaseTableIfFree(Order $order): void
     {
         $table = $order->table;
@@ -531,10 +523,9 @@ class OrderController extends Controller
             ])
             ->exists();
 
-        if (!$hasOtherOpenOrders && !$hasActiveReservations) {
+        if (! $hasOtherOpenOrders && ! $hasActiveReservations) {
             $table->is_occupied = false;
             $table->save();
         }
     }
-
 }

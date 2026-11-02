@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Concerns\LogsActivity;
+use Database\Factories\TableFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @use HasFactory<\Database\Factories\TableFactory>
+ * @use HasFactory<TableFactory>
  */
 class Table extends Model
 {
@@ -33,9 +35,9 @@ class Table extends Model
     /**
      * Получить бронирования
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Reservation, Table>
+     * @return HasMany<Reservation, Table>
      */
-    public function reservations(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }

@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\User;
-use App\Models\MenuCategory;
-use App\Models\MenuItem;
 use App\Models\Concerns\LogsActivity;
+use Database\Factories\PromoCodeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
- * @use HasFactory<\Database\Factories\PromoCodeFactory>
+ * @use HasFactory<PromoCodeFactory>
  */
 class PromoCode extends Model
 {
@@ -79,7 +77,7 @@ class PromoCode extends Model
 
     public function isAvailable(): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -93,7 +91,7 @@ class PromoCode extends Model
             return false;
         }
 
-        if (!is_null($this->max_uses) && $this->used_count >= $this->max_uses) {
+        if (! is_null($this->max_uses) && $this->used_count >= $this->max_uses) {
             return false;
         }
 
@@ -102,7 +100,7 @@ class PromoCode extends Model
 
     public function isClaimable(): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -116,7 +114,7 @@ class PromoCode extends Model
             return false;
         }
 
-        if (!is_null($this->max_uses) && $this->claimed_count >= $this->max_uses) {
+        if (! is_null($this->max_uses) && $this->claimed_count >= $this->max_uses) {
             return false;
         }
 
@@ -130,7 +128,7 @@ class PromoCode extends Model
 
     public function claimForUser(User $user, bool $markUsed = false): bool
     {
-        if (!$this->isClaimable()) {
+        if (! $this->isClaimable()) {
             return false;
         }
 

@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-
 use App\Models\Translation;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TranslationController extends Controller
 {
@@ -65,7 +63,7 @@ class TranslationController extends Controller
         ]);
 
         $translation = Translation::create([
-            'key'   => $data['key'],
+            'key' => $data['key'],
             'value' => $data['value'],
         ]);
 
@@ -108,7 +106,7 @@ class TranslationController extends Controller
         $oldKey = $translation->key;
 
         $translation->update([
-            'key'   => $data['key'],
+            'key' => $data['key'],
             'value' => $data['value'],
         ]);
 

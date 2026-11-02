@@ -2,27 +2,32 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsActivity;
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailCustom;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\VerifyEmailCustom;
-use App\Notifications\ResetPasswordNotification;
-use App\Models\Concerns\LogsActivity;
-
-use Illuminate\Contracts\Translation\HasLocalePreference;
 
 /**
  * @property string|null $phone
- * @use HasFactory<\Database\Factories\UserFactory>
+ *
+ * @use HasFactory<UserFactory>
  */
-class User extends Authenticatable implements MustVerifyEmail, HasLocalePreference
+class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
-    use HasFactory, Notifiable, LogsActivity;
+    use HasFactory, LogsActivity, Notifiable;
 
     public const ROLE_CLIENT = 'client';
+
     public const ROLE_STAFF = 'staff';
-    public const ROLE_ADMIN  = 'admin';
+
+    public const ROLE_ADMIN = 'admin';
 
     protected $fillable = [
         'name',
@@ -83,9 +88,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     /**
      * Получить заказы пользователя
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Order, User>
+     * @return HasMany<Order, User>
      */
-    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
@@ -93,11 +98,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     /**
      * Получить промокоды пользователя
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<PromoCode>
+     * @return BelongsToMany<PromoCode>
      */
-    public function promoCodes(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function promoCodes(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\PromoCode::class)
+        return $this->belongsToMany(PromoCode::class)
             ->withPivot(['claimed_at', 'used_at', 'is_used'])
             ->withTimestamps();
     }
@@ -105,9 +110,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     /**
      * Получить бонусы лояльности пользователя
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<LoyaltyEarning, User>
+     * @return HasMany<LoyaltyEarning, User>
      */
-    public function loyaltyEarnings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function loyaltyEarnings(): HasMany
     {
         return $this->hasMany(LoyaltyEarning::class);
     }
@@ -115,9 +120,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
     public function sendEmailVerificationNotification()
     {
         try {
-            $this->notify(new VerifyEmailCustom());
+            $this->notify(new VerifyEmailCustom);
         } catch (\Exception $e) {
-            throw new \Exception('Failed to send email verification notification: ' . $e->getMessage());
+            throw new \Exception('Failed to send email verification notification: '.$e->getMessage());
         }
     }
 
@@ -126,7 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasLocalePreferen
         try {
             $this->notify(new ResetPasswordNotification($token));
         } catch (\Exception $e) {
-            throw new \Exception('Failed to send password reset notification: ' . $e->getMessage());
+            throw new \Exception('Failed to send password reset notification: '.$e->getMessage());
         }
     }
 }

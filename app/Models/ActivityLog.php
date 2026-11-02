@@ -40,7 +40,7 @@ class ActivityLog extends Model
     /**
      * Получить модель, с которой произошло действие
      *
-     * @return MorphTo<\Illuminate\Database\Eloquent\Model, ActivityLog>
+     * @return MorphTo<Model, ActivityLog>
      */
     public function subject(): MorphTo
     {
@@ -52,7 +52,7 @@ class ActivityLog extends Model
      */
     public function getActionNameAttribute(): string
     {
-        return match($this->action) {
+        return match ($this->action) {
             'created' => 'Создано',
             'updated' => 'Обновлено',
             'deleted' => 'Удалено',
@@ -100,11 +100,11 @@ class ActivityLog extends Model
 
         foreach ($newValues as $key => $newValue) {
             $oldValue = $oldValues[$key] ?? null;
-            
+
             // Нормализуем числовые значения перед сравнением
             $normalizedOld = $this->normalizeValue($oldValue);
             $normalizedNew = $this->normalizeValue($newValue);
-            
+
             if ($normalizedOld !== $normalizedNew) {
                 $changes[$key] = [
                     'old' => $oldValue,
@@ -128,14 +128,15 @@ class ActivityLog extends Model
             if (strpos($value, '.') !== false) {
                 return $floatValue;
             }
+
             return (int) $floatValue;
         }
-        
+
         // Если уже число, просто возвращаем
-        if (is_numeric($value) && !is_string($value)) {
+        if (is_numeric($value) && ! is_string($value)) {
             return $value;
         }
-        
+
         return $value;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -20,9 +21,9 @@ class MenuCategory extends Model
     ];
 
     protected $casts = [
-        'name'        => 'array',
+        'name' => 'array',
         'description' => 'array',
-        'is_special'  => 'boolean',
+        'is_special' => 'boolean',
         'is_available' => 'boolean',
     ];
 
@@ -35,8 +36,8 @@ class MenuCategory extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<static> $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeOrdered($query)
     {

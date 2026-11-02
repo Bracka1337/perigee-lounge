@@ -3,15 +3,15 @@
 namespace App\Notifications;
 
 use App\Models\Reservation;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ReservationCreated extends Notification
 {
     public function __construct(public Reservation $reservation) {}
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array<int, string>
      */
     public function via($notifiable): array
@@ -20,7 +20,7 @@ class ReservationCreated extends Notification
     }
 
     /**
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      */
     public function toMail($notifiable): MailMessage
     {

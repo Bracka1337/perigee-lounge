@@ -6,6 +6,7 @@ use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -27,9 +28,9 @@ class MenuItem extends Model
     ];
 
     protected $casts = [
-        'name'        => 'array',
+        'name' => 'array',
         'description' => 'array',
-        'allergens'   => 'array',
+        'allergens' => 'array',
         'is_available' => 'boolean',
     ];
 
@@ -44,9 +45,9 @@ class MenuItem extends Model
     /**
      * Получить элементы заказов
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<OrderItem, MenuItem>
+     * @return HasMany<OrderItem, MenuItem>
      */
-    public function orderItems(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
@@ -54,6 +55,7 @@ class MenuItem extends Model
     public function getImageUrlAttribute(): ?string
     {
         $path = $this->image_path ?? $this->image ?? null;
+
         return ($path !== null && $path !== '') ? Storage::url($path) : null;
     }
 }
