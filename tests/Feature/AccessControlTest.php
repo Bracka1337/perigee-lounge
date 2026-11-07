@@ -116,3 +116,54 @@ test('staff can sort menu categories through the JSON endpoint', function () {
 
     expect(MenuCategory::orderBy('sort_order')->pluck('id')->all())->toBe($reversed);
 });
+
+test('staff cannot add items to a finished order', function () {
+    $order = Order::create([
+        'table_id' => $this->table->id,
+        'status' => Order::STATUS_COMPLETED,
+        'source' => 'staff',
+    ]);
+    $staff = accountWithRole('staff');
+
+    $this->actingAs($staff)
+        ->get(route('staff.orders.items.catalog', ['locale' => 'en', 'order' => $order]))
+        ->assertForbidden();
+
+    $this->actingAs($staff)
+        ->post(route('staff.orders.items.store', ['locale' => 'en', 'order' => $order]), [
+            'menu_item_id' => MenuCategory::first()->items()->first()->id,
+        ])
+        ->assertForbidden();
+
+    expect($order->items()->count())->toBe(0);
+});
+
+test('staff cannot cancel a reservation a client made', function () {
+    $reservation = Reservation::create([
+        'table_id' => $this->table->id,
+        'user_id' => accountWithRole('client')->id,
+        'start_at' => now()->addWeek(),
+        'status' => Reservation::STATUS_PENDING,
+        'guests_count' => 2,
+        'source' => 'client',
+    ]);
+
+    $this->actingAs(accountWithRole('staff'))
+        ->patch(route('staff.reservations.cancel', ['locale' => 'en', 'reservation' => $reservation]))
+        ->assertSessionHas('error');
+
+    expect($reservation->fresh()->status)->toBe(Reservation::STATUS_PENDING);
+});
+
+test('the admin history page only opens for clients', function () {
+    $admin = accountWithRole('admin');
+
+    $this->actingAs($admin)
+        ->get(route('admin.users.show', ['locale' => 'en', 'user' => accountWithRole('staff')]))
+        ->assertRedirect(route('admin.users.index'))
+        ->assertSessionHas('error');
+
+    $this->actingAs($admin)
+        ->get(route('admin.users.show', ['locale' => 'en', 'user' => accountWithRole('client')]))
+        ->assertOk();
+});
