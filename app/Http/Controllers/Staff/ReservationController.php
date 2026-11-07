@@ -15,6 +15,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends Controller
 {
@@ -118,7 +119,7 @@ class ReservationController extends Controller
             return back()->with('error', __('staff-reservations-cancel-forbidden'));
         }
 
-        if ($reservation->user_id !== null) {
+        if (Gate::denies('cancel', $reservation)) {
             return back()->with('error', __('staff-reservations-cancel-client-forbidden'));
         }
 

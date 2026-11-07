@@ -19,7 +19,7 @@ class CheckTableBinding
         $user = $request->user();
 
         // Only check for authenticated clients
-        if ($user === null || $user->role !== 'client') {
+        if ($user === null || ! $user->isClient()) {
             return $next($request);
         }
 

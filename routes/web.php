@@ -99,7 +99,7 @@ Route::group([
         Route::post('/menu/table-{code}/confirm', [ClientTableOrderController::class, 'confirm'])->name('client.table.cart.confirm');
     });
 
-    Route::middleware(['auth', 'role:client', 'verified'])->group(function () {
+    Route::middleware(['auth', 'can:client', 'verified'])->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::get('/promo-codes', [PromoCodeController::class, 'index'])->name('client.promo-codes.index');
@@ -113,7 +113,7 @@ Route::group([
         Route::get('/loyalty', [ClientLoyaltyController::class, 'show'])->name('client.loyalty.show');
     });
 
-    Route::middleware(['auth', 'role:admin', 'verified'])
+    Route::middleware(['auth', 'can:admin', 'verified'])
         ->prefix('admin')
         ->name('admin.')
         ->group(function () {
@@ -131,7 +131,7 @@ Route::group([
             Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
         });
 
-    Route::middleware(['auth', 'role:staff', 'verified'])
+    Route::middleware(['auth', 'can:staff', 'verified'])
         ->prefix('staff')
         ->name('staff.')
         ->group(function () {
