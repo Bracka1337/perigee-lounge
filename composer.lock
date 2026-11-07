@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "57f1b22228ece4ee3062c0392cd9b33e",
+    "content-hash": "f1b9a3677d9b5ed9d1e77c1ef1f5fd25",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1165,26 +1165,26 @@
         },
         {
             "name": "intervention/gif",
-            "version": "4.2.4",
+            "version": "5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/gif.git",
-                "reference": "c3598a16ebe7690cd55640c44144a9df383ea73c"
+                "reference": "bb395af960deffe64d70c976b4df9283f68e762d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/gif/zipball/c3598a16ebe7690cd55640c44144a9df383ea73c",
-                "reference": "c3598a16ebe7690cd55640c44144a9df383ea73c",
+                "url": "https://api.github.com/repos/Intervention/gif/zipball/bb395af960deffe64d70c976b4df9283f68e762d",
+                "reference": "bb395af960deffe64d70c976b4df9283f68e762d",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.3"
             },
             "require-dev": {
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^10.0 || ^11.0  || ^12.0",
+                "phpunit/phpunit": "^12.0",
                 "slevomat/coding-standard": "~8.0",
-                "squizlabs/php_codesniffer": "^3.8"
+                "squizlabs/php_codesniffer": "^4"
             },
             "type": "library",
             "autoload": {
@@ -1203,7 +1203,7 @@
                     "homepage": "https://intervention.io/"
                 }
             ],
-            "description": "Native PHP GIF Encoder/Decoder",
+            "description": "PHP GIF Encoder/Decoder",
             "homepage": "https://github.com/intervention/gif",
             "keywords": [
                 "animation",
@@ -1213,7 +1213,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/gif/issues",
-                "source": "https://github.com/Intervention/gif/tree/4.2.4"
+                "source": "https://github.com/Intervention/gif/tree/5.0.1"
             },
             "funding": [
                 {
@@ -1229,33 +1229,33 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-01-04T09:27:23+00:00"
+            "time": "2026-05-03T06:04:47+00:00"
         },
         {
             "name": "intervention/image",
-            "version": "3.11.10",
+            "version": "4.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "af6e5cfa403233cec4c4347e475addcbdc5b8f07"
+                "reference": "3a47838f2e0f4ec6c8c9b43a5d73ac985b975830"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/af6e5cfa403233cec4c4347e475addcbdc5b8f07",
-                "reference": "af6e5cfa403233cec4c4347e475addcbdc5b8f07",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/3a47838f2e0f4ec6c8c9b43a5d73ac985b975830",
+                "reference": "3a47838f2e0f4ec6c8c9b43a5d73ac985b975830",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "intervention/gif": "^4.2",
-                "php": "^8.1"
+                "intervention/gif": "^5",
+                "php": "^8.3"
             },
             "require-dev": {
+                "intervention/coding-standard": "^1",
                 "mockery/mockery": "^1.6",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^10.0 || ^11.0 || ^12.0",
-                "slevomat/coding-standard": "~8.0",
-                "squizlabs/php_codesniffer": "^4"
+                "phpunit/phpunit": "^12.0",
+                "psr/http-message": "^2"
             },
             "suggest": {
                 "ext-exif": "Recommended to be able to read EXIF data properly."
@@ -1289,7 +1289,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/3.11.10"
+                "source": "https://github.com/Intervention/image/tree/4.4.1"
             },
             "funding": [
                 {
@@ -1305,7 +1305,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-10-05T12:21:16+00:00"
+            "time": "2026-10-30T13:38:01+00:00"
         },
         {
             "name": "laravel/framework",
@@ -6709,8 +6709,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-19T17:59:20+00:00",
-            "published-time": "2026-07-26T14:55:09+00:00"
+            "time": "2026-07-19T17:59:20+00:00"
         },
         {
             "name": "amphp/byte-stream",
@@ -6785,8 +6784,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-31T19:10:04+00:00",
-            "published-time": "2026-10-31T19:16:39+00:00"
+            "time": "2026-10-31T19:10:04+00:00"
         },
         {
             "name": "amphp/cache",
@@ -6851,8 +6849,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-19T03:38:06+00:00",
-            "published-time": "2024-04-19T03:40:51+00:00"
+            "time": "2024-04-19T03:38:06+00:00"
         },
         {
             "name": "amphp/dns",
@@ -6941,8 +6938,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-31T19:53:43+00:00",
-            "published-time": "2026-10-31T19:59:04+00:00"
+            "time": "2026-10-31T19:53:43+00:00"
         },
         {
             "name": "amphp/hpack",
@@ -7016,8 +7012,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-03T19:28:59+00:00",
-            "published-time": "2026-05-03T19:30:31+00:00"
+            "time": "2026-05-03T19:28:59+00:00"
         },
         {
             "name": "amphp/http",
@@ -7081,8 +7076,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-23T14:57:26+00:00",
-            "published-time": "2024-11-23T14:59:51+00:00"
+            "time": "2024-11-23T14:57:26+00:00"
         },
         {
             "name": "amphp/http-client",
@@ -7179,8 +7173,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-01T16:48:44+00:00",
-            "published-time": "2026-11-01T16:52:50+00:00"
+            "time": "2026-11-01T16:48:44+00:00"
         },
         {
             "name": "amphp/http-server",
@@ -7277,8 +7270,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-01T16:18:27+00:00",
-            "published-time": "2026-11-01T16:21:35+00:00"
+            "time": "2026-11-01T16:18:27+00:00"
         },
         {
             "name": "amphp/parser",
@@ -7340,8 +7332,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-21T19:16:53+00:00",
-            "published-time": "2024-03-21T19:18:30+00:00"
+            "time": "2024-03-21T19:16:53+00:00"
         },
         {
             "name": "amphp/pipeline",
@@ -7408,8 +7399,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-26T14:50:43+00:00",
-            "published-time": "2026-07-26T15:13:19+00:00"
+            "time": "2026-07-26T14:50:43+00:00"
         },
         {
             "name": "amphp/process",
@@ -7477,8 +7467,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-07T16:33:32+00:00",
-            "published-time": "2026-11-07T16:36:48+00:00"
+            "time": "2026-11-07T16:33:32+00:00"
         },
         {
             "name": "amphp/serialization",
@@ -7545,8 +7534,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-05T15:59:53+00:00",
-            "published-time": "2026-04-05T16:03:16+00:00"
+            "time": "2026-04-05T15:59:53+00:00"
         },
         {
             "name": "amphp/socket",
@@ -7630,8 +7618,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-22T18:13:20+00:00",
-            "published-time": "2026-08-22T20:37:31+00:00"
+            "time": "2026-08-22T18:13:20+00:00"
         },
         {
             "name": "amphp/sync",
@@ -7706,8 +7693,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-14T17:37:39+00:00",
-            "published-time": "2026-10-31T17:39:05+00:00"
+            "time": "2026-06-14T17:37:39+00:00"
         },
         {
             "name": "amphp/websocket",
@@ -7788,8 +7774,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-01T17:50:39+00:00",
-            "published-time": "2026-11-01T17:54:44+00:00"
+            "time": "2026-11-01T17:50:39+00:00"
         },
         {
             "name": "amphp/websocket-client",
@@ -7873,8 +7858,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-24T17:25:34+00:00",
-            "published-time": "2025-08-24T17:29:13+00:00"
+            "time": "2025-08-24T17:25:34+00:00"
         },
         {
             "name": "brianium/paratest",
@@ -8153,8 +8137,7 @@
                 "issues": "https://github.com/DaveRandom/LibDNS/issues",
                 "source": "https://github.com/DaveRandom/LibDNS/tree/v2.1.0"
             },
-            "time": "2024-04-12T12:12:48+00:00",
-            "published-time": "2024-04-13T16:58:48+00:00"
+            "time": "2024-04-12T12:12:48+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -8612,8 +8595,7 @@
                 "issues": "https://github.com/kelunik/certificate/issues",
                 "source": "https://github.com/kelunik/certificate/tree/v1.1.3"
             },
-            "time": "2023-02-03T21:26:53+00:00",
-            "published-time": "2023-02-03T21:33:41+00:00"
+            "time": "2023-02-03T21:26:53+00:00"
         },
         {
             "name": "larastan/larastan",
@@ -9000,8 +8982,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-04T12:45:07+00:00",
-            "published-time": "2026-11-04T13:02:25+00:00"
+            "time": "2026-11-04T12:45:07+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -9580,8 +9561,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-08T21:04:12+00:00",
-            "published-time": "2026-04-08T21:11:40+00:00"
+            "time": "2026-04-08T21:04:12+00:00"
         },
         {
             "name": "pestphp/pest-plugin-laravel",
@@ -10867,8 +10847,7 @@
                 "issues": "https://github.com/revoltphp/event-loop/issues",
                 "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
             },
-            "time": "2026-05-16T17:55:38+00:00",
-            "published-time": "2026-05-16T18:04:08+00:00"
+            "time": "2026-05-16T17:55:38+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -12186,5 +12165,5 @@
     "platform-overrides": {
         "php": "8.3.0"
     },
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.9.0"
 }

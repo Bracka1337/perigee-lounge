@@ -8,7 +8,7 @@
     ],
     "require": {
         "php": "^8.3",
-        "intervention/image": "^3.11",
+        "intervention/image": "^4.4",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "propaganistas/laravel-disposable-email": "^2.4",
