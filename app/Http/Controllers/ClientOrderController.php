@@ -2,40 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LoyaltyEarning;
 use App\Models\Order;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ClientOrderController extends Controller
 {
-    public function index(string $locale): View
+    public function index(Request $request, string $locale): View
     {
-        $orders = Order::with(['items.menuItem.category', 'table'])
-            ->where('user_id', auth()->id())
-            ->orderByDesc('created_at')
-            ->get();
-
         return view('client.orders.index', [
-            'orders' => $orders,
+            'orders' => $request->user()->orders()
+                ->with(['items.menuItem.category', 'table'])
+                ->orderByDesc('created_at')
+                ->get(),
         ]);
     }
 
     public function show(string $locale, Order $order): View
     {
-        abort_unless($order->user_id === auth()->id(), 404);
+        Gate::authorize('view', $order);
 
         $order->load(['items.menuItem.category', 'table', 'promoCode']);
         // Ensure totals are up to date for display (no persistence here).
         $order->recalculateTotals();
 
-        $loyaltySpent = LoyaltyEarning::where('order_id', $order->id)
-            ->where('amount', '<', 0)
-            ->sum('amount');
-        $loyaltySpent = $loyaltySpent < 0 ? abs($loyaltySpent) : 0;
-
         return view('client.orders.show', [
             'order' => $order,
-            'loyaltySpent' => $loyaltySpent,
+            'loyaltySpent' => $order->loyaltySpent(),
         ]);
     }
 }

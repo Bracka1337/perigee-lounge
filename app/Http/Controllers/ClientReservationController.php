@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 class ClientReservationController extends Controller
@@ -170,11 +171,9 @@ class ClientReservationController extends Controller
 
     public function cancel(Request $request, string $locale, Reservation $reservation): RedirectResponse
     {
-        $user = $request->user();
+        Gate::authorize('cancel', $reservation);
 
-        if ($reservation->user_id !== $user->id) {
-            abort(403);
-        }
+        $user = $request->user();
 
         if (! in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
             return back()->with('error', __('client-reservations-cancel-forbidden'));
