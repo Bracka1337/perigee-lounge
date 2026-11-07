@@ -16,11 +16,10 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @property string|null $phone
- *
- * @use HasFactory<UserFactory>
  */
 class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
+    /** @use HasFactory<UserFactory> */
     use HasFactory, LogsActivity, Notifiable;
 
     public const ROLE_CLIENT = 'client';
@@ -28,6 +27,17 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public const ROLE_STAFF = 'staff';
 
     public const ROLE_ADMIN = 'admin';
+
+    /**
+     * Same defaults as the database columns, so new models have them before a refresh.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'locale' => 'ru',
+        'loyalty_code' => null,
+        'loyalty_balance' => 0,
+    ];
 
     protected $fillable = [
         'name',
@@ -59,6 +69,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             'newsletter_agreed_at' => 'datetime',
             'newsletter_agreed' => 'boolean',
             'password' => 'hashed',
+            'loyalty_balance' => 'float',
         ];
     }
 
@@ -97,13 +108,13 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
             return null;
         }
 
-        return $order->table?->name ?? "#{$order->table_id}";
+        return Table::whereKey($order->table_id)->value('name') ?? "#{$order->table_id}";
     }
 
     /**
      * Получить заказы пользователя
      *
-     * @return HasMany<Order, User>
+     * @return HasMany<Order, $this>
      */
     public function orders(): HasMany
     {
@@ -113,7 +124,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     /**
      * Получить промокоды пользователя
      *
-     * @return BelongsToMany<PromoCode>
+     * @return BelongsToMany<PromoCode, $this>
      */
     public function promoCodes(): BelongsToMany
     {
@@ -125,7 +136,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     /**
      * Получить бонусы лояльности пользователя
      *
-     * @return HasMany<LoyaltyEarning, User>
+     * @return HasMany<LoyaltyEarning, $this>
      */
     public function loyaltyEarnings(): HasMany
     {

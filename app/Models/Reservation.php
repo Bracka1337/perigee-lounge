@@ -5,21 +5,15 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
-use Carbon\Carbon;
-use Database\Factories\ReservationFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\ValidationException;
 
-/**
- * @use HasFactory<ReservationFactory>
- */
 class Reservation extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -51,23 +45,10 @@ class Reservation extends Model
     protected static function booted()
     {
         static::creating(function (Reservation $reservation) {
-            $startDate = null;
-            if ($reservation->start_at !== null && $reservation->start_at !== '') {
-                try {
-                    $startDate = Carbon::parse($reservation->start_at)->toDateString();
-                } catch (\Exception $e) {
-                    $startDate = null;
-                }
-            }
-
-            $query = Order::where('table_id', $reservation->table_id)
-                ->whereNotIn('status', OrderStatus::closed());
-
-            if ($startDate !== null && $startDate !== '') {
-                $query->whereDate('started_at', $startDate);
-            }
-
-            $hasActiveOrder = $query->exists();
+            $hasActiveOrder = Order::where('table_id', $reservation->table_id)
+                ->whereNotIn('status', OrderStatus::closed())
+                ->whereDate('started_at', $reservation->start_at->toDateString())
+                ->exists();
 
             if ($hasActiveOrder) {
                 throw ValidationException::withMessages([
@@ -80,7 +61,7 @@ class Reservation extends Model
     /**
      * Получить пользователя
      *
-     * @return BelongsTo<User, Reservation>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -90,7 +71,7 @@ class Reservation extends Model
     /**
      * Получить столик
      *
-     * @return BelongsTo<Table, Reservation>
+     * @return BelongsTo<Table, $this>
      */
     public function table(): BelongsTo
     {
@@ -100,7 +81,7 @@ class Reservation extends Model
     /**
      * Получить заказ
      *
-     * @return HasOne<Order, Reservation>
+     * @return HasOne<Order, $this>
      */
     public function order(): HasOne
     {

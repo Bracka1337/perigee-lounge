@@ -6,7 +6,7 @@ trait HasTranslations
 {
     public function t(string $field): ?string
     {
-        $value = $this->{$field} ?? null;
+        $value = $this->getAttribute($field);
 
         if (! is_array($value)) {
             return $value;

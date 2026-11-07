@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Translation\DatabaseTranslator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        // Outside production, lazy loading (N+1 queries), unknown attributes and silently
+        // dropped mass-assignment fail loudly instead of slipping through.
+        Model::shouldBeStrict(! $this->app->isProduction());
 
         // Area access by role, used as `can:admin`, `can:staff` and `can:client` on route groups.
         Gate::define('admin', fn (User $user) => $user->isAdmin());

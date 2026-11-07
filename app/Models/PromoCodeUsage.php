@@ -2,18 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\PromoCodeUsageFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @use HasFactory<PromoCodeUsageFactory>
- */
 class PromoCodeUsage extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'promo_code_id',
         'order_id',
@@ -22,7 +15,7 @@ class PromoCodeUsage extends Model
     ];
 
     /**
-     * @return BelongsTo<PromoCode, PromoCodeUsage>
+     * @return BelongsTo<PromoCode, $this>
      */
     public function promoCode(): BelongsTo
     {
@@ -30,7 +23,7 @@ class PromoCodeUsage extends Model
     }
 
     /**
-     * @return BelongsTo<Order, PromoCodeUsage>
+     * @return BelongsTo<Order, $this>
      */
     public function order(): BelongsTo
     {
@@ -38,7 +31,7 @@ class PromoCodeUsage extends Model
     }
 
     /**
-     * @return BelongsTo<User, PromoCodeUsage>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {

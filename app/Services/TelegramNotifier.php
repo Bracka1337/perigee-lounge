@@ -71,6 +71,9 @@ class TelegramNotifier
         }
     }
 
+    /**
+     * @param  list<int>  $newItemIds
+     */
     public static function notifyAddedItems(Order $order, array $newItemIds): void
     {
         $token = config('services.telegram.staff_bot_token');
@@ -138,7 +141,7 @@ class TelegramNotifier
         }
 
         $tableName = $reservation->table !== null ? $reservation->table->name : 'Стол';
-        $date = $reservation->start_at !== null ? $reservation->start_at->format('d.m.Y H:i') : '';
+        $date = $reservation->start_at->format('d.m.Y H:i');
         $guestName = $reservation->user !== null
             ? $reservation->user->name
             : (($reservation->guest_name !== null && $reservation->guest_name !== '') ? $reservation->guest_name : 'Гость');
@@ -218,7 +221,7 @@ class TelegramNotifier
         }
 
         $tableName = $reservation->table !== null ? $reservation->table->name : 'Стол';
-        $date = $reservation->start_at !== null ? $reservation->start_at->format('d.m.Y H:i') : '';
+        $date = $reservation->start_at->format('d.m.Y H:i');
         $guestName = $reservation->user !== null
             ? $reservation->user->name
             : (($reservation->guest_name !== null && $reservation->guest_name !== '') ? $reservation->guest_name : 'Гость');

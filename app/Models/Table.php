@@ -5,17 +5,12 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
-use Database\Factories\TableFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/**
- * @use HasFactory<TableFactory>
- */
 class Table extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected $fillable = [
         'name',
@@ -79,7 +74,7 @@ class Table extends Model
     /**
      * Получить бронирования
      *
-     * @return HasMany<Reservation, Table>
+     * @return HasMany<Reservation, $this>
      */
     public function reservations(): HasMany
     {
