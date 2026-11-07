@@ -8,7 +8,7 @@
         "php": "^8.2",
         "intervention/image": "^3.11",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0.2",
         "livewire/livewire": "^3.7",
         "propaganistas/laravel-disposable-email": "^2.4",
         "simplesoftwareio/simple-qrcode": "^4.2"
