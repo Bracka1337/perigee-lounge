@@ -19,6 +19,36 @@ services:
       timeout: 2s
       retries: 60
 
+  # Same image as app: runs queued mail and Telegram messages.
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: perigee_queue
+    working_dir: /var/www/html
+    command: php artisan queue:work --tries=3
+    volumes:
+      - ./:/var/www/html
+      - cache_data:/var/www/html/bootstrap/cache
+    depends_on:
+      app:
+        condition: service_healthy
+
+  # Runs scheduled commands, such as expiring late reservations.
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: perigee_scheduler
+    working_dir: /var/www/html
+    command: php artisan schedule:work
+    volumes:
+      - ./:/var/www/html
+      - cache_data:/var/www/html/bootstrap/cache
+    depends_on:
+      app:
+        condition: service_healthy
+
   nginx:
     image: nginx:1.27-alpine
     container_name: perigee_nginx

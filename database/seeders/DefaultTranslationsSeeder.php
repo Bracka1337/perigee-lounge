@@ -4948,6 +4948,84 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Jūsu galds vēl nav atvērts. Groziņu varat aizpildīt jau tagad; pirms nosūtīšanas palūdziet viesmīlim atvērt galdu.',
                 'ru' => 'Ваш стол ещё не открыт. Корзину можно собрать уже сейчас; перед отправкой попросите официанта открыть стол.',
             ],
+
+            'telegram-items-added-title' => [
+                'en' => 'NEW ITEMS ADDED',
+                'lv' => 'PIEVIENOTAS JAUNAS POZĪCIJAS',
+                'ru' => 'НОВЫЕ ПОЗИЦИИ ДОБАВЛЕНЫ',
+            ],
+
+            'telegram-new-reservation-title' => [
+                'en' => 'NEW RESERVATION',
+                'lv' => 'JAUNA REZERVĀCIJA',
+                'ru' => 'НОВАЯ БРОНЬ',
+            ],
+
+            'telegram-reservation-cancelled-title' => [
+                'en' => 'RESERVATION CANCELLED',
+                'lv' => 'REZERVĀCIJA ATCELTA',
+                'ru' => 'БРОНЬ ОТМЕНЕНА',
+            ],
+
+            'telegram-table' => [
+                'en' => 'Table',
+                'lv' => 'Galds',
+                'ru' => 'Стол',
+            ],
+
+            'telegram-client' => [
+                'en' => 'Client',
+                'lv' => 'Klients',
+                'ru' => 'Клиент',
+            ],
+
+            'telegram-guest' => [
+                'en' => 'Guest',
+                'lv' => 'Viesis',
+                'ru' => 'Гость',
+            ],
+
+            'telegram-order' => [
+                'en' => 'Order',
+                'lv' => 'Pasūtījums',
+                'ru' => 'Заказ',
+            ],
+
+            'telegram-added' => [
+                'en' => 'Added',
+                'lv' => 'Pievienots',
+                'ru' => 'Добавлены',
+            ],
+
+            'telegram-date-time' => [
+                'en' => 'Date and time',
+                'lv' => 'Datums un laiks',
+                'ru' => 'Дата и время',
+            ],
+
+            'telegram-guests' => [
+                'en' => 'Guests',
+                'lv' => 'Viesi',
+                'ru' => 'Гостей',
+            ],
+
+            'telegram-name' => [
+                'en' => 'Name',
+                'lv' => 'Vārds',
+                'ru' => 'Имя',
+            ],
+
+            'telegram-status' => [
+                'en' => 'Status',
+                'lv' => 'Statuss',
+                'ru' => 'Статус',
+            ],
+
+            'telegram-reservation-id' => [
+                'en' => 'Reservation ID',
+                'lv' => 'Rezervācijas ID',
+                'ru' => 'ID брони',
+            ],
             'order-sent-to-waiter' => [
                 'en' => 'Your order was sent to the waiter',
                 'lv' => 'Pasūtījums nosūtīts viesmīlim',
