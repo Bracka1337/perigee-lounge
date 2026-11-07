@@ -67,6 +67,8 @@ class UserController extends Controller
         $user->email = $data['email'];
         $user->role = $data['role'];
         $user->password = bcrypt($data['password']);
+        // The admin vouches for staff and admin accounts, and staff pages require a verified email.
+        $user->email_verified_at = now();
 
         $user->save();
 
@@ -115,6 +117,10 @@ class UserController extends Controller
     {
         if (Auth::id() === $user->getKey()) {
             return back()->with('error', __('admin-users-error-self-delete'));
+        }
+
+        if ($user->orders()->active()->exists()) {
+            return back()->with('error', __('admin-users-error-open-order'));
         }
 
         $user->delete();
