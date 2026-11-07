@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\MenuCategory;
 use App\Models\Order;
 use App\Models\Reservation;
@@ -49,7 +51,7 @@ test('a client cannot open another client\'s order', function () {
     $order = Order::create([
         'table_id' => $this->table->id,
         'user_id' => accountWithRole('client')->id,
-        'status' => Order::STATUS_OPEN,
+        'status' => OrderStatus::Open,
         'source' => 'staff',
         'subtotal' => 0,
         'discount_total' => 0,
@@ -70,7 +72,7 @@ test('a client cannot cancel another client\'s reservation', function () {
         'table_id' => $this->table->id,
         'user_id' => accountWithRole('client')->id,
         'start_at' => now()->addWeek(),
-        'status' => Reservation::STATUS_PENDING,
+        'status' => ReservationStatus::Pending,
         'guests_count' => 2,
         'source' => 'client',
     ]);
@@ -79,7 +81,7 @@ test('a client cannot cancel another client\'s reservation', function () {
         ->post(route('client.reservations.cancel', ['locale' => 'en', 'reservation' => $reservation]))
         ->assertForbidden();
 
-    expect($reservation->fresh()->status)->toBe(Reservation::STATUS_PENDING);
+    expect($reservation->fresh()->status)->toBe(ReservationStatus::Pending);
 });
 
 test('reservations validate their input', function (array $override, string $field) {
@@ -120,7 +122,7 @@ test('staff can sort menu categories through the JSON endpoint', function () {
 test('staff cannot add items to a finished order', function () {
     $order = Order::create([
         'table_id' => $this->table->id,
-        'status' => Order::STATUS_COMPLETED,
+        'status' => OrderStatus::Completed,
         'source' => 'staff',
     ]);
     $staff = accountWithRole('staff');
@@ -143,7 +145,7 @@ test('staff cannot cancel a reservation a client made', function () {
         'table_id' => $this->table->id,
         'user_id' => accountWithRole('client')->id,
         'start_at' => now()->addWeek(),
-        'status' => Reservation::STATUS_PENDING,
+        'status' => ReservationStatus::Pending,
         'guests_count' => 2,
         'source' => 'client',
     ]);
@@ -152,7 +154,7 @@ test('staff cannot cancel a reservation a client made', function () {
         ->patch(route('staff.reservations.cancel', ['locale' => 'en', 'reservation' => $reservation]))
         ->assertSessionHas('error');
 
-    expect($reservation->fresh()->status)->toBe(Reservation::STATUS_PENDING);
+    expect($reservation->fresh()->status)->toBe(ReservationStatus::Pending);
 });
 
 test('the admin history page only opens for clients', function () {

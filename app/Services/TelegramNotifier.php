@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\ReservationStatus;
 use App\Models\Order;
 use App\Models\Reservation;
 use Illuminate\Http\Client\ConnectionException;
@@ -147,11 +148,11 @@ class TelegramNotifier
             : (($reservation->guest_phone !== null && $reservation->guest_phone !== '') ? $reservation->guest_phone : '—');
         $email = $reservation->user !== null ? $reservation->user->email : '—';
         $status = match ($reservation->status) {
-            'pending' => '⏳ Ожидает',
-            'active' => '✅ Активна',
-            'completed' => '✔️ Завершена',
-            'cancelled' => '❌ Отменена',
-            default => $reservation->status,
+            ReservationStatus::Pending => '⏳ Ожидает',
+            ReservationStatus::Active => '✅ Активна',
+            ReservationStatus::Completed => '✔️ Завершена',
+            ReservationStatus::Cancelled => '❌ Отменена',
+            default => $reservation->status->value,
         };
 
         $text = "🆕 <b>НОВАЯ БРОНЬ</b>\n\n";

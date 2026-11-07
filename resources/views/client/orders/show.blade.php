@@ -47,7 +47,7 @@
                     </div>
                     <div class="text-xs text-ink-muted mt-1">
                         {{ __('client-orders-status-label') }}:
-                        {{ __('client-orders-status-'.$order->status) }}
+                        {{ __('client-orders-status-'.$order->status->value) }}
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-@if($order->table && $order->status !== \App\Models\Order::STATUS_COMPLETED && $order->status !== \App\Models\Order::STATUS_CANCELLED)
+@if($order->table && $order->status !== \App\Enums\OrderStatus::Completed && $order->status !== \App\Enums\OrderStatus::Cancelled)
                 <div class="mt-6">
                     <a href="{{ route('client.table.menu', ['locale' => app()->getLocale(), 'code' => $order->table->name]) }}"
                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-line-strong bg-surface hover:bg-line text-xs text-ink-soft transition">

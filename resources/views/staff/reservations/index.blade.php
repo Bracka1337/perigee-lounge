@@ -96,9 +96,9 @@
                         $status = 'active';
                     } elseif ($date->isSameDay(\Carbon\Carbon::now()) && ($table->is_occupied ?? false)) {
                         $status = 'active';
-                    } elseif ($tableReservations->contains(fn($r) => $r->status === 'active')) {
+                    } elseif ($tableReservations->contains(fn($r) => $r->status === \App\Enums\ReservationStatus::Active)) {
                         $status = 'active';
-                    } elseif ($tableReservations->contains(fn($r) => $r->status === 'pending')) {
+                    } elseif ($tableReservations->contains(fn($r) => $r->status === \App\Enums\ReservationStatus::Pending)) {
                         $status = 'pending';
                     }
 
@@ -360,12 +360,12 @@
                                 </div>
                                 <div class="mt-1 text-xs text-ink-muted">
                                     {{ __('staff-reservations-status-label') }}:
-                                    {{ __('staff-reservations-status-'.$res->status) }}
+                                    {{ __('staff-reservations-status-'.$res->status->value) }}
                                 </div>
                             </div>
 
                             <div class="flex flex-col items-end gap-2 shrink-0">
-                                @if($res->status === \App\Models\Reservation::STATUS_PENDING)
+                                @if($res->status === \App\Enums\ReservationStatus::Pending)
                                     <form method="POST" action="{{ route('staff.reservations.arrive', ['locale' => app()->getLocale(), 'reservation' => $res]) }}">
                                         @csrf @method('PATCH')
                                         <button type="submit"
@@ -383,7 +383,7 @@
                                             {{ __('staff-reservations-cancel-button') }}
                                         </button>
                                     </form>
-                                @elseif($res->status === \App\Models\Reservation::STATUS_ACTIVE)
+                                @elseif($res->status === \App\Enums\ReservationStatus::Active)
                                     <form method="POST" action="{{ route('staff.reservations.complete', ['locale' => app()->getLocale(), 'reservation' => $res]) }}">
                                         @csrf @method('PATCH')
                                         <button type="submit"

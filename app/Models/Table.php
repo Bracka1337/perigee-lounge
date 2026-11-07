@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\TableFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,12 +62,12 @@ class Table extends Model
     public function releaseIfFree(?int $exceptOrderId = null): void
     {
         $hasOpenOrder = Order::where('table_id', $this->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+            ->whereNotIn('status', OrderStatus::closed())
             ->when($exceptOrderId !== null, fn ($query) => $query->where('id', '!=', $exceptOrderId))
             ->exists();
 
         $hasSeatedGuest = Reservation::where('table_id', $this->id)
-            ->where('status', Reservation::STATUS_ACTIVE)
+            ->where('status', ReservationStatus::Active)
             ->exists();
 
         if (! $hasOpenOrder && ! $hasSeatedGuest) {

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,12 +20,6 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
-    public const STATUS_OPEN = 'open';
-
-    public const STATUS_COMPLETED = 'completed';
-
-    public const STATUS_CANCELLED = 'cancelled';
-
     protected $fillable = [
         'reservation_id',
         'table_id',
@@ -39,6 +35,7 @@ class Order extends Model
     ];
 
     protected $casts = [
+        'status' => OrderStatus::class,
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
@@ -167,7 +164,7 @@ class Order extends Model
      */
     public function scopeActive($query)
     {
-        return $query->whereNotIn('status', [self::STATUS_COMPLETED, self::STATUS_CANCELLED]);
+        return $query->whereNotIn('status', OrderStatus::closed());
     }
 
     protected static function booted()
@@ -179,7 +176,7 @@ class Order extends Model
             }
 
             $hasActiveReservation = Reservation::where('table_id', $order->table_id)
-                ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+                ->whereIn('status', ReservationStatus::holdingTable())
                 ->exists();
 
             if ($hasActiveReservation) {

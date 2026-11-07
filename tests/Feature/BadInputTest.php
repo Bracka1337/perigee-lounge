@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -23,7 +24,7 @@ beforeEach(function () {
 });
 
 test('staff can add at most 99 of an item to an order', function () {
-    $order = Order::create(['table_id' => Table::first()->id, 'status' => Order::STATUS_OPEN, 'source' => 'staff']);
+    $order = Order::create(['table_id' => Table::first()->id, 'status' => OrderStatus::Open, 'source' => 'staff']);
     $item = MenuItem::first();
     $staff = ($this->as)('staff');
 
@@ -41,7 +42,7 @@ test('staff can add at most 99 of an item to an order', function () {
 });
 
 test('staff cannot add an unavailable menu item to an order', function () {
-    $order = Order::create(['table_id' => Table::first()->id, 'status' => Order::STATUS_OPEN, 'source' => 'staff']);
+    $order = Order::create(['table_id' => Table::first()->id, 'status' => OrderStatus::Open, 'source' => 'staff']);
     $item = MenuItem::first();
     $item->update(['is_available' => false]);
 
