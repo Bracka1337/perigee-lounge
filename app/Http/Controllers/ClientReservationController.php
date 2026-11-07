@@ -99,31 +99,8 @@ class ClientReservationController extends Controller
             return back()->with('error', __('client-reservations-error-too-soon'))->withInput();
         }
 
-        $weekday = $start->dayOfWeek;
-        $hours = OpeningHour::where('weekday', $weekday)->first();
-
-        if ($hours === null || ! $hours->is_open) {
+        if (! OpeningHour::isOpenAt($start)) {
             return back()->with('error', __('client-reservations-error-closed'))->withInput();
-        }
-
-        $timeString = $start->format('H:i:s');
-        $opensAt = $hours->opens_at;
-        $closesAt = $hours->closes_at;
-
-        if ($closesAt === '00:00:00') {
-            $closesAt = '23:59:59';
-        }
-
-        if ($opensAt !== null && $opensAt !== '' && $closesAt !== null && $closesAt !== '') {
-            if ($closesAt > $opensAt) {
-                $isClosed = $timeString < $opensAt || $timeString >= $closesAt;
-            } else {
-                $isClosed = ! ($timeString >= $opensAt || $timeString < $closesAt);
-            }
-
-            if ($isClosed) {
-                return back()->with('error', __('client-reservations-error-closed'))->withInput();
-            }
         }
 
         $hasReservationThatDay = Reservation::where('user_id', $user->id)
