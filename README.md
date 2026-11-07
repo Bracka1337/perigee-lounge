@@ -1,5 +1,7 @@
 # Perigee Lounge
 
+[![CI](https://github.com/Bracka1337/perigee-lounge/actions/workflows/ci.yml/badge.svg)](https://github.com/Bracka1337/perigee-lounge/actions/workflows/ci.yml)
+
 A website and management system for a fictional hookah lounge. Guests browse the menu and book tables, order from their table by QR code, and collect loyalty points. Staff run orders, reservations and promo codes, and admins manage users, tables and translations. The site is available in English, Latvian and Russian.
 
 ![Home page](docs/screenshots/home.png)
@@ -54,10 +56,17 @@ Demo accounts, for local use only:
 
 Register a new account to try the client side. Email is written to the log by default, so the verification link is in `storage/logs/laravel.log`.
 
-## How it works
+## Architecture
 
-- **Routing:** every page sits under a `{locale}` route prefix, and access is controlled by `auth` and `verified` middleware, `can:admin`/`can:staff`/`can:client` role gates, and policies for orders, reservations and users.
-- **Translations:** interface text is stored in the database and served by a custom translator, so admins can edit it on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without changing edited ones.
+- **Controllers stay thin.** Each one validates with a Form Request, checks access, calls one action and returns a response.
+- **Actions** in `app/Actions` hold the business operations, one class each: `OpenTableOrder`, `OpenReservationOrder`, `CompleteOrder`, `ApplyPromoCode`, `SpendLoyaltyPoints`, `ConfirmTableCart`, `CreateStaffReservation` and others. Opening an order for a reservation and completing an order are shared by the order and reservation screens. When a rule blocks an action, it throws a `BusinessRuleException` carrying a translation key, and the user is sent back with that message.
+- **Services** hold what isn't a single operation: `TableCart` (the QR-table cart in the session) and `TelegramNotifier`.
+- **Authorization:** route groups use `can:admin`, `can:staff` and `can:client` gates. `OrderPolicy`, `ReservationPolicy` and `UserPolicy` cover per-record rules, such as a client seeing only their own orders (others get a 404) or staff cancelling only phone and walk-in bookings.
+- **Statuses** are backed enums (`OrderStatus`, `ReservationStatus`) cast on the models.
+- **Locale routing:** every page sits under `/{locale}`. `SetLocale` validates the prefix, sets it as the URL default so `route()` calls don't need it, and remembers it on the user. A path without a locale gets a 301 redirect to the default language.
+- **Translations from the database:** `DatabaseTranslator` extends Laravel's translator and reads interface text from a `translations` table, cached per key, so admins can edit any text on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without overwriting edited ones.
+- **Activity log:** a `LogsActivity` trait records create, update and delete events on the main models for the admin log.
+- **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 7 with no baseline, and bans `dd()`, `dump()` and `env()` outside config files.
 - **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
 - **Telegram:** optional staff notifications for new orders and reservations, set up with the `TELEGRAM_*` values in `.env`.
 
@@ -71,3 +80,13 @@ npm run build
 ```
 
 GitHub Actions runs these on every pull request. Dependabot opens weekly grouped updates for Composer, npm and Actions.
+
+## What I'd do next
+
+- **Live demo** with a nightly data reset.
+- **Laravel 13.** Laravel 12 gets security fixes until February 2027.
+- **Larastan level 8.** What's left is mostly nullable handling.
+- **Expire reservations on a schedule.** Late pending bookings are currently marked expired when someone opens a reservations page.
+- **Queue mail and Telegram notifications,** which are sent during the request today.
+- **Translate the Telegram messages,** which are Russian only.
+- **Browser tests** (Pest 4 browser testing) for the QR cart, drag-and-drop menu sorting and the floor plan.
