@@ -29,7 +29,7 @@ A website and management system for a fictional hookah lounge. Guests browse the
 
 ## Stack
 
-Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
+Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint, Larastan (PHPStan level 7) and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
 
 ## Getting started
 
@@ -64,9 +64,10 @@ Register a new account to try the client side. Email is written to the log by de
 ## Tests
 
 ```bash
-composer test
+composer test          # Pest, in parallel
 vendor/bin/pint --test
+composer stan          # Larastan, level 7, no baseline
 npm run build
 ```
 
-GitHub Actions runs these on every pull request.
+GitHub Actions runs these on every pull request. Dependabot opens weekly grouped updates for Composer, npm and Actions.
