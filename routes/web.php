@@ -151,7 +151,6 @@ Route::group([
             Route::post('/orders', [StaffOrderController::class, 'store'])->name('orders.store');
             Route::post('/orders/from-reservation/{reservation}', [StaffOrderController::class, 'fromReservation'])->name('orders.from-reservation');
             Route::get('/orders/{order}', [StaffOrderController::class, 'show'])->name('orders.show');
-            Route::post('/orders/{order}/items', [StaffOrderController::class, 'addItem'])->name('orders.items.store');
             Route::patch('/orders/{order}/items/{item}', [StaffOrderController::class, 'updateItem'])->name('orders.items.update');
             Route::patch('/orders/{order}/items/{item}/served', [StaffOrderController::class, 'markServed'])->name('orders.items.served');
             Route::delete('/orders/{order}/items/{item}', [StaffOrderController::class, 'destroyItem'])->name('orders.items.destroy');
@@ -159,7 +158,6 @@ Route::group([
             Route::post('/orders/{order}/apply-promo', [StaffOrderController::class, 'applyPromo'])->name('orders.apply-promo');
             Route::post('/orders/{order}/apply-loyalty', [StaffOrderController::class, 'applyLoyalty'])->name('orders.apply-loyalty');
             Route::post('/orders/{order}/complete', [StaffOrderController::class, 'complete'])->name('orders.complete');
-            // Cancel endpoint removed per requirements: staff cannot cancel orders.
 
             Route::get('orders/{order}/items/catalog', [OrderItemCatalogController::class, 'index'])->name('orders.items.catalog');
             Route::post('orders/{order}/items', [OrderItemCatalogController::class, 'store'])->name('orders.items.store');

@@ -33,6 +33,28 @@ class Table extends Model
     ];
 
     /**
+     * Finds a table from its QR code: the table name ("Z4", any case), its id ("4"),
+     * or "z" followed by the id ("z4").
+     */
+    public static function findByQrCode(string $code): ?self
+    {
+        $byName = self::whereRaw('LOWER(name) = ?', [strtolower($code)])->first();
+        if ($byName !== null) {
+            return $byName;
+        }
+
+        $id = (strlen($code) > 1 && strtolower($code[0]) === 'z') ? substr($code, 1) : $code;
+
+        return ctype_digit($id) ? self::find((int) $id) : null;
+    }
+
+    public function occupy(): void
+    {
+        $this->is_occupied = true;
+        $this->save();
+    }
+
+    /**
      * Free the table unless another open order or a seated guest still holds it.
      */
     public function releaseIfFree(?int $exceptOrderId = null): void

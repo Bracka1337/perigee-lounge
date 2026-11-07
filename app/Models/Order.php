@@ -83,6 +83,18 @@ class Order extends Model
         return $this->belongsTo(PromoCode::class);
     }
 
+    /**
+     * Reloads the order after its items or promo changed, gives back loyalty points
+     * that no longer fit, and saves the new totals.
+     */
+    public function syncTotals(): void
+    {
+        $this->refresh();
+        $this->refundExcessLoyalty();
+        $this->recalculateTotals();
+        $this->save();
+    }
+
     public function recalculateTotals(): void
     {
         $subtotal = $this->items()->sum('total_price');
