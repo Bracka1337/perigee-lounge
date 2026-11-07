@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ClientOrderController extends Controller
 {
-    public function index(Request $request, string $locale): View
+    public function index(Request $request, string $locale, #[CurrentUser] User $user): View
     {
         return view('client.orders.index', [
-            'orders' => $request->user()->orders()
+            'orders' => $user->orders()
                 ->with(['items.menuItem.category', 'table'])
                 ->orderByDesc('created_at')
                 ->get(),

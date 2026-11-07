@@ -129,7 +129,7 @@ class ClientTableOrderController extends Controller
         }
 
         // Unverified clients can't open their order page yet, so they go back to the menu.
-        $target = auth()->user()?->hasVerifiedEmail()
+        $target = auth()->user()?->hasVerifiedEmail() === true
             ? redirect()->route('client.orders.show', ['locale' => $locale, 'order' => $order])
             : redirect()->route('client.table.menu', ['locale' => $locale, 'code' => $code]);
 

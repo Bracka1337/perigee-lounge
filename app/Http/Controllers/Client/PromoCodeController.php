@@ -4,16 +4,16 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\PromoCode;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PromoCodeController extends Controller
 {
-    public function index(string $locale): View
+    public function index(string $locale, #[CurrentUser] User $user): View
     {
-        $user = Auth::user();
         $promoCodes = $user->promoCodes()
             ->withPivot('claimed_at', 'used_at', 'is_used', 'is_redeemed', 'redeemed_at')
             ->with(['menuCategory:id,name', 'menuItem:id,name'])
@@ -24,13 +24,11 @@ class PromoCodeController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $locale): RedirectResponse
+    public function store(Request $request, string $locale, #[CurrentUser] User $user): RedirectResponse
     {
         $data = $request->validate([
             'public_code' => ['required', 'string'],
         ]);
-
-        $user = Auth::user();
 
         $promo = PromoCode::where('public_code', $data['public_code'])->first();
 

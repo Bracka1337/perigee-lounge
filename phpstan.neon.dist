@@ -4,7 +4,7 @@ parameters:
     - routes
     - database
     - config
-  level: 7
+  level: 8
   tmpDir: storage/framework/cache/phpstan
   checkMissingTypehints: true
   checkUninitializedProperties: true
