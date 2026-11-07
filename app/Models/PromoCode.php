@@ -3,20 +3,15 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsActivity;
-use Database\Factories\PromoCodeFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
-/**
- * @use HasFactory<PromoCodeFactory>
- */
 class PromoCode extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected $fillable = [
         'public_code',
@@ -42,7 +37,7 @@ class PromoCode extends Model
     ];
 
     /**
-     * @return HasMany<PromoCodeUsage, PromoCode>
+     * @return HasMany<PromoCodeUsage, $this>
      */
     public function usages(): HasMany
     {
@@ -50,7 +45,7 @@ class PromoCode extends Model
     }
 
     /**
-     * @return BelongsTo<MenuCategory, PromoCode>
+     * @return BelongsTo<MenuCategory, $this>
      */
     public function menuCategory(): BelongsTo
     {
@@ -58,7 +53,7 @@ class PromoCode extends Model
     }
 
     /**
-     * @return BelongsTo<MenuItem, PromoCode>
+     * @return BelongsTo<MenuItem, $this>
      */
     public function menuItem(): BelongsTo
     {
@@ -66,7 +61,7 @@ class PromoCode extends Model
     }
 
     /**
-     * @return BelongsToMany<User>
+     * @return BelongsToMany<User, $this>
      */
     public function users(): BelongsToMany
     {
@@ -199,6 +194,9 @@ class PromoCode extends Model
         return round($discount, 2);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getDiscountDetailsForOrder(Order $order): array
     {
         $order->loadMissing('items.menuItem.category');

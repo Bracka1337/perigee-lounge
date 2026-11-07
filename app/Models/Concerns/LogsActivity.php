@@ -3,7 +3,6 @@
 namespace App\Models\Concerns;
 
 use App\Models\ActivityLog;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Auth;
 
@@ -156,7 +155,7 @@ trait LogsActivity
     /**
      * Получить логи активности для данной модели
      *
-     * @return MorphMany<ActivityLog, Model>
+     * @return MorphMany<ActivityLog, $this>
      */
     public function activityLogs()
     {

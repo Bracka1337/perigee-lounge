@@ -8,6 +8,7 @@ use Illuminate\Translation\Translator;
 class DatabaseTranslator extends Translator
 {
     /**
+     * @param  array<array-key, mixed>  $replace
      * @return array<string, mixed>|string
      */
     public function get($key, array $replace = [], $locale = null, $fallback = true)

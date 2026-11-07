@@ -14,7 +14,7 @@ abstract class Controller
     {
         $date = $request->query('date');
 
-        if (is_string($date) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $m) && checkdate((int) $m[2], (int) $m[3], (int) $m[1])) {
+        if (is_string($date) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $m) === 1 && checkdate((int) $m[2], (int) $m[3], (int) $m[1])) {
             return Carbon::parse($date)->startOfDay();
         }
 

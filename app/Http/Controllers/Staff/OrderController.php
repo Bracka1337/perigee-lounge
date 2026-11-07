@@ -68,7 +68,7 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request, string $locale, OpenTableOrder $openTableOrder): RedirectResponse
     {
-        $table = Table::where('is_active', true)->findOrFail($request->validated('table_id'));
+        $table = Table::where('is_active', true)->findOrFail((int) $request->validated('table_id'));
 
         $order = $openTableOrder->handle($table, $request->validated('user_id'));
 

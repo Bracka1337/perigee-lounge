@@ -49,7 +49,8 @@ class ClientReservationController extends Controller
             ->values()
             ->all();
 
-        $myReservations = Reservation::where('user_id', $user->id)
+        $myReservations = Reservation::with('table')
+            ->where('user_id', $user->id)
             ->orderByDesc('start_at')
             ->limit(10)
             ->get();
@@ -78,7 +79,7 @@ class ClientReservationController extends Controller
             'guests_count' => ['required', 'integer', 'min:1', 'max:20'],
         ]);
 
-        $table = Table::where('is_active', true)->findOrFail($data['table_id']);
+        $table = Table::where('is_active', true)->findOrFail((int) $data['table_id']);
 
         if ($table->is_occupied) {
             return back()->with('error', __('client-reservations-error-overlap'))->withInput();

@@ -44,7 +44,8 @@ class ReservationController extends Controller
                 ->whereIn('status', ReservationStatus::holdingTable())
                 ->get()
                 ->groupBy('table_id'),
-            'reservations' => Reservation::whereDate('start_at', $selectedDate->toDateString())
+            'reservations' => Reservation::with('table')
+                ->whereDate('start_at', $selectedDate->toDateString())
                 ->orderBy('start_at')
                 ->get(),
             'occupiedTableIds' => $occupiedTableIds,

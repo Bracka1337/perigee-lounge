@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
                 'sort_order' => $sortOrder,
             ];
 
-            if ($category) {
+            if ($category !== null) {
                 $category->update($attributes);
             } else {
                 $category = MenuCategory::create($attributes);
@@ -44,7 +44,7 @@ class MenuSeeder extends Seeder
                     ->where('name->en', $item['name']['en'])
                     ->first();
 
-                if ($existing) {
+                if ($existing !== null) {
                     $existing->update($itemAttributes);
                 } else {
                     MenuItem::create($itemAttributes);

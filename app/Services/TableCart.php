@@ -78,10 +78,10 @@ class TableCart
         $this->put($tableId, $items);
 
         foreach ($items as $menuItemId => $qty) {
-            $menuItem = $menuItems->get((int) $menuItemId);
-            $sum = $menuItem->price * (int) $qty;
+            $menuItem = $menuItems->get($menuItemId);
+            $sum = $menuItem->price * $qty;
             $total += $sum;
-            $lines[(int) $menuItemId] = ['item' => $menuItem, 'qty' => (int) $qty, 'sum' => $sum];
+            $lines[$menuItemId] = ['item' => $menuItem, 'qty' => $qty, 'sum' => $sum];
         }
 
         return ['lines' => $lines, 'total' => $total];

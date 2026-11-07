@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 class CreateStaffReservation
 {
     /**
-     * @param  array{table_id: int|string, date: string, time: string, mode: string, guest_name?: ?string, guest_phone?: ?string, guests_count: int|string}  $data
+     * @param  array<string, mixed>  $data  Validated StoreReservationRequest data
      */
     public function handle(array $data): Reservation
     {

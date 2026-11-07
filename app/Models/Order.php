@@ -5,20 +5,15 @@ namespace App\Models;
 use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
-use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\ValidationException;
 
-/**
- * @use HasFactory<OrderFactory>
- */
 class Order extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected $fillable = [
         'reservation_id',
@@ -36,12 +31,15 @@ class Order extends Model
 
     protected $casts = [
         'status' => OrderStatus::class,
+        'subtotal' => 'float',
+        'discount_total' => 'float',
+        'total' => 'float',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
     ];
 
     /**
-     * @return BelongsTo<Reservation, Order>
+     * @return BelongsTo<Reservation, $this>
      */
     public function reservation(): BelongsTo
     {
@@ -49,7 +47,7 @@ class Order extends Model
     }
 
     /**
-     * @return BelongsTo<Table, Order>
+     * @return BelongsTo<Table, $this>
      */
     public function table(): BelongsTo
     {
@@ -57,7 +55,7 @@ class Order extends Model
     }
 
     /**
-     * @return BelongsTo<User, Order>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -65,7 +63,7 @@ class Order extends Model
     }
 
     /**
-     * @return HasMany<OrderItem, Order>
+     * @return HasMany<OrderItem, $this>
      */
     public function items(): HasMany
     {
@@ -73,7 +71,7 @@ class Order extends Model
     }
 
     /**
-     * @return BelongsTo<PromoCode, Order>
+     * @return BelongsTo<PromoCode, $this>
      */
     public function promoCode(): BelongsTo
     {
@@ -94,7 +92,7 @@ class Order extends Model
 
     public function recalculateTotals(): void
     {
-        $subtotal = $this->items()->sum('total_price');
+        $subtotal = (float) $this->items()->sum('total_price');
         $this->subtotal = $subtotal;
         $this->discount_total = $this->promoDiscount() + $this->loyaltySpent();
         $this->total = max($subtotal - $this->discount_total, 0);
@@ -125,7 +123,8 @@ class Order extends Model
             return;
         }
 
-        $entries = LoyaltyEarning::where('order_id', $this->id)
+        $entries = LoyaltyEarning::with('user')
+            ->where('order_id', $this->id)
             ->where('amount', '<', 0)
             ->orderByDesc('id')
             ->get();
@@ -135,14 +134,14 @@ class Order extends Model
                 break;
             }
 
-            $refund = min(abs((float) $entry->amount), $excess);
+            $refund = min(abs($entry->amount), $excess);
 
             if ($entry->user !== null) {
-                $entry->user->loyalty_balance = round((float) $entry->user->loyalty_balance + $refund, 2);
+                $entry->user->loyalty_balance = round($entry->user->loyalty_balance + $refund, 2);
                 $entry->user->save();
             }
 
-            $remaining = round((float) $entry->amount + $refund, 2);
+            $remaining = round($entry->amount + $refund, 2);
             if ($remaining < 0) {
                 $entry->update(['amount' => $remaining]);
             } else {
