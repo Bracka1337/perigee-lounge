@@ -8,6 +8,7 @@ use App\Models\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class TableController extends Controller
@@ -103,7 +104,8 @@ class TableController extends Controller
     public function updateOpeningHours(Request $request, string $locale): RedirectResponse
     {
         $data = $request->validate([
-            'hours' => ['required', 'array'],
+            'hours' => ['required', 'array:0,1,2,3,4,5,6'],
+            'hours.*' => ['array:is_open,opens_at,closes_at'],
             'hours.*.is_open' => ['nullable', 'boolean'],
             'hours.*.opens_at' => ['nullable', 'date_format:H:i'],
             'hours.*.closes_at' => ['nullable', 'date_format:H:i'],
@@ -112,8 +114,8 @@ class TableController extends Controller
         foreach ($data['hours'] as $weekday => $row) {
             $model = OpeningHour::firstOrNew(['weekday' => (int) $weekday]);
             $model->is_open = isset($row['is_open']) ? (bool) $row['is_open'] : false;
-            $model->opens_at = $row['opens_at'] ? $row['opens_at'].':00' : null;
-            $model->closes_at = $row['closes_at'] ? $row['closes_at'].':00' : null;
+            $model->opens_at = ! empty($row['opens_at']) ? $row['opens_at'].':00' : null;
+            $model->closes_at = ! empty($row['closes_at']) ? $row['closes_at'].':00' : null;
             $model->save();
         }
 
@@ -127,13 +129,20 @@ class TableController extends Controller
             'layout_payload' => ['required', 'string'],
         ]);
 
-        $items = json_decode($data['layout_payload'], true) ?? [];
+        $items = Validator::make(
+            ['layout' => json_decode($data['layout_payload'], true) ?? []],
+            [
+                'layout' => ['array'],
+                'layout.*.id' => ['required', 'integer'],
+                'layout.*.pos_x' => ['required', 'numeric'],
+                'layout.*.pos_y' => ['required', 'numeric'],
+                'layout.*.width' => ['required', 'numeric', 'min:1'],
+                'layout.*.height' => ['required', 'numeric', 'min:1'],
+                'layout.*.rotation' => ['required', 'numeric'],
+            ],
+        )->validate()['layout'];
 
         foreach ($items as $row) {
-            if (! isset($row['id'])) {
-                continue;
-            }
-
             $table = Table::find($row['id']);
             if ($table === null) {
                 continue;

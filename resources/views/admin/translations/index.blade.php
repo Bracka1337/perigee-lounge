@@ -16,7 +16,7 @@
                   class="flex items-center gap-2 w-full md:w-auto">
                 <input type="text"
                        name="q"
-                       value="{{ request('q') }}"
+                       value="{{ $search }}"
                        placeholder="{{ __('admin-translations-search-placeholder') }}"
                        class="bg-ground/60 border border-line rounded-full px-3 py-1.5 text-xs text-ink w-full md:w-56">
             </form>

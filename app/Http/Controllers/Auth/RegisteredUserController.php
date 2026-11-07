@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'indisposable', 'unique:'.User::class],
+            'email' => ['bail', 'required', 'string', 'lowercase', 'email', 'max:255', 'indisposable', 'unique:'.User::class],
             'birth_date' => ['required', 'date', 'before_or_equal:'.Carbon::now()->subYears(20)->format('Y-m-d')],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'terms' => ['required', 'accepted'],

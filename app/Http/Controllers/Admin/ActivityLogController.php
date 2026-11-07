@@ -11,6 +11,15 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'user_id' => ['nullable', 'integer'],
+            'model_id' => ['nullable', 'integer'],
+            'model_type' => ['nullable', 'string'],
+            'action' => ['nullable', 'string'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date'],
+        ]);
+
         $query = ActivityLog::with('user')
             ->orderBy('created_at', 'desc');
 
