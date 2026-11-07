@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Order;
@@ -66,7 +67,7 @@ test('items that become unavailable are removed from the cart at confirmation', 
 test('confirming a cart adds its items to the open order', function () {
     $order = Order::create([
         'table_id' => Table::where('name', 'Z4')->value('id'),
-        'status' => Order::STATUS_OPEN,
+        'status' => OrderStatus::Open,
     ]);
 
     $this->post($this->addUrl, ['menu_item_id' => $this->item->id, 'quantity' => 2]);
@@ -131,7 +132,7 @@ test('invalid item ids in cart urls are rejected without a server error', functi
 test('verified guests see a confirmation after sending an order', function () {
     Order::create([
         'table_id' => Table::where('name', 'Z4')->value('id'),
-        'status' => Order::STATUS_OPEN,
+        'status' => OrderStatus::Open,
     ]);
 
     $this->post($this->addUrl, ['menu_item_id' => $this->item->id]);

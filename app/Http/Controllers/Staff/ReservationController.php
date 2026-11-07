@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Staff;
 use App\Actions\Orders\CompleteOrder;
 use App\Actions\Orders\OpenReservationOrder;
 use App\Actions\Reservations\CreateStaffReservation;
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StoreReservationRequest;
 use App\Models\Order;
@@ -22,9 +24,9 @@ class ReservationController extends Controller
     public function index(Request $request, string $locale): View
     {
         // Guests more than an hour late lose the booking.
-        Reservation::where('status', Reservation::STATUS_PENDING)
+        Reservation::where('status', ReservationStatus::Pending)
             ->where('start_at', '<', now()->subHour())
-            ->update(['status' => Reservation::STATUS_EXPIRED]);
+            ->update(['status' => ReservationStatus::Expired]);
 
         $selectedDate = $this->dateFilter($request);
         $tables = Table::where('is_active', true)->orderBy('id')->get();
@@ -39,7 +41,7 @@ class ReservationController extends Controller
             'date' => $selectedDate,
             'tables' => $tables,
             'reservationsForDay' => Reservation::whereDate('start_at', $selectedDate->toDateString())
-                ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+                ->whereIn('status', ReservationStatus::holdingTable())
                 ->get()
                 ->groupBy('table_id'),
             'reservations' => Reservation::whereDate('start_at', $selectedDate->toDateString())
@@ -63,7 +65,7 @@ class ReservationController extends Controller
 
     public function markArrived(string $locale, Reservation $reservation, OpenReservationOrder $openReservationOrder): RedirectResponse
     {
-        if ($reservation->status !== Reservation::STATUS_PENDING) {
+        if ($reservation->status !== ReservationStatus::Pending) {
             return back()->with('error', __('staff-reservations-arrive-forbidden'));
         }
 
@@ -90,12 +92,12 @@ class ReservationController extends Controller
 
     public function markCompleted(string $locale, Reservation $reservation, CompleteOrder $completeOrder): RedirectResponse
     {
-        if ($reservation->status !== Reservation::STATUS_ACTIVE) {
+        if ($reservation->status !== ReservationStatus::Active) {
             return back()->with('error', __('staff-reservations-complete-forbidden'));
         }
 
         DB::transaction(function () use ($reservation, $completeOrder) {
-            $reservation->status = Reservation::STATUS_COMPLETED;
+            $reservation->status = ReservationStatus::Completed;
             $reservation->end_at = Carbon::now();
             $reservation->save();
 
@@ -103,7 +105,7 @@ class ReservationController extends Controller
             $order = $reservation->order
                 ?? Order::active()->where('table_id', $reservation->table_id)->first();
 
-            if ($order !== null && $order->status !== Order::STATUS_COMPLETED) {
+            if ($order !== null && $order->status !== OrderStatus::Completed) {
                 $completeOrder->handle($order);
             }
 
@@ -115,7 +117,7 @@ class ReservationController extends Controller
 
     public function cancel(string $locale, Reservation $reservation): RedirectResponse
     {
-        if (! in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
+        if (! in_array($reservation->status, ReservationStatus::holdingTable(), true)) {
             return back()->with('error', __('staff-reservations-cancel-forbidden'));
         }
 
@@ -123,7 +125,7 @@ class ReservationController extends Controller
             return back()->with('error', __('staff-reservations-cancel-client-forbidden'));
         }
 
-        $reservation->status = Reservation::STATUS_CANCELLED;
+        $reservation->status = ReservationStatus::Cancelled;
         $reservation->end_at = null;
         $reservation->save();
 

@@ -2,6 +2,8 @@
 
 namespace App\Actions\Orders;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Order;
 use App\Models\Reservation;
 use Illuminate\Support\Carbon;
@@ -15,8 +17,8 @@ class OpenReservationOrder
 {
     public function handle(Reservation $reservation): ?Order
     {
-        if ($reservation->status === Reservation::STATUS_PENDING) {
-            $reservation->status = Reservation::STATUS_ACTIVE;
+        if ($reservation->status === ReservationStatus::Pending) {
+            $reservation->status = ReservationStatus::Active;
             $reservation->save();
         }
 
@@ -42,7 +44,7 @@ class OpenReservationOrder
                 'reservation_id' => $reservation->id,
                 'table_id' => $reservation->table_id,
                 'user_id' => $reservation->user_id,
-                'status' => Order::STATUS_OPEN,
+                'status' => OrderStatus::Open,
                 'started_at' => Carbon::now(),
                 'source' => $source,
             ]);

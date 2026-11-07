@@ -2,6 +2,7 @@
 
 namespace App\Actions\Reservations;
 
+use App\Enums\ReservationStatus;
 use App\Exceptions\BusinessRuleException;
 use App\Models\OpeningHour;
 use App\Models\Order;
@@ -48,7 +49,7 @@ class CreateStaffReservation
 
         $tableTaken = Reservation::where('table_id', $tableId)
             ->whereDate('start_at', $start->toDateString())
-            ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+            ->whereIn('status', ReservationStatus::holdingTable())
             ->exists();
 
         if ($tableTaken) {
@@ -62,7 +63,7 @@ class CreateStaffReservation
             'guest_phone' => ($data['guest_phone'] ?? '') !== '' ? $data['guest_phone'] : null,
             'start_at' => $start,
             'end_at' => null,
-            'status' => Reservation::STATUS_PENDING,
+            'status' => ReservationStatus::Pending,
             'guests_count' => $data['guests_count'],
             'source' => $data['mode'],
         ]);

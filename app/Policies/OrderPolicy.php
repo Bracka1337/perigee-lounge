@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -23,6 +24,6 @@ class OrderPolicy
      */
     public function addItems(User $user, Order $order): bool
     {
-        return $user->isWorker() && $order->status === Order::STATUS_OPEN;
+        return $user->isWorker() && $order->status === OrderStatus::Open;
     }
 }

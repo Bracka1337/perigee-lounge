@@ -2,6 +2,8 @@
 
 namespace App\Actions\Orders;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Exceptions\BusinessRuleException;
 use App\Models\Order;
 use App\Models\Reservation;
@@ -28,7 +30,7 @@ class OpenTableOrder
 
         $reservation = Reservation::where('table_id', $table->id)
             ->whereDate('start_at', $now->toDateString())
-            ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+            ->whereIn('status', ReservationStatus::holdingTable())
             ->orderBy('start_at')
             ->first();
 
@@ -36,8 +38,8 @@ class OpenTableOrder
             throw new BusinessRuleException('staff-orders-error-table-reserved');
         }
 
-        if ($reservation?->status === Reservation::STATUS_PENDING) {
-            $reservation->status = Reservation::STATUS_ACTIVE;
+        if ($reservation?->status === ReservationStatus::Pending) {
+            $reservation->status = ReservationStatus::Active;
             $reservation->save();
         }
 
@@ -45,7 +47,7 @@ class OpenTableOrder
             'reservation_id' => $reservation?->id,
             'table_id' => $table->id,
             'user_id' => $userId ?? $reservation?->user_id,
-            'status' => Order::STATUS_OPEN,
+            'status' => OrderStatus::Open,
             'started_at' => $now,
             'source' => ($reservation?->source ?? '') !== '' ? $reservation->source : 'manual',
         ]);

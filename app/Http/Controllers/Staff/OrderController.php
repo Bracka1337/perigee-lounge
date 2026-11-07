@@ -8,6 +8,8 @@ use App\Actions\Orders\CompleteOrder;
 use App\Actions\Orders\OpenReservationOrder;
 use App\Actions\Orders\OpenTableOrder;
 use App\Actions\Orders\SpendLoyaltyPoints;
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\ApplyPromoCodeRequest;
 use App\Http\Requests\Staff\AttachClientRequest;
@@ -39,11 +41,11 @@ class OrderController extends Controller
             'ordersActive' => Order::active()->with(['table', 'user'])->orderByDesc('created_at')->get(),
             'ordersHistory' => Order::with(['table', 'user'])
                 ->whereDate('created_at', $selectedDate->toDateString())
-                ->whereIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+                ->whereIn('status', OrderStatus::closed())
                 ->orderByDesc('created_at')
                 ->get(),
             'reservations' => Reservation::whereDate('start_at', $selectedDate->toDateString())
-                ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+                ->whereIn('status', ReservationStatus::holdingTable())
                 ->whereDoesntHave('order')
                 ->with(['table', 'user'])
                 ->orderBy('start_at')
@@ -57,7 +59,7 @@ class OrderController extends Controller
             'tables' => Table::where('is_active', true)->orderBy('id')->get(),
             'menuCategories' => MenuCategory::with('items')->ordered()->get(),
             'reservedTableIds' => Reservation::whereDate('start_at', Carbon::now()->toDateString())
-                ->whereIn('status', [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE])
+                ->whereIn('status', ReservationStatus::holdingTable())
                 ->pluck('table_id')
                 ->toArray(),
             'openOrderTableIds' => Order::active()->pluck('table_id')->toArray(),
@@ -85,7 +87,7 @@ class OrderController extends Controller
             ->route('staff.orders.index', ['locale' => $locale, 'date' => $reservation->start_at->toDateString()])
             ->with('error', __($error));
 
-        if (! in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
+        if (! in_array($reservation->status, ReservationStatus::holdingTable(), true)) {
             return $backToDay('staff-orders-error-reservation-closed');
         }
 
@@ -124,7 +126,7 @@ class OrderController extends Controller
     {
         abort_if($order->id !== $item->order_id, 404);
 
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-update-item-forbidden'));
         }
 
@@ -143,7 +145,7 @@ class OrderController extends Controller
     {
         abort_if($order->id !== $item->order_id, 404);
 
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-delete-item-forbidden'));
         }
 
@@ -157,7 +159,7 @@ class OrderController extends Controller
 
     public function attachClient(AttachClientRequest $request, string $locale, Order $order, AttachClient $attachClient): RedirectResponse
     {
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-attach-client-forbidden'));
         }
 
@@ -168,7 +170,7 @@ class OrderController extends Controller
 
     public function applyPromo(ApplyPromoCodeRequest $request, string $locale, Order $order, ApplyPromoCode $applyPromoCode): RedirectResponse
     {
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-apply-promo-forbidden'));
         }
 
@@ -179,7 +181,7 @@ class OrderController extends Controller
 
     public function applyLoyalty(SpendLoyaltyRequest $request, string $locale, Order $order, SpendLoyaltyPoints $spendLoyaltyPoints): RedirectResponse
     {
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-apply-loyalty-forbidden'));
         }
 
@@ -190,7 +192,7 @@ class OrderController extends Controller
 
     public function complete(string $locale, Order $order, CompleteOrder $completeOrder): RedirectResponse
     {
-        if ($order->status !== Order::STATUS_OPEN) {
+        if ($order->status !== OrderStatus::Open) {
             return back()->with('error', __('staff-orders-complete-forbidden'));
         }
 
