@@ -3,17 +3,10 @@
 namespace App\Models;
 
 use Carbon\CarbonInterface;
-use Database\Factories\OpeningHourFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @use HasFactory<OpeningHourFactory>
- */
 class OpeningHour extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'weekday',
         'is_open',

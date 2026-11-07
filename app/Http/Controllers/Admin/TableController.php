@@ -114,8 +114,8 @@ class TableController extends Controller
         foreach ($data['hours'] as $weekday => $row) {
             $model = OpeningHour::firstOrNew(['weekday' => (int) $weekday]);
             $model->is_open = isset($row['is_open']) ? (bool) $row['is_open'] : false;
-            $model->opens_at = ! empty($row['opens_at']) ? $row['opens_at'].':00' : null;
-            $model->closes_at = ! empty($row['closes_at']) ? $row['closes_at'].':00' : null;
+            $model->opens_at = ($row['opens_at'] ?? '') !== '' ? $row['opens_at'].':00' : null;
+            $model->closes_at = ($row['closes_at'] ?? '') !== '' ? $row['closes_at'].':00' : null;
             $model->save();
         }
 
@@ -143,7 +143,7 @@ class TableController extends Controller
         )->validate()['layout'];
 
         foreach ($items as $row) {
-            $table = Table::find($row['id']);
+            $table = Table::find((int) $row['id']);
             if ($table === null) {
                 continue;
             }

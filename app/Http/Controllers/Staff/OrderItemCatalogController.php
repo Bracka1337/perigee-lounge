@@ -29,7 +29,7 @@ class OrderItemCatalogController extends Controller
     {
         Gate::authorize('addItems', $order);
 
-        $menuItem = MenuItem::with('category')->findOrFail($request->validated('menu_item_id'));
+        $menuItem = MenuItem::with('category')->findOrFail((int) $request->validated('menu_item_id'));
 
         if (! $menuItem->isOrderable()) {
             return back()->with('error', __('menu-unavailable'));
@@ -40,7 +40,7 @@ class OrderItemCatalogController extends Controller
             'menu_item_id' => $menuItem->id,
         ]);
 
-        $quantity = (int) $orderItem->quantity + (int) ($request->validated('quantity') ?? 1);
+        $quantity = ($orderItem->exists ? $orderItem->quantity : 0) + (int) ($request->validated('quantity') ?? 1);
 
         // The line total is capped too, so repeated adds can't push it past the limit.
         Validator::make(

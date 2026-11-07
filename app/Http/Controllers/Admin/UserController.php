@@ -100,7 +100,7 @@ class UserController extends Controller
         $user->email = $data['email'];
         $user->role = $data['role'];
 
-        if (isset($data['password']) && $data['password'] !== '' && $data['password'] !== null) {
+        if (isset($data['password']) && $data['password'] !== '') {
             $user->password = bcrypt($data['password']);
         }
 
@@ -166,7 +166,7 @@ class UserController extends Controller
             ->where('amount', '>', 0)
             ->sum('amount');
 
-        $loyaltyRedeemed = abs(LoyaltyEarning::where('user_id', $user->id)
+        $loyaltyRedeemed = abs((float) LoyaltyEarning::where('user_id', $user->id)
             ->where('amount', '<', 0)
             ->sum('amount'));
 

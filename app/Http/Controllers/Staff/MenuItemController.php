@@ -14,7 +14,7 @@ class MenuItemController extends Controller
 {
     public function create(Request $request): View
     {
-        $categoryId = $request->get('category_id');
+        $categoryId = $request->input('category_id');
         $category = MenuCategory::findOrFail($categoryId);
 
         return view('staff.menu.create-item', compact('category'));

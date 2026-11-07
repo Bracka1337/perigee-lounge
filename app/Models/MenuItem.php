@@ -32,10 +32,11 @@ class MenuItem extends Model
         'description' => 'array',
         'allergens' => 'array',
         'is_available' => 'boolean',
+        'price' => 'float',
     ];
 
     /**
-     * @return BelongsTo<MenuCategory, MenuItem>
+     * @return BelongsTo<MenuCategory, $this>
      */
     public function category(): BelongsTo
     {
@@ -45,7 +46,7 @@ class MenuItem extends Model
     /**
      * Получить элементы заказов
      *
-     * @return HasMany<OrderItem, MenuItem>
+     * @return HasMany<OrderItem, $this>
      */
     public function orderItems(): HasMany
     {
@@ -54,12 +55,12 @@ class MenuItem extends Model
 
     public function isOrderable(): bool
     {
-        return ($this->is_available ?? true) && ($this->category?->is_available ?? true);
+        return ($this->is_available ?? true) && ($this->category->is_available ?? true);
     }
 
     public function getFormattedPriceAttribute(): string
     {
-        return number_format((float) $this->price, 2, '.', ' ').' €';
+        return number_format($this->price, 2, '.', ' ').' €';
     }
 
     public function getImageUrlAttribute(): ?string

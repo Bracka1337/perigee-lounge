@@ -2,18 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\LoyaltyEarningFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @use HasFactory<LoyaltyEarningFactory>
- */
 class LoyaltyEarning extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'order_id',
@@ -21,7 +14,7 @@ class LoyaltyEarning extends Model
     ];
 
     /**
-     * @return BelongsTo<User, LoyaltyEarning>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -29,7 +22,7 @@ class LoyaltyEarning extends Model
     }
 
     /**
-     * @return BelongsTo<Order, LoyaltyEarning>
+     * @return BelongsTo<Order, $this>
      */
     public function order(): BelongsTo
     {

@@ -28,7 +28,7 @@ class PromoCodeController extends Controller
     public function create(string $locale): View
     {
         $categories = MenuCategory::ordered()->get();
-        $items = MenuItem::orderBy('menu_category_id')->orderBy('sort_order')->get();
+        $items = MenuItem::with('category')->orderBy('menu_category_id')->orderBy('sort_order')->get();
 
         return view('staff.promo-codes.create', [
             'categories' => $categories,
@@ -92,7 +92,7 @@ class PromoCodeController extends Controller
     public function edit(string $locale, PromoCode $promoCode): View
     {
         $categories = MenuCategory::ordered()->get();
-        $items = MenuItem::orderBy('menu_category_id')->orderBy('sort_order')->get();
+        $items = MenuItem::with('category')->orderBy('menu_category_id')->orderBy('sort_order')->get();
 
         return view('staff.promo-codes.edit', [
             'promoCode' => $promoCode,

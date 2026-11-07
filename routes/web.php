@@ -51,7 +51,7 @@ Route::fallback(function (Request $request) {
     $path = $request->path();
 
     // Check if the path already starts with a valid locale
-    $firstSegment = explode('/', $path)[0] ?? '';
+    $firstSegment = explode('/', $path)[0];
     if (in_array($firstSegment, $locales, true)) {
         // Already has locale, this is a real 404
         abort(404);
