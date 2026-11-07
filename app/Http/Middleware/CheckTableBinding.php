@@ -43,7 +43,7 @@ class CheckTableBinding
 
         if ($existingOrder !== null && $existingOrder->table_id !== $requestedTable->id) {
             $boundTable = $existingOrder->table;
-            $boundTableName = $boundTable?->name ?? "#{$existingOrder->table_id}";
+            $boundTableName = $boundTable->name ?? "#{$existingOrder->table_id}";
 
             $locale = $request->route('locale') ?? app()->getLocale();
 
@@ -65,7 +65,7 @@ class CheckTableBinding
         // Fallback: support numeric id (e.g. "4") or prefixed like "z4" meaning id=4
         $normalized = $code;
         if (strlen($normalized) > 1 && strtolower($normalized[0]) === 'z') {
-            $normalized = substr($normalized, 1) ?: '';
+            $normalized = substr($normalized, 1);
         }
         if (ctype_digit($normalized)) {
             return Table::find((int) $normalized);

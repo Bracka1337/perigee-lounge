@@ -2,18 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\OrderItemFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @use HasFactory<OrderItemFactory>
- */
 class OrderItem extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'order_id',
         'menu_item_id',
@@ -25,10 +18,12 @@ class OrderItem extends Model
 
     protected $casts = [
         'is_served' => 'boolean',
+        'unit_price' => 'float',
+        'total_price' => 'float',
     ];
 
     /**
-     * @return BelongsTo<Order, OrderItem>
+     * @return BelongsTo<Order, $this>
      */
     public function order(): BelongsTo
     {
@@ -36,7 +31,7 @@ class OrderItem extends Model
     }
 
     /**
-     * @return BelongsTo<MenuItem, OrderItem>
+     * @return BelongsTo<MenuItem, $this>
      */
     public function menuItem(): BelongsTo
     {

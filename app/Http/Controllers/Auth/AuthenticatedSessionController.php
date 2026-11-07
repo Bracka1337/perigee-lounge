@@ -41,9 +41,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        $locale = $request->route('locale')
-            ?? app()->getLocale()
-            ?? config('site.default_locale', 'ru');
+        $locale = $request->route('locale') ?? app()->getLocale();
 
         return redirect()->route('home', ['locale' => $locale]);
     }

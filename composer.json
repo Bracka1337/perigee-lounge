@@ -57,11 +57,10 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php artisan test --parallel"
         ],
         "stan": "php -d memory_limit=1G vendor/bin/phpstan analyse --ansi",
         "stan:baseline": "php -d memory_limit=1G vendor/bin/phpstan analyse --generate-baseline --ansi",
-        "stan:clear-baseline": "rm -f phpstan-baseline.neon",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

@@ -14,9 +14,7 @@ class Authenticate extends Middleware
             return null;
         }
 
-        $locale = $request->route('locale')
-            ?? App::getLocale()
-            ?? config('site.default_locale', config('app.locale', 'ru'));
+        $locale = $request->route('locale') ?? App::getLocale();
 
         return route('login', ['locale' => $locale]);
     }

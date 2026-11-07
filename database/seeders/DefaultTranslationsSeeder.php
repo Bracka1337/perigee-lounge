@@ -607,11 +607,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Atpakaļ uz ieeju',
                 'ru' => 'Назад к входу',
             ],
-            'reset-password-email-title' => [
-                'en' => 'Password Reset',
-                'lv' => 'Paroles atiestatīšana',
-                'ru' => 'Сброс пароля',
-            ],
             'reset-password-email-content' => [
                 'en' => 'We received a request to reset your password. Click the button below to set a new one.',
                 'lv' => 'Mēs saņēmām pieprasījumu atiestatīt jūsu paroli. Noklikšķiniet uz pogas zemāk, lai iestatītu jaunu.',
@@ -627,30 +622,10 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Ja rodas problēmas noklikšķinot uz pogas “Atiestatīt paroli”, nokopējiet un ielīmējiet zemāk esošo URL savā pārlūkprogrammā:',
                 'ru' => 'Если у вас возникают трудности с нажатием кнопки «Сбросить пароль», скопируйте и вставьте URL ниже в адресную строку браузера:',
             ],
-            'email-regards' => [
-                'en' => 'Regards',
-                'lv' => 'Ar cieņu',
-                'ru' => 'С уважением',
-            ],
-            'reset-password-email-button' => [
-                'en' => 'Reset Password',
-                'lv' => 'Atiestatīt paroli',
-                'ru' => 'Сбросить пароль',
-            ],
-            'verify-email-email-title' => [
-                'en' => 'Verify Your Email',
-                'lv' => 'Apstipriniet savu e-pastu',
-                'ru' => 'Подтвердите email',
-            ],
             'verify-email-email-content' => [
                 'en' => 'Please click the button below to verify your email address.',
                 'lv' => 'Lūdzu, noklikšķiniet uz pogas zemāk, lai apstiprinātu savu e-pasta adresi.',
                 'ru' => 'Нажмите на кнопку ниже, чтобы подтвердить ваш email адрес.',
-            ],
-            'verify-email-email-button' => [
-                'en' => 'Verify Email',
-                'lv' => 'Apstiprināt e-pastu',
-                'ru' => 'Подтвердить email',
             ],
             'verify-email-email-not-requested' => [
                 'en' => 'If you did not create an account, no further action is required.',
@@ -4481,42 +4456,6 @@ class DefaultTranslationsSeeder extends Seeder
                 'en' => 'Too many login attempts. Please try again in :seconds seconds.',
                 'lv' => 'Pārāk daudz mēģinājumu pierakstīties. Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
                 'ru' => 'Слишком много попыток входа. Пожалуйста, повторите попытку через :seconds секунд.',
-            ],
-
-            'footer-terms-conditions' => [
-                'en' => 'Terms and Conditions',
-                'lv' => 'Lietošanas noteikumi',
-                'ru' => 'Условия использования',
-            ],
-
-            'footer-privacy-policy' => [
-                'en' => 'Privacy Policy',
-                'lv' => 'Konfidencialitātes politika',
-                'ru' => 'Политика конфиденциальности',
-            ],
-
-            'footer-cookie-policy' => [
-                'en' => 'Cookie Policy',
-                'lv' => 'Sīkdatņu politika',
-                'ru' => 'Политика использования cookies',
-            ],
-
-            'footer-contact-us' => [
-                'en' => 'Contact Us',
-                'lv' => 'Kontaktējieties ar mums',
-                'ru' => 'Связаться с нами',
-            ],
-
-            'register-terms-agree' => [
-                'en' => 'I agree to the terms and conditions and privacy policy of this website',
-                'lv' => 'Es piekrītu šīs tīmekļa vietnes lietošanas noteikumiem un konfidencialitātes politikai',
-                'ru' => 'Я согласен(а) с условиями использования и политикой конфиденциальности данного веб-сайта',
-            ],
-
-            'register-terms-link' => [
-                'en' => 'Read the terms and conditions',
-                'lv' => 'Izlasīt lietošanas noteikumus',
-                'ru' => 'Прочитать условия использования',
             ],
 
             // Footer links and legal pages

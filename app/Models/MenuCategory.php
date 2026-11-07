@@ -28,7 +28,7 @@ class MenuCategory extends Model
     ];
 
     /**
-     * @return HasMany<MenuItem, MenuCategory>
+     * @return HasMany<MenuItem, $this>
      */
     public function items(): HasMany
     {

@@ -34,7 +34,8 @@ class ClientTableOrderController extends Controller
             return $this->tableNotFound($locale);
         }
 
-        if ($redirect = $this->redirectIfBoundElsewhere($locale, $table)) {
+        $redirect = $this->redirectIfBoundElsewhere($locale, $table);
+        if ($redirect !== null) {
             return $redirect;
         }
 
@@ -58,7 +59,8 @@ class ClientTableOrderController extends Controller
         }
 
         if (auth()->check()) {
-            if ($redirect = $this->redirectIfBoundElsewhere($locale, $table)) {
+            $redirect = $this->redirectIfBoundElsewhere($locale, $table);
+            if ($redirect !== null) {
                 return $redirect;
             }
 
@@ -114,7 +116,8 @@ class ClientTableOrderController extends Controller
             return $this->backToCart($locale, $code, 'table-unavailable');
         }
 
-        if (auth()->check() && ($redirect = $this->redirectIfBoundElsewhere($locale, $table))) {
+        $redirect = auth()->check() ? $this->redirectIfBoundElsewhere($locale, $table) : null;
+        if ($redirect !== null) {
             return $redirect;
         }
 

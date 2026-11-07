@@ -58,15 +58,15 @@ class ConfirmTableCart
             $newItemIds[] = OrderItem::create([
                 'order_id' => $order->id,
                 'menu_item_id' => $menuItemId,
-                'quantity' => (int) $qty,
+                'quantity' => $qty,
                 'unit_price' => $price,
-                'total_price' => $price * (int) $qty,
+                'total_price' => $price * $qty,
             ])->id;
         }
 
         $order->refresh();
         $order->recalculateTotals();
-        $order->source = $order->source ?: 'qr';
+        $order->source = ($order->source ?? '') !== '' ? $order->source : 'qr';
         $order->save();
 
         try {

@@ -30,7 +30,7 @@ class ActivityLog extends Model
     /**
      * Получить пользователя, который совершил действие
      *
-     * @return BelongsTo<User, ActivityLog>
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
@@ -40,7 +40,7 @@ class ActivityLog extends Model
     /**
      * Получить модель, с которой произошло действие
      *
-     * @return MorphTo<Model, ActivityLog>
+     * @return MorphTo<Model, $this>
      */
     public function subject(): MorphTo
     {
