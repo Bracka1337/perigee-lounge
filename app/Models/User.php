@@ -86,6 +86,21 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
+     * Name of another table this user already has an open order at, if any.
+     * A client can only order at one table at a time.
+     */
+    public function tableBoundOtherThan(int $tableId): ?string
+    {
+        $order = $this->orders()->active()->first();
+
+        if ($order === null || $order->table_id === $tableId) {
+            return null;
+        }
+
+        return $order->table?->name ?? "#{$order->table_id}";
+    }
+
+    /**
      * Получить заказы пользователя
      *
      * @return HasMany<Order, User>
