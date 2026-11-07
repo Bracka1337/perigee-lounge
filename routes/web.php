@@ -119,7 +119,7 @@ Route::group([
         ->group(function () {
             Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
             Route::resource('users', UserController::class);
-            Route::resource('translations', TranslationController::class)->except(['show']);
+            Route::resource('translations', TranslationController::class)->except(['show'])->whereNumber('translation');
             Route::resource('tables', TableController::class)->except(['show']);
 
             Route::post('tables/layout', [TableController::class, 'updateLayout'])

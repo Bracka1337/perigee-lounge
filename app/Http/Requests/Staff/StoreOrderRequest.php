@@ -17,8 +17,8 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'table_id' => ['required', 'exists:tables,id'],
-            'user_id' => ['nullable', 'exists:users,id'],
+            'table_id' => ['required', 'integer', 'exists:tables,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ];
     }
 }
