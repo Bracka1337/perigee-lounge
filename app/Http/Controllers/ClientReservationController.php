@@ -23,10 +23,6 @@ class ClientReservationController extends Controller
 {
     public function index(Request $request, string $locale): View
     {
-        Reservation::where('status', ReservationStatus::Pending)
-            ->where('start_at', '<', now()->subHour())
-            ->update(['status' => ReservationStatus::Expired]);
-
         $user = $request->user();
 
         $date = $this->dateFilter($request);

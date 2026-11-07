@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Actions\Orders\CompleteOrder;
 use App\Actions\Orders\OpenReservationOrder;
 use App\Actions\Reservations\CreateStaffReservation;
+use App\Actions\Reservations\ExpireLateReservations;
 use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
@@ -23,11 +24,6 @@ class ReservationController extends Controller
 {
     public function index(Request $request, string $locale): View
     {
-        // Guests more than an hour late lose the booking.
-        Reservation::where('status', ReservationStatus::Pending)
-            ->where('start_at', '<', now()->subHour())
-            ->update(['status' => ReservationStatus::Expired]);
-
         $selectedDate = $this->dateFilter($request);
         $tables = Table::where('is_active', true)->orderBy('id')->get();
 
@@ -76,7 +72,7 @@ class ReservationController extends Controller
             return back()->with('error', __('staff-reservations-arrive-too-early'));
         }
 
-        if ($now->gt($reservation->start_at->copy()->addHour())) {
+        if ($now->gt($reservation->start_at->copy()->addMinutes(ExpireLateReservations::GRACE_MINUTES))) {
             return back()->with('error', __('staff-reservations-arrive-too-late'));
         }
 
