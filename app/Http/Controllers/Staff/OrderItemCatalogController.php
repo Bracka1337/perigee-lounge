@@ -9,14 +9,13 @@ use App\Models\OrderItem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderItemCatalogController extends Controller
 {
     public function index(string $locale, Order $order): View
     {
-        if ($order->status !== 'open') {
-            abort(403);
-        }
+        Gate::authorize('addItems', $order);
 
         $categories = MenuCategory::with('items')->ordered()->get();
 
@@ -28,9 +27,7 @@ class OrderItemCatalogController extends Controller
 
     public function store(Request $request, string $locale, Order $order): RedirectResponse
     {
-        if ($order->status !== 'open') {
-            abort(403);
-        }
+        Gate::authorize('addItems', $order);
 
         $data = $request->validate([
             'menu_item_id' => ['required', 'exists:menu_items,id'],

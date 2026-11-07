@@ -56,7 +56,7 @@ Register a new account to try the client side. Email is written to the log by de
 
 ## How it works
 
-- **Routing:** every page sits under a `{locale}` route prefix, and access is controlled by `auth`, `verified` and `role:` middleware.
+- **Routing:** every page sits under a `{locale}` route prefix, and access is controlled by `auth` and `verified` middleware, `can:admin`/`can:staff`/`can:client` role gates, and policies for orders, reservations and users.
 - **Translations:** interface text is stored in the database and served by a custom translator, so admins can edit it on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without changing edited ones.
 - **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
 - **Telegram:** optional staff notifications for new orders and reservations, set up with the `TELEGRAM_*` values in `.env`.
