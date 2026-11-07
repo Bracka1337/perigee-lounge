@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -126,7 +127,7 @@ class UserController extends Controller
     public function show(string $locale, User $user): View|RedirectResponse
     {
         // Only clients can be viewed in the history page.
-        if (! $user->isClient()) {
+        if (Gate::denies('viewHistory', $user)) {
             return redirect()->route('admin.users.index')
                 ->with('error', __('admin-users-show-forbidden'));
         }
