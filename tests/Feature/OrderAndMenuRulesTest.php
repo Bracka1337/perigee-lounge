@@ -173,3 +173,157 @@ test('reservations reject a date with a time in it', function () {
         ])
         ->assertSessionHasErrors('date');
 });
+
+function clientWithPoints(float $points, string $code): User
+{
+    $client = userWithRole('client');
+    $client->forceFill(['loyalty_balance' => $points, 'loyalty_code' => $code])->save();
+
+    return $client;
+}
+
+function spendLoyalty(User $staff, Order $order, User $client, float $amount): void
+{
+    $order->update(['user_id' => $client->id]);
+    $order->refresh()->recalculateTotals();
+    $order->save();
+
+    test()->actingAs($staff)
+        ->post(route('staff.orders.apply-loyalty', ['locale' => 'en', 'order' => $order]), ['amount' => $amount])
+        ->assertSessionHas('success');
+}
+
+test('an order cannot be started from a reservation that is over', function (string $status) {
+    $reservation = reservationOn($this->table, $status, now()->subHour());
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.from-reservation', ['locale' => 'en', 'reservation' => $reservation]))
+        ->assertSessionHas('error');
+
+    expect(Order::count())->toBe(0)
+        ->and($this->table->fresh()->is_occupied)->toBeFalse()
+        ->and($reservation->fresh()->status)->toBe($status);
+})->with([Reservation::STATUS_CANCELLED, Reservation::STATUS_COMPLETED, Reservation::STATUS_EXPIRED]);
+
+test('an order can still be started from a pending reservation', function () {
+    $reservation = reservationOn($this->table, Reservation::STATUS_PENDING, now()->subMinute());
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.from-reservation', ['locale' => 'en', 'reservation' => $reservation]))
+        ->assertSessionHas('success');
+
+    expect(Order::where('reservation_id', $reservation->id)->count())->toBe(1);
+});
+
+test('removing every item returns the loyalty points spent on the order', function () {
+    $client = clientWithPoints(50, 'REFUND-ALL');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    spendLoyalty($this->staff, $order, $client, 5);
+    spendLoyalty($this->staff, $order, $client, 10);
+
+    $this->actingAs($this->staff)
+        ->delete(route('staff.orders.items.destroy', ['locale' => 'en', 'order' => $order, 'item' => $order->items()->first()]))
+        ->assertSessionHas('success');
+
+    $order->refresh();
+    expect((float) $client->fresh()->loyalty_balance)->toBe(50.0)
+        ->and((float) $order->discount_total)->toBe(0.0)
+        ->and((float) $order->total)->toBe(0.0)
+        ->and($order->user_id)->toBe($client->id);
+});
+
+test('lowering a quantity returns only the points that no longer fit the order', function () {
+    $client = clientWithPoints(50, 'REFUND-PART');
+    $order = openOrder($this->table);
+    OrderItem::create(['order_id' => $order->id, 'menu_item_id' => $this->item->id, 'quantity' => 3, 'unit_price' => 10, 'total_price' => 30]);
+    spendLoyalty($this->staff, $order, $client, 25);
+
+    $this->actingAs($this->staff)
+        ->patch(route('staff.orders.items.update', ['locale' => 'en', 'order' => $order, 'item' => $order->items()->first()]), ['quantity' => 2])
+        ->assertSessionHas('success');
+
+    $order->refresh();
+    expect((float) $client->fresh()->loyalty_balance)->toBe(30.0)
+        ->and((float) $order->subtotal)->toBe(20.0)
+        ->and((float) $order->discount_total)->toBe(20.0)
+        ->and((float) $order->total)->toBe(0.0);
+});
+
+test('removing an item keeps the points while they still fit the order', function () {
+    $client = clientWithPoints(50, 'REFUND-NONE');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    addItem($order, MenuItem::where('id', '!=', $this->item->id)->first(), 18);
+    spendLoyalty($this->staff, $order, $client, 10);
+
+    $this->actingAs($this->staff)
+        ->delete(route('staff.orders.items.destroy', ['locale' => 'en', 'order' => $order, 'item' => $order->items()->latest('id')->first()]))
+        ->assertSessionHas('success');
+
+    $order->refresh();
+    expect((float) $client->fresh()->loyalty_balance)->toBe(40.0)
+        ->and((float) $order->total)->toBe(10.0);
+});
+
+test('applying a promo returns the points it pushes past the order total', function () {
+    $client = clientWithPoints(50, 'REFUND-PROMO');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    spendLoyalty($this->staff, $order, $client, 15);
+
+    $promo = new PromoCode;
+    $promo->forceFill([
+        'public_code' => 'HALF', 'qr_code' => 'HALF-QR', 'discount_type' => 'percent', 'discount_value' => 50,
+        'scope' => 'all', 'is_active' => true, 'used_count' => 0,
+    ])->save();
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.apply-promo', ['locale' => 'en', 'order' => $order]), ['code' => 'HALF'])
+        ->assertSessionHas('success');
+
+    $order->refresh();
+    expect((float) $client->fresh()->loyalty_balance)->toBe(40.0)
+        ->and((float) $order->discount_total)->toBe(20.0)
+        ->and((float) $order->total)->toBe(0.0);
+});
+
+test('the client cannot be changed once they spent points on the order', function () {
+    $first = clientWithPoints(50, 'SWAP-FIRST');
+    clientWithPoints(50, 'SWAP-SECOND');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    spendLoyalty($this->staff, $order, $first, 10);
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.attach-client', ['locale' => 'en', 'order' => $order]), ['loyalty_code' => 'SWAP-SECOND'])
+        ->assertSessionHas('error');
+
+    expect($order->fresh()->user_id)->toBe($first->id);
+});
+
+test('the client can be changed on an open order with no points spent', function () {
+    $first = clientWithPoints(50, 'FREE-FIRST');
+    $second = clientWithPoints(50, 'FREE-SECOND');
+    $order = openOrder($this->table);
+    $order->update(['user_id' => $first->id]);
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.attach-client', ['locale' => 'en', 'order' => $order]), ['loyalty_code' => 'FREE-SECOND'])
+        ->assertSessionHas('success');
+
+    expect($order->fresh()->user_id)->toBe($second->id);
+});
+
+test('the client of a finished order cannot be changed', function () {
+    $first = clientWithPoints(0, 'DONE-FIRST');
+    clientWithPoints(0, 'DONE-SECOND');
+    $order = openOrder($this->table);
+    $order->update(['user_id' => $first->id, 'status' => Order::STATUS_COMPLETED]);
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.attach-client', ['locale' => 'en', 'order' => $order]), ['loyalty_code' => 'DONE-SECOND'])
+        ->assertSessionHas('error');
+
+    expect($order->fresh()->user_id)->toBe($first->id);
+});

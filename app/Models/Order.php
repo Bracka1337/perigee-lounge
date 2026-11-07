@@ -87,23 +87,66 @@ class Order extends Model
     {
         $subtotal = $this->items()->sum('total_price');
         $this->subtotal = $subtotal;
-        $promoDiscount = 0;
-        if ($this->promoCode !== null) {
-            $promoDiscount = $this->promoCode->calculateDiscountForOrder($this);
-        }
+        $this->discount_total = $this->promoDiscount() + $this->loyaltySpent();
+        $this->total = max($subtotal - $this->discount_total, 0);
+    }
 
-        // Loyalty discounts are stored as negative LoyaltyEarning.amount entries linked to this order.
-        $loyaltyNegativeSum = LoyaltyEarning::where('order_id', $this->id)
+    /**
+     * Loyalty discounts are stored as negative LoyaltyEarning.amount entries linked to this order.
+     */
+    public function loyaltySpent(): float
+    {
+        $spent = LoyaltyEarning::where('order_id', $this->id)
             ->where('amount', '<', 0)
             ->sum('amount');
 
-        $loyaltyDiscount = 0;
-        if ($loyaltyNegativeSum < 0) {
-            $loyaltyDiscount = -1 * $loyaltyNegativeSum;
+        return abs((float) $spent);
+    }
+
+    /**
+     * Gives back points the order can no longer use after its items or promo code changed,
+     * newest spend first. Each spend entry shrinks to what the order still uses.
+     */
+    public function refundExcessLoyalty(): void
+    {
+        $payable = max((float) $this->items()->sum('total_price') - $this->promoDiscount(), 0);
+        $excess = round($this->loyaltySpent() - $payable, 2);
+
+        if ($excess <= 0) {
+            return;
         }
 
-        $this->discount_total = $promoDiscount + $loyaltyDiscount;
-        $this->total = max($subtotal - $this->discount_total, 0);
+        $entries = LoyaltyEarning::where('order_id', $this->id)
+            ->where('amount', '<', 0)
+            ->orderByDesc('id')
+            ->get();
+
+        foreach ($entries as $entry) {
+            if ($excess <= 0) {
+                break;
+            }
+
+            $refund = min(abs((float) $entry->amount), $excess);
+
+            if ($entry->user !== null) {
+                $entry->user->loyalty_balance = round((float) $entry->user->loyalty_balance + $refund, 2);
+                $entry->user->save();
+            }
+
+            $remaining = round((float) $entry->amount + $refund, 2);
+            if ($remaining < 0) {
+                $entry->update(['amount' => $remaining]);
+            } else {
+                $entry->delete();
+            }
+
+            $excess = round($excess - $refund, 2);
+        }
+    }
+
+    private function promoDiscount(): float
+    {
+        return $this->promoCode?->calculateDiscountForOrder($this) ?? 0.0;
     }
 
     /**

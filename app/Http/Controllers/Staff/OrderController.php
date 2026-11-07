@@ -147,6 +147,15 @@ class OrderController extends Controller
                 ->with('success', __('staff-orders-order-already-created'));
         }
 
+        if (! in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
+            return redirect()
+                ->route('staff.orders.index', [
+                    'locale' => $locale,
+                    'date' => $reservation->start_at->toDateString(),
+                ])
+                ->with('error', __('staff-orders-error-reservation-closed'));
+        }
+
         $now = Carbon::now();
 
         if ($now->lt($reservation->start_at)) {
@@ -277,13 +286,16 @@ class OrderController extends Controller
             'quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
 
-        $item->quantity = $data['quantity'];
-        $item->total_price = $item->unit_price * $item->quantity;
-        $item->save();
+        DB::transaction(function () use ($order, $item, $data) {
+            $item->quantity = $data['quantity'];
+            $item->total_price = $item->unit_price * $item->quantity;
+            $item->save();
 
-        $order->refresh();
-        $order->recalculateTotals();
-        $order->save();
+            $order->refresh();
+            $order->refundExcessLoyalty();
+            $order->recalculateTotals();
+            $order->save();
+        });
 
         return back()->with('success', __('staff-orders-item-updated'));
     }
@@ -298,17 +310,24 @@ class OrderController extends Controller
             return back()->with('error', __('staff-orders-delete-item-forbidden'));
         }
 
-        $item->delete();
+        DB::transaction(function () use ($order, $item) {
+            $item->delete();
 
-        $order->refresh();
-        $order->recalculateTotals();
-        $order->save();
+            $order->refresh();
+            $order->refundExcessLoyalty();
+            $order->recalculateTotals();
+            $order->save();
+        });
 
         return back()->with('success', __('staff-orders-item-deleted'));
     }
 
     public function attachClient(Request $request, string $locale, Order $order): RedirectResponse
     {
+        if ($order->status !== Order::STATUS_OPEN) {
+            return back()->with('error', __('staff-orders-attach-client-forbidden'));
+        }
+
         $data = $request->validate([
             'loyalty_code' => ['required', 'string'],
         ]);
@@ -317,6 +336,10 @@ class OrderController extends Controller
 
         if ($user === null) {
             return back()->with('error', __('staff-orders-attach-client-not-found'));
+        }
+
+        if ($order->user_id !== $user->id && $order->loyaltySpent() > 0) {
+            return back()->with('error', __('staff-orders-attach-client-loyalty-spent'));
         }
 
         $order->user_id = $user->id;
@@ -357,6 +380,7 @@ class OrderController extends Controller
 
         DB::transaction(function () use ($order, $promo, $discount) {
             $order->promo_code_id = $promo->id;
+            $order->refundExcessLoyalty();
             $order->recalculateTotals();
             $order->save();
 

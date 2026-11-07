@@ -3245,6 +3245,24 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Клиент успешно добавлен к заказу.',
             ],
 
+            'staff-orders-attach-client-forbidden' => [
+                'en' => 'The client of a finished order cannot be changed.',
+                'lv' => 'Pabeigta pasūtījuma klientu nevar mainīt.',
+                'ru' => 'Клиента завершённого заказа нельзя изменить.',
+            ],
+
+            'staff-orders-attach-client-loyalty-spent' => [
+                'en' => 'The client cannot be changed after loyalty points were spent on this order.',
+                'lv' => 'Klientu nevar mainīt, jo šim pasūtījumam jau izmantoti lojalitātes punkti.',
+                'ru' => 'Клиента нельзя изменить: на этот заказ уже потрачены бонусные баллы.',
+            ],
+
+            'staff-orders-error-reservation-closed' => [
+                'en' => 'This reservation is cancelled, expired or completed, so an order cannot be started from it.',
+                'lv' => 'Šī rezervācija ir atcelta, beigusies vai pabeigta, tāpēc no tās nevar izveidot pasūtījumu.',
+                'ru' => 'Эта бронь отменена, истекла или завершена, поэтому создать из неё заказ нельзя.',
+            ],
+
             'staff-promo-title' => [
                 'en' => 'Promo Codes',
                 'lv' => 'Promokodi',
