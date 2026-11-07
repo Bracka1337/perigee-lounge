@@ -100,6 +100,7 @@ class ClientTableOrderController extends Controller
             'table' => $table,
             'cartItems' => $summary['lines'],
             'cartTotal' => $summary['total'],
+            'hasOpenOrder' => Order::active()->where('table_id', $table->id)->exists(),
             'code' => $code,
             'categories' => $this->menu(),
         ]);

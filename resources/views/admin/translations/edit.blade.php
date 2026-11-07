@@ -40,7 +40,7 @@
                     name="key"
                     value="{{ old('key', $translation->key) }}"
                     class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink
-                           focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                           focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     required
                 >
             </div>
@@ -53,7 +53,7 @@
                             data-locale="{{ $locale }}">
                         {{ strtoupper($locale) }}
                         @if($locale === $default)
-                            <span class="ml-1 text-emerald-300/80">{{ __('admin-translations-lang-main-label') }}</span>
+                            <span class="ml-1 opacity-80">{{ __('admin-translations-lang-main-label') }}</span>
                         @endif
                     </button>
                 @endforeach
@@ -81,7 +81,7 @@
                                     name="value[{{ $locale }}]"
                                     rows="3"
                                     class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2 text-sm text-ink
-                                           focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70">{{ old("value.$locale", $values[$locale] ?? '') }}</textarea>
+                                           focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70">{{ old("value.$locale", $values[$locale] ?? '') }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -95,9 +95,9 @@
             <div class="pt-2 flex flex-wrap items-center gap-3">
                 <button type="submit"
                         class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full
-                               border border-red-500/80 bg-red-600/80
-                               text-xs text-ink
-                               hover:bg-red-500 transition">
+                               border border-nebula bg-nebula
+                               text-xs font-semibold text-on-nebula
+                               hover:border-ink hover:bg-ink transition">
                     <x-icon category="Interface" name="Save" class="w-5 h-5 shrink-0"/>
                     <span>{{ __('admin-translations-save-button') }}</span>
                 </button>

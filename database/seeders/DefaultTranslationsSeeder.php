@@ -1262,6 +1262,12 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Нельзя удалить самого себя.',
             ],
 
+            'admin-users-error-open-order' => [
+                'en' => 'This client has an open order. Complete it before deleting the account.',
+                'lv' => 'Šim klientam ir atvērts pasūtījums. Pabeidziet to, pirms dzēšat kontu.',
+                'ru' => 'У этого клиента есть открытый заказ. Завершите его перед удалением аккаунта.',
+            ],
+
             // --- Admin: translations management ---
 
             'admin-translations-title' => [
@@ -4935,6 +4941,12 @@ class DefaultTranslationsSeeder extends Seeder
                 'en' => 'There is no open order for this table',
                 'lv' => 'Šim galdam nav atvērta pasūtījuma',
                 'ru' => 'Нет открытого заказа для этого стола',
+            ],
+
+            'table-no-open-order-hint' => [
+                'en' => 'Your table isn\'t open yet. You can fill the cart now; ask a waiter to open the table before you send it.',
+                'lv' => 'Jūsu galds vēl nav atvērts. Groziņu varat aizpildīt jau tagad; pirms nosūtīšanas palūdziet viesmīlim atvērt galdu.',
+                'ru' => 'Ваш стол ещё не открыт. Корзину можно собрать уже сейчас; перед отправкой попросите официанта открыть стол.',
             ],
             'order-sent-to-waiter' => [
                 'en' => 'Your order was sent to the waiter',

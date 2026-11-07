@@ -48,7 +48,16 @@ function setupCategoryHighlight() {
         });
     };
 
+    // After a chip click, keep its highlight while the page scrolls there, so sections
+    // passing by on the way don't take it over.
+    let lockedUntil = 0;
+    chips.forEach((chip) => chip.addEventListener('click', () => {
+        setCurrent(chip.getAttribute('href'));
+        lockedUntil = Date.now() + 1000;
+    }));
+
     const observer = new IntersectionObserver((entries) => {
+        if (Date.now() < lockedUntil) return;
         entries.forEach((entry) => {
             if (entry.isIntersecting) setCurrent(`#${entry.target.id}`);
         });
@@ -56,8 +65,15 @@ function setupCategoryHighlight() {
 
     sections.forEach((section) => observer.observe(section));
 
+    const lastSection = sections[sections.length - 1];
     window.addEventListener('scroll', () => {
-        if (window.scrollY < sections[0].offsetTop - 200) setCurrent('#menu-top');
+        if (Date.now() < lockedUntil) return;
+        if (window.scrollY < sections[0].offsetTop - 200) {
+            setCurrent('#menu-top');
+        } else if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+            // A short last section never reaches the observer's band, so the page bottom selects it.
+            setCurrent(`#${lastSection.id}`);
+        }
     }, { passive: true });
 }
 
