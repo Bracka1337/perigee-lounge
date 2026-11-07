@@ -31,11 +31,11 @@ A website and management system for a fictional hookah lounge. Guests browse the
 
 ## Stack
 
-Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint, Larastan (PHPStan level 8) and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
+Laravel 13, PHP 8.3, Blade, Tailwind CSS 4, Vite 8, Pest 4, Pint, Larastan (PHPStan level 8) and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
 
 ## Getting started
 
-You need PHP 8.2 or newer with the `gd` extension, Composer, and Node.js.
+You need PHP 8.3 or newer with the `gd` extension, Composer, and Node.js 22 or newer.
 
 ```bash
 git clone https://github.com/Bracka1337/perigee-lounge.git
@@ -85,5 +85,4 @@ GitHub Actions runs these on every pull request. Dependabot opens weekly grouped
 ## What I'd do next
 
 - **Live demo** with a nightly data reset.
-- **Laravel 13.** Laravel 12 gets security fixes until February 2027.
 - **Browser tests** (Pest 4 browser testing) for the QR cart, drag-and-drop menu sorting and the floor plan.
