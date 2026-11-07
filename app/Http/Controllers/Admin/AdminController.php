@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\LoyaltyEarning;
 use App\Models\Order;
@@ -18,37 +20,37 @@ class AdminController extends Controller
         $from7 = Carbon::now()->subDays(7);
         $from30 = Carbon::now()->subDays(30);
 
-        $revenueToday = Order::where('status', Order::STATUS_COMPLETED)
+        $revenueToday = Order::where('status', OrderStatus::Completed)
             ->whereDate('completed_at', $today)
             ->sum('total');
 
-        $revenue7 = Order::where('status', Order::STATUS_COMPLETED)
+        $revenue7 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from7)
             ->sum('total');
 
-        $revenue30 = Order::where('status', Order::STATUS_COMPLETED)
+        $revenue30 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->sum('total');
 
-        $ordersToday = Order::where('status', Order::STATUS_COMPLETED)
+        $ordersToday = Order::where('status', OrderStatus::Completed)
             ->whereDate('completed_at', $today)
             ->count();
 
-        $orders7 = Order::where('status', Order::STATUS_COMPLETED)
+        $orders7 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from7)
             ->count();
 
-        $orders30 = Order::where('status', Order::STATUS_COMPLETED)
+        $orders30 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->count();
 
         $aov30 = $orders30 > 0 ? round($revenue30 / $orders30, 2) : 0;
 
-        $discount30 = Order::where('status', Order::STATUS_COMPLETED)
+        $discount30 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->sum('discount_total');
 
-        $ordersWithPromo30 = Order::where('status', Order::STATUS_COMPLETED)
+        $ordersWithPromo30 = Order::where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->whereNotNull('promo_code_id')
             ->count();
@@ -57,21 +59,18 @@ class AdminController extends Controller
 
         $loyaltyEarned30 = LoyaltyEarning::where('created_at', '>=', $from30)->sum('amount');
 
-        $activeOrdersNow = Order::where('status', Order::STATUS_OPEN)->count();
-        $activeReservationsNow = Reservation::whereIn('status', [
-            Reservation::STATUS_PENDING,
-            Reservation::STATUS_ACTIVE,
-        ])->count();
+        $activeOrdersNow = Order::where('status', OrderStatus::Open)->count();
+        $activeReservationsNow = Reservation::whereIn('status', ReservationStatus::holdingTable())->count();
 
         $revenueByDay = Order::selectRaw('DATE(completed_at) as d, SUM(total) as sum')
-            ->where('status', Order::STATUS_COMPLETED)
+            ->where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->groupBy('d')
             ->orderBy('d')
             ->get();
 
         $ordersByDay = Order::selectRaw('DATE(completed_at) as d, COUNT(*) as cnt')
-            ->where('status', Order::STATUS_COMPLETED)
+            ->where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->groupBy('d')
             ->orderBy('d')
@@ -79,7 +78,7 @@ class AdminController extends Controller
 
         $topPromos = Order::select('promo_code_id')
             ->selectRaw('COUNT(*) as uses, SUM(discount_total) as discount_sum')
-            ->where('status', Order::STATUS_COMPLETED)
+            ->where('status', OrderStatus::Completed)
             ->where('completed_at', '>=', $from30)
             ->whereNotNull('promo_code_id')
             ->groupBy('promo_code_id')
@@ -90,7 +89,7 @@ class AdminController extends Controller
 
         $topClients = User::where('role', User::ROLE_CLIENT)
             ->withSum(['orders as spent' => function ($q) use ($from30) {
-                $q->where('status', Order::STATUS_COMPLETED)
+                $q->where('status', OrderStatus::Completed)
                     ->where('completed_at', '>=', $from30);
             }], 'total')
             ->orderByDesc('spent')

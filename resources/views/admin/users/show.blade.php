@@ -171,7 +171,7 @@
                             <div class="text-sm">
                                 <span class="font-semibold">#{{ $order->id }}</span>
                                 <span class="text-ink-muted">•</span>
-                                <span>{{ ucfirst($order->status) }}</span>
+                                <span>{{ ucfirst($order->status->value) }}</span>
                                 @if($order->started_at)
                                     <span class="text-ink-muted">•</span>
                                     <span>{{ __('admin-users-show-order-started') }}: {{ $order->started_at->format('d.m.Y H:i') }}</span>

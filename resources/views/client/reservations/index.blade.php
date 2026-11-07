@@ -71,9 +71,9 @@
                         $status = 'free';
                         if (isset($occupiedTableIds) && in_array($table->id, $occupiedTableIds)) {
                             $status = 'active';
-                        } elseif ($tableReservations->contains(fn($r) => $r->status === 'active')) {
+                        } elseif ($tableReservations->contains(fn($r) => $r->status === \App\Enums\ReservationStatus::Active)) {
                             $status = 'active';
-                        } elseif ($tableReservations->contains(fn($r) => $r->status === 'pending')) {
+                        } elseif ($tableReservations->contains(fn($r) => $r->status === \App\Enums\ReservationStatus::Pending)) {
                             $status = 'pending';
                         }
 
@@ -280,11 +280,11 @@
         <div class="mt-1 text-xs text-ink-muted leading-snug whitespace-normal">
             {{ __('client-reservations-status-label') }}:
             <span class="break-words">
-                {{ __('client-reservations-status-'.$res->status) }}
+                {{ __('client-reservations-status-'.$res->status->value) }}
             </span>
         </div>
 
-        @if($res->status === \App\Models\Reservation::STATUS_PENDING)
+        @if($res->status === \App\Enums\ReservationStatus::Pending)
             <form method="POST"
                   action="{{ route('client.reservations.cancel', ['locale' => app()->getLocale(), 'reservation' => $res]) }}"
                   class="mt-3 flex justify-center">

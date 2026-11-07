@@ -79,11 +79,11 @@
             @forelse($ordersActive as $order)
                 @php
                     $status = $order->status;
-                    $statusClass = [
-                        \App\Models\Order::STATUS_OPEN      => 'text-emerald-200 bg-emerald-500/15 border-emerald-400/60',
-                        \App\Models\Order::STATUS_COMPLETED => 'text-slate-200 bg-slate-500/20 border-slate-400/50',
-                        \App\Models\Order::STATUS_CANCELLED => 'text-red-200 bg-red-500/15 border-red-400/50',
-                    ][$status] ?? 'text-ink-soft bg-line border-line-strong';
+                    $statusClass = match ($status) {
+                        \App\Enums\OrderStatus::Open => 'text-emerald-200 bg-emerald-500/15 border-emerald-400/60',
+                        \App\Enums\OrderStatus::Completed => 'text-slate-200 bg-slate-500/20 border-slate-400/50',
+                        \App\Enums\OrderStatus::Cancelled => 'text-red-200 bg-red-500/15 border-red-400/50',
+                    };
                 @endphp
 
                 <div class="rounded-2xl bg-ground/40 border border-line px-4 py-3 text-xs text-ink-soft min-w-0">
@@ -112,7 +112,7 @@
 
                                 <div>
                                     <span class="inline-flex px-2 py-0.5 rounded-full border {{ $statusClass }} text-xs">
-                                        {{ __('staff-orders-status-'.$order->status) }}
+                                        {{ __('staff-orders-status-'.$order->status->value) }}
                                     </span>
                                 </div>
                             </div>
@@ -175,7 +175,7 @@
 
                                 <div class="text-xs text-ink-muted">
                                     {{ __('staff-orders-status-label') }}:
-                                    {{ __('staff-reservations-status-'.$res->status) }}
+                                    {{ __('staff-reservations-status-'.$res->status->value) }}
                                 </div>
                             </div>
                         </div>
@@ -214,11 +214,11 @@
             @forelse($ordersHistory as $order)
                 @php
                     $status = $order->status;
-                    $statusClass = [
-                        \App\Models\Order::STATUS_OPEN      => 'text-emerald-200 bg-emerald-500/15 border-emerald-400/60',
-                        \App\Models\Order::STATUS_COMPLETED => 'text-slate-200 bg-slate-500/20 border-slate-400/50',
-                        \App\Models\Order::STATUS_CANCELLED => 'text-red-200 bg-red-500/15 border-red-400/50',
-                    ][$status] ?? 'text-ink-soft bg-line border-line-strong';
+                    $statusClass = match ($status) {
+                        \App\Enums\OrderStatus::Open => 'text-emerald-200 bg-emerald-500/15 border-emerald-400/60',
+                        \App\Enums\OrderStatus::Completed => 'text-slate-200 bg-slate-500/20 border-slate-400/50',
+                        \App\Enums\OrderStatus::Cancelled => 'text-red-200 bg-red-500/15 border-red-400/50',
+                    };
                 @endphp
 
                 <div class="rounded-2xl bg-ground/30 border border-line px-4 py-3 text-xs text-ink-soft min-w-0">
@@ -245,7 +245,7 @@
 
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <span class="inline-flex px-2 py-0.5 rounded-full border {{ $statusClass }} text-xs">
-                                        {{ __('staff-orders-status-'.$order->status) }}
+                                        {{ __('staff-orders-status-'.$order->status->value) }}
                                     </span>
 
                                     @if($order->completed_at)

@@ -39,7 +39,7 @@
         <div class="flex flex-wrap items-center gap-2 text-xs">
             <div class="px-3 py-1 rounded-full border border-line-strong text-ink-soft inline-flex items-center gap-2">
                 <x-icon category="Interface" name="Info_Circle" class="w-4 h-4"/>
-                <span>{{ __('staff-orders-status-label') }}: {{ __('staff-orders-status-'.$order->status) }}</span>
+                <span>{{ __('staff-orders-status-label') }}: {{ __('staff-orders-status-'.$order->status->value) }}</span>
             </div>
 
             <div class="px-3 py-1 rounded-full border border-line-strong text-ink-soft inline-flex items-center gap-2">
@@ -70,7 +70,7 @@
                     {{ __('staff-orders-items-title') }}
                 </h2>
 
-                @if($order->status === \App\Models\Order::STATUS_OPEN)
+                @if($order->status === \App\Enums\OrderStatus::Open)
                     <a href="{{ route('staff.orders.items.catalog', ['locale' => $locale, 'order' => $order]) }}"
                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-line hover:bg-line border border-line text-sm text-ink transition">
                         <x-icon category="Shopping" name="Shopping_Cart_01" class="w-5 h-5"/>
@@ -98,7 +98,7 @@
                             </div>
                         </div>
 
-                        @if($order->status === \App\Models\Order::STATUS_OPEN)
+                        @if($order->status === \App\Enums\OrderStatus::Open)
                             <div class="flex flex-wrap items-center gap-2 justify-end">
                                 <form method="POST"
                                       action="{{ route('staff.orders.items.served', ['locale' => $locale, 'order' => $order, 'item' => $item]) }}"
@@ -282,7 +282,7 @@
                             {{ number_format($order->user->loyalty_balance, 2, '.', ' ') }} €
                         </div>
 
-                        @if($order->status === \App\Models\Order::STATUS_OPEN)
+                        @if($order->status === \App\Enums\OrderStatus::Open)
                             <form method="POST"
                                   action="{{ route('staff.orders.apply-loyalty', ['locale' => $locale, 'order' => $order]) }}"
                                   class="mt-3 space-y-2 text-xs">
@@ -333,7 +333,7 @@
                     @endif
                 </div>
 
-                @if(!$order->user && $order->status === \App\Models\Order::STATUS_OPEN)
+                @if(!$order->user && $order->status === \App\Enums\OrderStatus::Open)
                     <form id="attachClientForm"
                           method="POST"
                           action="{{ route('staff.orders.attach-client', ['locale' => $locale, 'order' => $order]) }}"
@@ -392,7 +392,7 @@
                             {{ $order->promoCode->name }}
                         </div>
                     </div>
-                @elseif($order->status === \App\Models\Order::STATUS_OPEN)
+                @elseif($order->status === \App\Enums\OrderStatus::Open)
                     @php
                         $promoHint = __('staff-orders-promo-hint');
                         if ($promoHint === 'staff-orders-promo-hint') {
@@ -446,7 +446,7 @@
                 @endif
             </div>
 
-            @if($order->status === \App\Models\Order::STATUS_OPEN)
+            @if($order->status === \App\Enums\OrderStatus::Open)
                 <div>
                     <form method="POST" action="{{ route('staff.orders.complete', ['locale' => $locale, 'order' => $order]) }}" class="w-full">
                         @csrf

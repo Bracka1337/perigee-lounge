@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Models\Table;
 use Closure;
@@ -37,7 +38,7 @@ class CheckTableBinding
 
         // Check if user has an active order for a DIFFERENT table
         $existingOrder = Order::where('user_id', $user->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+            ->whereNotIn('status', OrderStatus::closed())
             ->first();
 
         if ($existingOrder !== null && $existingOrder->table_id !== $requestedTable->id) {

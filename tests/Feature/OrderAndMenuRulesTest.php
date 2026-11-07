@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Order;
@@ -8,6 +10,7 @@ use App\Models\PromoCode;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Models\User;
+use App\Notifications\ReservationCreated;
 use Database\Seeders\DefaultTranslationsSeeder;
 use Database\Seeders\MenuSeeder;
 use Database\Seeders\TableSeeder;
@@ -26,7 +29,7 @@ function openOrder(Table $table): Order
 
     return Order::create([
         'table_id' => $table->id,
-        'status' => Order::STATUS_OPEN,
+        'status' => OrderStatus::Open,
         'source' => 'staff',
         'subtotal' => 0,
         'discount_total' => 0,
@@ -45,7 +48,7 @@ function addItem(Order $order, MenuItem $item, float $price): void
     ]);
 }
 
-function reservationOn(Table $table, string $status, mixed $startAt): Reservation
+function reservationOn(Table $table, ReservationStatus $status, mixed $startAt): Reservation
 {
     return Reservation::create([
         'table_id' => $table->id,
@@ -66,7 +69,7 @@ beforeEach(function () {
 
 test('completing an order frees the table when the only other reservation is in the future', function () {
     $order = openOrder($this->table);
-    reservationOn($this->table, Reservation::STATUS_PENDING, now()->addWeek());
+    reservationOn($this->table, ReservationStatus::Pending, now()->addWeek());
 
     $this->actingAs($this->staff)
         ->post(route('staff.orders.complete', ['locale' => 'en', 'order' => $order]))
@@ -77,7 +80,7 @@ test('completing an order frees the table when the only other reservation is in 
 
 test('completing an order keeps the table occupied while a guest is seated there', function () {
     $order = openOrder($this->table);
-    reservationOn($this->table, Reservation::STATUS_ACTIVE, now());
+    reservationOn($this->table, ReservationStatus::Active, now());
 
     $this->actingAs($this->staff)
         ->post(route('staff.orders.complete', ['locale' => 'en', 'order' => $order]))
@@ -193,7 +196,7 @@ function spendLoyalty(User $staff, Order $order, User $client, float $amount): v
         ->assertSessionHas('success');
 }
 
-test('an order cannot be started from a reservation that is over', function (string $status) {
+test('an order cannot be started from a reservation that is over', function (ReservationStatus $status) {
     $reservation = reservationOn($this->table, $status, now()->subHour());
 
     $this->actingAs($this->staff)
@@ -203,10 +206,10 @@ test('an order cannot be started from a reservation that is over', function (str
     expect(Order::count())->toBe(0)
         ->and($this->table->fresh()->is_occupied)->toBeFalse()
         ->and($reservation->fresh()->status)->toBe($status);
-})->with([Reservation::STATUS_CANCELLED, Reservation::STATUS_COMPLETED, Reservation::STATUS_EXPIRED]);
+})->with([ReservationStatus::Cancelled, ReservationStatus::Completed, ReservationStatus::Expired]);
 
 test('an order can still be started from a pending reservation', function () {
-    $reservation = reservationOn($this->table, Reservation::STATUS_PENDING, now()->subMinute());
+    $reservation = reservationOn($this->table, ReservationStatus::Pending, now()->subMinute());
 
     $this->actingAs($this->staff)
         ->post(route('staff.orders.from-reservation', ['locale' => 'en', 'reservation' => $reservation]))
@@ -319,7 +322,7 @@ test('the client of a finished order cannot be changed', function () {
     $first = clientWithPoints(0, 'DONE-FIRST');
     clientWithPoints(0, 'DONE-SECOND');
     $order = openOrder($this->table);
-    $order->update(['user_id' => $first->id, 'status' => Order::STATUS_COMPLETED]);
+    $order->update(['user_id' => $first->id, 'status' => OrderStatus::Completed]);
 
     $this->actingAs($this->staff)
         ->post(route('staff.orders.attach-client', ['locale' => 'en', 'order' => $order]), ['loyalty_code' => 'DONE-SECOND'])
@@ -329,7 +332,7 @@ test('the client of a finished order cannot be changed', function () {
 });
 
 test('marking a guest as arrived opens an order for their table', function () {
-    $reservation = reservationOn($this->table, Reservation::STATUS_PENDING, now()->subMinutes(10));
+    $reservation = reservationOn($this->table, ReservationStatus::Pending, now()->subMinutes(10));
 
     $response = $this->actingAs($this->staff)
         ->patch(route('staff.reservations.arrive', ['locale' => 'en', 'reservation' => $reservation]));
@@ -337,15 +340,15 @@ test('marking a guest as arrived opens an order for their table', function () {
     $order = Order::where('reservation_id', $reservation->id)->firstOrFail();
     $response->assertRedirect(route('staff.orders.show', ['locale' => 'en', 'order' => $order]));
 
-    expect($order->status)->toBe(Order::STATUS_OPEN)
+    expect($order->status)->toBe(OrderStatus::Open)
         ->and($order->source)->toBe('phone')
-        ->and($reservation->fresh()->status)->toBe(Reservation::STATUS_ACTIVE)
+        ->and($reservation->fresh()->status)->toBe(ReservationStatus::Active)
         ->and($this->table->fresh()->is_occupied)->toBeTrue();
 });
 
 test('marking a guest as arrived links the walk-in order already open on the table', function () {
     $order = openOrder($this->table);
-    $reservation = reservationOn($this->table, Reservation::STATUS_PENDING, now()->subMinutes(10));
+    $reservation = reservationOn($this->table, ReservationStatus::Pending, now()->subMinutes(10));
 
     $this->actingAs($this->staff)
         ->patch(route('staff.reservations.arrive', ['locale' => 'en', 'reservation' => $reservation]))
@@ -356,19 +359,19 @@ test('marking a guest as arrived links the walk-in order already open on the tab
 });
 
 test('a guest cannot be marked as arrived before the reservation starts', function () {
-    $reservation = reservationOn($this->table, Reservation::STATUS_PENDING, now()->addHour());
+    $reservation = reservationOn($this->table, ReservationStatus::Pending, now()->addHour());
 
     $this->actingAs($this->staff)
         ->patch(route('staff.reservations.arrive', ['locale' => 'en', 'reservation' => $reservation]))
         ->assertSessionHas('error');
 
-    expect($reservation->fresh()->status)->toBe(Reservation::STATUS_PENDING)
+    expect($reservation->fresh()->status)->toBe(ReservationStatus::Pending)
         ->and(Order::count())->toBe(0);
 });
 
 test('completing a reservation completes its order, awards points and frees the table', function () {
     $client = userWithRole('client');
-    $reservation = reservationOn($this->table, Reservation::STATUS_ACTIVE, now()->subHour());
+    $reservation = reservationOn($this->table, ReservationStatus::Active, now()->subHour());
     $reservation->update(['user_id' => $client->id]);
     $this->table->update(['is_occupied' => true]);
 
@@ -376,7 +379,7 @@ test('completing a reservation completes its order, awards points and frees the 
         'reservation_id' => $reservation->id,
         'table_id' => $this->table->id,
         'user_id' => $client->id,
-        'status' => Order::STATUS_OPEN,
+        'status' => OrderStatus::Open,
         'source' => 'phone',
     ]);
     addItem($order, $this->item, 200);
@@ -385,8 +388,8 @@ test('completing a reservation completes its order, awards points and frees the 
         ->patch(route('staff.reservations.complete', ['locale' => 'en', 'reservation' => $reservation]))
         ->assertSessionHas('success');
 
-    expect($reservation->fresh()->status)->toBe(Reservation::STATUS_COMPLETED)
-        ->and($order->fresh()->status)->toBe(Order::STATUS_COMPLETED)
+    expect($reservation->fresh()->status)->toBe(ReservationStatus::Completed)
+        ->and($order->fresh()->status)->toBe(OrderStatus::Completed)
         ->and((float) $order->fresh()->total)->toBe(200.0)
         ->and((float) $client->fresh()->loyalty_balance)->toBe(2.0)
         ->and($this->table->fresh()->is_occupied)->toBeFalse();
@@ -402,6 +405,36 @@ test('completing an order awards the client one percent in points', function () 
         ->post(route('staff.orders.complete', ['locale' => 'en', 'order' => $order]))
         ->assertRedirect(route('staff.orders.index', ['locale' => 'en']));
 
-    expect($order->fresh()->status)->toBe(Order::STATUS_COMPLETED)
+    expect($order->fresh()->status)->toBe(OrderStatus::Completed)
         ->and((float) $client->fresh()->loyalty_balance)->toBe(1.5);
+});
+
+test('pages that show order and reservation statuses render for every status', function () {
+    $client = userWithRole('client');
+    $admin = userWithRole('admin');
+    $tables = Table::orderBy('id')->take(3)->get();
+
+    foreach (OrderStatus::cases() as $i => $status) {
+        Order::create(['table_id' => $tables[$i]->id, 'user_id' => $client->id, 'status' => $status, 'source' => 'staff']);
+    }
+    foreach ([ReservationStatus::Pending, ReservationStatus::Active, ReservationStatus::Cancelled] as $i => $status) {
+        reservationOn($tables[$i], $status, now()->addHours(2))->update(['user_id' => $client->id]);
+    }
+    $order = Order::first();
+    $reservation = Reservation::first();
+
+    $this->actingAs($this->staff);
+    foreach (['staff.dashboard', 'staff.orders.index', 'staff.reservations.index'] as $route) {
+        $this->get(route($route, ['locale' => 'en']))->assertOk();
+    }
+    $this->get(route('staff.orders.show', ['locale' => 'en', 'order' => $order]))->assertOk();
+
+    $this->actingAs($client);
+    $this->get(route('client.reservations.index', ['locale' => 'en']))->assertOk();
+    $this->get(route('client.orders.show', ['locale' => 'en', 'order' => $order]))->assertOk();
+
+    $this->actingAs($admin)->get(route('admin.users.show', ['locale' => 'en', 'user' => $client]))->assertOk();
+
+    expect((new ReservationCreated($reservation))->toMail($client)->render())
+        ->toContain(strtoupper($reservation->status->value));
 });
