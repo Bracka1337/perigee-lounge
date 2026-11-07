@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Staff\StoreOrderItemRequest;
 use App\Models\MenuCategory;
+use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 
 class OrderItemCatalogController extends Controller
 {
@@ -17,33 +19,38 @@ class OrderItemCatalogController extends Controller
     {
         Gate::authorize('addItems', $order);
 
-        $categories = MenuCategory::with('items')->ordered()->get();
-
         return view('staff.orders.catalog', [
             'order' => $order,
-            'categories' => $categories,
+            'categories' => MenuCategory::with('items')->ordered()->get(),
         ]);
     }
 
-    public function store(Request $request, string $locale, Order $order): RedirectResponse
+    public function store(StoreOrderItemRequest $request, string $locale, Order $order): RedirectResponse
     {
         Gate::authorize('addItems', $order);
 
-        $data = $request->validate([
-            'menu_item_id' => ['required', 'exists:menu_items,id'],
-            'quantity' => ['nullable', 'integer', 'min:1'],
-        ]);
+        $menuItem = MenuItem::with('category')->findOrFail($request->validated('menu_item_id'));
 
-        $qty = $data['quantity'] ?? 1;
+        if (! $menuItem->isOrderable()) {
+            return back()->with('error', __('menu-unavailable'));
+        }
 
         $orderItem = OrderItem::firstOrNew([
             'order_id' => $order->id,
-            'menu_item_id' => $data['menu_item_id'],
+            'menu_item_id' => $menuItem->id,
         ]);
 
-        $orderItem->unit_price ??= $orderItem->menuItem->price;
-        $orderItem->quantity += $qty;
-        $orderItem->total_price = $orderItem->unit_price * $orderItem->quantity;
+        $quantity = (int) $orderItem->quantity + (int) ($request->validated('quantity') ?? 1);
+
+        // The line total is capped too, so repeated adds can't push it past the limit.
+        Validator::make(
+            ['quantity' => $quantity],
+            ['quantity' => ['integer', 'max:'.StoreOrderItemRequest::MAX_QUANTITY]],
+        )->validate();
+
+        $orderItem->unit_price ??= $menuItem->price;
+        $orderItem->quantity = $quantity;
+        $orderItem->total_price = $orderItem->unit_price * $quantity;
         $orderItem->save();
 
         $order->recalculateTotals();

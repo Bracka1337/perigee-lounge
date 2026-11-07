@@ -18,8 +18,8 @@ class TranslationController extends Controller
 
         $query = Translation::query();
 
-        $search = $request->get('q');
-        if ($search !== null && $search !== '' && $search !== false) {
+        $search = is_string($request->query('q')) ? $request->query('q') : '';
+        if ($search !== '') {
             $query->where(function ($q) use ($search, $locales) {
                 $q->where('key', 'like', "%{$search}%");
 
@@ -39,7 +39,7 @@ class TranslationController extends Controller
                 ->render();
         }
 
-        return view('admin.translations.index', compact('translations', 'locales', 'default'));
+        return view('admin.translations.index', compact('translations', 'locales', 'default', 'search'));
     }
 
     public function create(): View

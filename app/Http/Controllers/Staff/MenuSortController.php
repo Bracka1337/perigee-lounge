@@ -12,8 +12,13 @@ class MenuSortController extends Controller
 {
     public function update(Request $request): JsonResponse
     {
-
-        $categories = $request->input('categories', []);
+        $categories = $request->validate([
+            'categories' => ['sometimes', 'array'],
+            'categories.*' => ['array'],
+            'categories.*.id' => ['nullable', 'integer'],
+            'categories.*.items' => ['sometimes', 'array'],
+            'categories.*.items.*' => ['integer'],
+        ])['categories'] ?? [];
 
         foreach ($categories as $catIndex => $categoryData) {
             if (! isset($categoryData['id']) || $categoryData['id'] === '') {
