@@ -42,7 +42,7 @@
                         name="name"
                         value="{{ old('name', $user->name) }}"
                         class="w-full bg-ground/60 border border-line rounded-xl pl-11 pr-3 py-2.5 text-sm text-ink
-                               focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                               focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                         required
                     >
                 </div>
@@ -62,7 +62,7 @@
                         name="email"
                         value="{{ old('email', $user->email) }}"
                         class="w-full bg-ground/60 border border-line rounded-xl pl-11 pr-3 py-2.5 text-sm text-ink
-                               focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                               focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                         required
                     >
                 </div>
@@ -84,7 +84,7 @@
                         id="role"
                         name="role"
                         class="relative z-0 appearance-none w-full bg-ground/60 border border-line rounded-xl pl-11 pr-10 py-2.5
-                               text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                               text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                         required
                     >
                         <option value="admin"  {{ $currentRole === 'admin' ? 'selected' : '' }}>
@@ -119,7 +119,7 @@
                         id="password"
                         name="password"
                         class="w-full bg-ground/60 border border-line rounded-xl pl-11 pr-3 py-2.5 text-sm text-ink
-                               focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                               focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                         placeholder="{{ __('admin-users-field-password-new-placeholder') }}"
                     >
                 </div>
@@ -130,9 +130,9 @@
 
             <div class="pt-2 flex flex-wrap items-center gap-3">
                 <button type="submit"
-                        class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-red-500/80 bg-red-600/80
-                               text-xs text-ink
-                               hover:bg-red-500 transition">
+                        class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full border border-nebula bg-nebula
+                               text-xs font-semibold text-on-nebula
+                               hover:border-ink hover:bg-ink transition">
                     <x-icon category="System" name="Save" class="w-5 h-5"/>
                     {{ __('admin-users-save-button') }}
                 </button>

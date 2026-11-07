@@ -32,6 +32,12 @@ $locale = app()->getLocale();
             <p class="text-base text-ink-muted">{{ $table->name }}</p>
         </div>
 
+        @unless($hasOpenOrder)
+            <div class="mb-6 p-4 text-sm text-ink-soft border border-line-strong bg-surface rounded-2xl" role="status">
+                {{ __('table-no-open-order-hint') }}
+            </div>
+        @endunless
+
         @if(count($cartItems) > 0)
             <div class="space-y-6">
                 <!-- Items list -->

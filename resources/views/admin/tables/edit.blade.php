@@ -37,7 +37,7 @@
                     id="name"
                     name="name"
                     value="{{ old('name', $table->name) }}"
-                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     required
                 >
             </div>
@@ -53,7 +53,7 @@
                     value="{{ old('capacity', $table->capacity) }}"
                     min="1"
                     max="20"
-                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     required
                 >
             </div>
@@ -71,7 +71,7 @@
                         min="0"
                         max="100"
                         step="0.01"
-                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     >
                 </div>
 
@@ -87,7 +87,7 @@
                         min="0"
                         max="100"
                         step="0.01"
-                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     >
                 </div>
             </div>
@@ -104,7 +104,7 @@
                         value="{{ old('width', $table->width) }}"
                         min="10"
                         max="1000"
-                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     >
                 </div>
 
@@ -119,7 +119,7 @@
                         value="{{ old('height', $table->height) }}"
                         min="10"
                         max="1000"
-                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                        class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                     >
                 </div>
             </div>
@@ -135,16 +135,16 @@
                     value="{{ old('rotation', $table->rotation) }}"
                     min="0"
                     max="359"
-                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500/70"
+                    class="w-full bg-ground/60 border border-line rounded-xl px-3 py-2.5 text-sm text-ink focus:outline-none focus:border-nebula focus:ring-1 focus:ring-nebula/70"
                 >
             </div>
 
 <div class="pt-2 flex flex-wrap items-center gap-3">
     <button type="submit"
             class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full
-                   border border-red-500/80 bg-red-600/80
-                   text-xs text-ink
-                   hover:bg-red-500 transition">
+                   border border-nebula bg-nebula
+                   text-xs font-semibold text-on-nebula
+                   hover:border-ink hover:bg-ink transition">
         <x-icon category="Interface" name="Save" class="w-5 h-5 shrink-0"/>
         <span>{{ __('admin-tables-save-button') }}</span>
     </button>

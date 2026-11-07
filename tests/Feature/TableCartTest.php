@@ -142,3 +142,13 @@ test('verified guests see a confirmation after sending an order', function () {
         ->assertOk()
         ->assertSee('Your order was sent to the waiter');
 });
+
+test('the cart says when staff have not opened the table yet', function () {
+    $cart = route('client.table.cart.show', ['locale' => 'en', 'code' => 'z4']);
+
+    $this->get($cart)->assertSee(__('table-no-open-order-hint'));
+
+    Order::create(['table_id' => Table::findByQrCode('z4')->id, 'status' => OrderStatus::Open, 'source' => 'staff']);
+
+    $this->get($cart)->assertDontSee(__('table-no-open-order-hint'));
+});
