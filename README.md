@@ -45,7 +45,7 @@ php artisan db:seed
 composer dev
 ```
 
-Then open http://localhost:8000.
+Then open http://localhost:8000. `composer dev` also runs the queue worker (mail and Telegram messages) and the scheduler (expiring late reservations).
 
 Demo accounts, for local use only:
 
@@ -68,7 +68,8 @@ Register a new account to try the client side. Email is written to the log by de
 - **Activity log:** a `LogsActivity` trait records create, update and delete events on the main models for the admin log.
 - **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 7 with no baseline, and bans `dd()`, `dump()` and `env()` outside config files.
 - **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
-- **Telegram:** optional staff notifications for new orders and reservations, set up with the `TELEGRAM_*` values in `.env`.
+- **Queue and scheduler:** mail and Telegram messages are queued, so a slow mail server or Telegram API never holds up a guest. Every five minutes, `reservations:expire` expires bookings the guest is more than an hour late for.
+- **Telegram:** optional staff notifications for QR orders and reservations, set up with the `TELEGRAM_*` values in `.env`. Messages use `TELEGRAM_LOCALE` (default: the site language) and escape guest input.
 
 ## Tests
 
@@ -86,7 +87,4 @@ GitHub Actions runs these on every pull request. Dependabot opens weekly grouped
 - **Live demo** with a nightly data reset.
 - **Laravel 13.** Laravel 12 gets security fixes until February 2027.
 - **Larastan level 8.** What's left is mostly nullable handling.
-- **Expire reservations on a schedule.** Late pending bookings are currently marked expired when someone opens a reservations page.
-- **Queue mail and Telegram notifications,** which are sent during the request today.
-- **Translate the Telegram messages,** which are Russian only.
 - **Browser tests** (Pest 4 browser testing) for the QR cart, drag-and-drop menu sorting and the floor plan.

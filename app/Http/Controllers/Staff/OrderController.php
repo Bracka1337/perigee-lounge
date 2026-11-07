@@ -8,6 +8,7 @@ use App\Actions\Orders\CompleteOrder;
 use App\Actions\Orders\OpenReservationOrder;
 use App\Actions\Orders\OpenTableOrder;
 use App\Actions\Orders\SpendLoyaltyPoints;
+use App\Actions\Reservations\ExpireLateReservations;
 use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
@@ -87,7 +88,10 @@ class OrderController extends Controller
             ->route('staff.orders.index', ['locale' => $locale, 'date' => $reservation->start_at->toDateString()])
             ->with('error', __($error));
 
-        if (! in_array($reservation->status, ReservationStatus::holdingTable(), true)) {
+        $late = $reservation->status === ReservationStatus::Pending
+            && Carbon::now()->gt($reservation->start_at->copy()->addMinutes(ExpireLateReservations::GRACE_MINUTES));
+
+        if (! in_array($reservation->status, ReservationStatus::holdingTable(), true) || $late) {
             return $backToDay('staff-orders-error-reservation-closed');
         }
 
