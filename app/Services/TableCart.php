@@ -67,7 +67,7 @@ class TableCart
     {
         $items = $this->items($tableId);
         $lines = [];
-        $total = 0;
+        $total = 0.0;
 
         if ($items === []) {
             return ['lines' => $lines, 'total' => $total];
@@ -79,6 +79,9 @@ class TableCart
 
         foreach ($items as $menuItemId => $qty) {
             $menuItem = $menuItems->get($menuItemId);
+            if ($menuItem === null) {
+                continue; // Can't happen: deleted items were dropped above.
+            }
             $sum = $menuItem->price * $qty;
             $total += $sum;
             $lines[$menuItemId] = ['item' => $menuItem, 'qty' => $qty, 'sum' => $sum];

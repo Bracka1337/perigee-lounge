@@ -31,7 +31,7 @@ A website and management system for a fictional hookah lounge. Guests browse the
 
 ## Stack
 
-Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint, Larastan (PHPStan level 7) and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
+Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Vite, Pest, Pint, Larastan (PHPStan level 8) and GitHub Actions. Uses SQLite locally, with a Docker setup for MySQL and Nginx.
 
 ## Getting started
 
@@ -66,7 +66,7 @@ Register a new account to try the client side. Email is written to the log by de
 - **Locale routing:** every page sits under `/{locale}`. `SetLocale` validates the prefix, sets it as the URL default so `route()` calls don't need it, and remembers it on the user. A path without a locale gets a 301 redirect to the default language.
 - **Translations from the database:** `DatabaseTranslator` extends Laravel's translator and reads interface text from a `translations` table, cached per key, so admins can edit any text on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without overwriting edited ones.
 - **Activity log:** a `LogsActivity` trait records create, update and delete events on the main models for the admin log.
-- **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 7 with no baseline, and bans `dd()`, `dump()` and `env()` outside config files.
+- **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 8 with no baseline, and bans `dd()`, `dump()` and `env()` outside config files.
 - **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
 - **Queue and scheduler:** mail and Telegram messages are queued, so a slow mail server or Telegram API never holds up a guest. Every five minutes, `reservations:expire` expires bookings the guest is more than an hour late for.
 - **Telegram:** optional staff notifications for QR orders and reservations, set up with the `TELEGRAM_*` values in `.env`. Messages use `TELEGRAM_LOCALE` (default: the site language) and escape guest input.
@@ -76,7 +76,7 @@ Register a new account to try the client side. Email is written to the log by de
 ```bash
 composer test          # Pest, in parallel
 vendor/bin/pint --test
-composer stan          # Larastan, level 7, no baseline
+composer stan          # Larastan, level 8, no baseline
 npm run build
 ```
 
@@ -86,5 +86,4 @@ GitHub Actions runs these on every pull request. Dependabot opens weekly grouped
 
 - **Live demo** with a nightly data reset.
 - **Laravel 13.** Laravel 12 gets security fixes until February 2027.
-- **Larastan level 8.** What's left is mostly nullable handling.
 - **Browser tests** (Pest 4 browser testing) for the QR cart, drag-and-drop menu sorting and the floor plan.

@@ -8,11 +8,12 @@ use App\Models\OpeningHour;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Models\Table;
+use App\Models\User;
 use App\Notifications\ReservationCancelled;
 use App\Notifications\ReservationCreated;
 use App\Services\TelegramNotifier;
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,10 +22,8 @@ use Illuminate\Validation\ValidationException;
 
 class ClientReservationController extends Controller
 {
-    public function index(Request $request, string $locale): View
+    public function index(Request $request, string $locale, #[CurrentUser] User $user): View
     {
-        $user = $request->user();
-
         $date = $this->dateFilter($request);
 
         $tables = Table::where('is_active', true)
@@ -60,11 +59,9 @@ class ClientReservationController extends Controller
         ]);
     }
 
-    public function store(Request $request, string $locale): RedirectResponse
+    public function store(Request $request, string $locale, #[CurrentUser] User $user): RedirectResponse
     {
-        $user = $request->user();
-
-        if (! ($user instanceof MustVerifyEmail) || ! $user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             return back()->with('error', __('client-reservations-error-email'))->withInput();
         }
 
@@ -162,11 +159,9 @@ class ClientReservationController extends Controller
             ->with('success', __('client-reservations-created'));
     }
 
-    public function cancel(Request $request, string $locale, Reservation $reservation): RedirectResponse
+    public function cancel(Request $request, string $locale, Reservation $reservation, #[CurrentUser] User $user): RedirectResponse
     {
         Gate::authorize('cancel', $reservation);
-
-        $user = $request->user();
 
         if (! in_array($reservation->status, [ReservationStatus::Pending], true)) {
             return back()->with('error', __('client-reservations-cancel-forbidden'));

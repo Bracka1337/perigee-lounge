@@ -38,7 +38,7 @@ class TelegramNotifier
 
         foreach ($order->items as $item) {
             if (in_array($item->id, $newItemIds, true)) {
-                $lines[] = '• '.e(self::itemName($item->menuItem->name)).' × '.$item->quantity;
+                $lines[] = '• '.e(self::itemName($item->menuItem?->name)).' × '.$item->quantity;
             }
         }
 
@@ -127,6 +127,8 @@ class TelegramNotifier
 
     private static function guestName(Reservation $reservation): string
     {
-        return $reservation->user->name ?? (($reservation->guest_name ?? '') !== '' ? $reservation->guest_name : self::t('telegram-guest'));
+        $name = $reservation->user->name ?? $reservation->guest_name;
+
+        return is_string($name) && $name !== '' ? $name : self::t('telegram-guest');
     }
 }
