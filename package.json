@@ -13,7 +13,7 @@
         "@zxing/library": "^0.23.0",
         "axios": "^1.21.0",
         "chart.js": "^4.6.1",
-        "concurrently": "^9.0.1",
+        "concurrently": "^10.0.6",
         "laravel-vite-plugin": "^2.0.0",
         "sortablejs": "^1.15.7",
         "tailwindcss": "^4.1.18",
