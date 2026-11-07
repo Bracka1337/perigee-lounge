@@ -74,15 +74,12 @@ Register a new account to try the client side. Email is written to the log by de
 ## Tests
 
 ```bash
-composer test          # Pest, in parallel
+composer test          # Pest, in parallel: feature and browser tests
 vendor/bin/pint --test
 composer stan          # Larastan, level 8, no baseline
 npm run build
 ```
 
-GitHub Actions runs these on every pull request. Dependabot opens weekly grouped updates for Composer, npm and Actions.
+Browser tests (`tests/Browser`) use Pest 4 with Playwright and cover the flows that need JavaScript: QR table ordering from menu to confirmation, the menu category highlight, drag-and-drop category sorting, and JavaScript errors at phone width. Install the browser once with `npx playwright install chromium`.
 
-## What I'd do next
-
-- **Live demo** with a nightly data reset.
-- **Browser tests** (Pest 4 browser testing) for the QR cart, drag-and-drop menu sorting and the floor plan.
+GitHub Actions runs all of these on every pull request. Dependabot opens weekly grouped updates for Composer, npm and Actions.
