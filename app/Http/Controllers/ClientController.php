@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
-    public function index(): View|RedirectResponse
+    public function index(#[CurrentUser] User $user): View|RedirectResponse
     {
-        $user = Auth::user();
-
         if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
