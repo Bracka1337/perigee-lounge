@@ -49,7 +49,7 @@ class OpenTableOrder
             'user_id' => $userId ?? $reservation?->user_id,
             'status' => OrderStatus::Open,
             'started_at' => $now,
-            'source' => ($reservation->source ?? '') !== '' ? $reservation->source : 'manual',
+            'source' => is_string($reservation?->source) && $reservation->source !== '' ? $reservation->source : 'manual',
         ]);
 
         $table->occupy();

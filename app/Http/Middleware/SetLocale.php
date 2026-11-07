@@ -27,8 +27,9 @@ class SetLocale
         URL::defaults(['locale' => $locale]);
 
         // Update user's preferred locale if authenticated and different
-        if (Auth::check() && Auth::user()->locale !== $locale) {
-            Auth::user()->update(['locale' => $locale]);
+        $user = Auth::user();
+        if ($user !== null && $user->locale !== $locale) {
+            $user->update(['locale' => $locale]);
         }
 
         view()->share('currentLocale', $locale);

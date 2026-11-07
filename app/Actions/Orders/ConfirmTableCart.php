@@ -54,7 +54,11 @@ class ConfirmTableCart
         // Each confirmation adds new lines, so staff see what arrived in this round.
         $newItemIds = [];
         foreach ($items as $menuItemId => $qty) {
-            $price = $orderable->get($menuItemId)->price;
+            $menuItem = $orderable->get($menuItemId);
+            if ($menuItem === null) {
+                continue; // Can't happen: unorderable items were rejected above.
+            }
+            $price = $menuItem->price;
             $newItemIds[] = OrderItem::create([
                 'order_id' => $order->id,
                 'menu_item_id' => $menuItemId,

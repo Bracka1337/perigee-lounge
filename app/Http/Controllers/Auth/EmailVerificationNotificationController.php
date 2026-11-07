@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,19 +14,19 @@ class EmailVerificationNotificationController extends Controller
     /**
      * Send a new email verification notification.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, #[CurrentUser] User $user): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
+        if ($user->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
         try {
-            $request->user()->sendEmailVerificationNotification();
+            $user->sendEmailVerificationNotification();
 
             return back()->with('status', 'verification-link-sent');
         } catch (\Exception $e) {
-            Log::error('Email verification resend failed for user: '.$request->user()->id, [
-                'email' => $request->user()->email,
+            Log::error('Email verification resend failed for user: '.$user->id, [
+                'email' => $user->email,
                 'error' => $e->getMessage(),
             ]);
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,25 +16,25 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request, #[CurrentUser] User $user): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, #[CurrentUser] User $user): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
         return Redirect::route('profile.edit')
             ->with('status', __('client-profile-updated'));
@@ -47,7 +49,7 @@ class ProfileController extends Controller
     //            'password' => ['required', 'current_password'],
     //        ]);
     //
-    //        $user = $request->user();
+    //        $user = $user;
     //
     //        Auth::logout();
     //
