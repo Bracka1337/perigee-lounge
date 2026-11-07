@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\OpeningHour;
 use App\Models\Order;
 use App\Models\Reservation;
@@ -21,9 +23,9 @@ class ClientReservationController extends Controller
 {
     public function index(Request $request, string $locale): View
     {
-        Reservation::where('status', 'pending')
+        Reservation::where('status', ReservationStatus::Pending)
             ->where('start_at', '<', now()->subHour())
-            ->update(['status' => 'expired']);
+            ->update(['status' => ReservationStatus::Expired]);
 
         $user = $request->user();
 
@@ -34,13 +36,10 @@ class ClientReservationController extends Controller
             ->get();
 
         $reservations = Reservation::whereDate('start_at', $date->toDateString())
-            ->whereIn('status', [
-                Reservation::STATUS_PENDING,
-                Reservation::STATUS_ACTIVE,
-            ])
+            ->whereIn('status', ReservationStatus::holdingTable())
             ->get();
 
-        $occupiedByOrders = Order::whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+        $occupiedByOrders = Order::whereNotIn('status', OrderStatus::closed())
             ->pluck('table_id');
 
         // occupiedTableIds now only includes active orders, not reservations
@@ -107,9 +106,9 @@ class ClientReservationController extends Controller
         $hasReservationThatDay = Reservation::where('user_id', $user->id)
             ->whereDate('start_at', $startDate)
             ->whereNotIn('status', [
-                Reservation::STATUS_CANCELLED,
-                Reservation::STATUS_COMPLETED,
-                Reservation::STATUS_EXPIRED,
+                ReservationStatus::Cancelled,
+                ReservationStatus::Completed,
+                ReservationStatus::Expired,
             ])
             ->exists();
 
@@ -118,7 +117,7 @@ class ClientReservationController extends Controller
         }
 
         $hasActiveOrder = Order::where('table_id', $table->id)
-            ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+            ->whereNotIn('status', OrderStatus::closed())
             ->exists();
 
         if ($hasActiveOrder) {
@@ -126,7 +125,7 @@ class ClientReservationController extends Controller
                 'table_id' => $table->id,
                 'user_id' => $user->id,
                 'active_orders' => Order::where('table_id', $table->id)
-                    ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED])
+                    ->whereNotIn('status', OrderStatus::closed())
                     ->count(),
             ]);
 
@@ -135,10 +134,7 @@ class ClientReservationController extends Controller
 
         $tableConflict = Reservation::where('table_id', $table->id)
             ->whereDate('start_at', $startDate)
-            ->whereIn('status', [
-                Reservation::STATUS_PENDING,
-                Reservation::STATUS_ACTIVE,
-            ])
+            ->whereIn('status', ReservationStatus::holdingTable())
             ->exists();
 
         if ($tableConflict) {
@@ -153,7 +149,7 @@ class ClientReservationController extends Controller
                 'guest_phone' => null,
                 'start_at' => $start,
                 'end_at' => null,
-                'status' => Reservation::STATUS_PENDING,
+                'status' => ReservationStatus::Pending,
                 'guests_count' => $data['guests_count'],
                 'source' => 'client',
             ]);
@@ -175,11 +171,11 @@ class ClientReservationController extends Controller
 
         $user = $request->user();
 
-        if (! in_array($reservation->status, [Reservation::STATUS_PENDING], true)) {
+        if (! in_array($reservation->status, [ReservationStatus::Pending], true)) {
             return back()->with('error', __('client-reservations-cancel-forbidden'));
         }
 
-        $reservation->status = Reservation::STATUS_CANCELLED;
+        $reservation->status = ReservationStatus::Cancelled;
         $reservation->end_at = null;
         $reservation->save();
 

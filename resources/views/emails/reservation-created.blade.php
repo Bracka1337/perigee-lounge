@@ -111,7 +111,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td style="padding: 4px 0; font-size: 13px; color: #666666;">{{ __('reservation-email-status') }}:</td>
-                                                            <td style="padding: 4px 0; font-size: 13px; color: #1a1a1a;">{{ strtoupper($reservation->status) }}</td>
+                                                            <td style="padding: 4px 0; font-size: 13px; color: #1a1a1a;">{{ strtoupper($reservation->status->value) }}</td>
                                                         </tr>
                                                     </table>
                                                 </td>

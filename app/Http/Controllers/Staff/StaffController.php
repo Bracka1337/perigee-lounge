@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Staff;
 
+use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use Carbon\Carbon;
@@ -14,10 +15,7 @@ class StaffController extends Controller
         $tomorrow = Carbon::now()->addDay()->startOfDay();
 
         $tomorrowReservations = Reservation::whereDate('start_at', $tomorrow->toDateString())
-            ->whereIn('status', [
-                Reservation::STATUS_PENDING,
-                Reservation::STATUS_ACTIVE,
-            ])
+            ->whereIn('status', ReservationStatus::holdingTable())
             ->with(['table', 'user'])
             ->orderBy('start_at')
             ->get();

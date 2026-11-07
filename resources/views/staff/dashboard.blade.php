@@ -48,7 +48,7 @@
                                         {{ $res->guest_name ?? ($res->user->name ?? __('common-guest')) }}
                                     </div>
                                     <div class="mt-1 text-xs text-ink-muted">
-                                        {{ __('staff-reservations-status-label') }}: {{ __('staff-reservations-status-'.$res->status) }}
+                                        {{ __('staff-reservations-status-label') }}: {{ __('staff-reservations-status-'.$res->status->value) }}
                                     </div>
                                 </div>
                                 <div class="text-right text-xs text-ink-muted">

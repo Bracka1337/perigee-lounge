@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\LoyaltyEarning;
-use App\Models\Order;
 use App\Models\PromoCodeUsage;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -159,7 +159,7 @@ class UserController extends Controller
         // Statistics summary
         $ordersCount = $user->orders()->count();
         $completedTotal = $user->orders()
-            ->where('status', Order::STATUS_COMPLETED)
+            ->where('status', OrderStatus::Completed)
             ->sum('total');
 
         $loyaltyEarned = LoyaltyEarning::where('user_id', $user->id)

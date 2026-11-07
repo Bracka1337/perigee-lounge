@@ -2,6 +2,8 @@
 
 namespace App\Actions\Orders;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\LoyaltyEarning;
 use App\Models\Order;
 use App\Models\Reservation;
@@ -23,13 +25,13 @@ class CompleteOrder
 
             $order->loadMissing('items', 'reservation', 'user');
             $order->recalculateTotals();
-            $order->status = Order::STATUS_COMPLETED;
+            $order->status = OrderStatus::Completed;
             $order->completed_at = $now;
             $order->save();
 
             $reservation = $order->reservation;
-            if ($reservation !== null && in_array($reservation->status, [Reservation::STATUS_PENDING, Reservation::STATUS_ACTIVE], true)) {
-                $reservation->status = Reservation::STATUS_COMPLETED;
+            if ($reservation !== null && in_array($reservation->status, ReservationStatus::holdingTable(), true)) {
+                $reservation->status = ReservationStatus::Completed;
                 $reservation->end_at = $now;
                 $reservation->save();
             }

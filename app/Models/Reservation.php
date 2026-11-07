@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
 use Carbon\Carbon;
 use Database\Factories\ReservationFactory;
@@ -19,16 +21,6 @@ class Reservation extends Model
 {
     use HasFactory, LogsActivity;
 
-    public const STATUS_PENDING = 'pending';
-
-    public const STATUS_ACTIVE = 'active';
-
-    public const STATUS_COMPLETED = 'completed';
-
-    public const STATUS_CANCELLED = 'cancelled';
-
-    public const STATUS_EXPIRED = 'expired';
-
     protected $fillable = [
         'user_id',
         'table_id',
@@ -42,6 +34,7 @@ class Reservation extends Model
     ];
 
     protected $casts = [
+        'status' => ReservationStatus::class,
         'start_at' => 'datetime',
         'end_at' => 'datetime',
     ];
@@ -52,10 +45,7 @@ class Reservation extends Model
      */
     public function scopeActive($query)
     {
-        return $query->whereIn('status', [
-            self::STATUS_PENDING,
-            self::STATUS_ACTIVE,
-        ]);
+        return $query->whereIn('status', ReservationStatus::holdingTable());
     }
 
     protected static function booted()
@@ -71,7 +61,7 @@ class Reservation extends Model
             }
 
             $query = Order::where('table_id', $reservation->table_id)
-                ->whereNotIn('status', [Order::STATUS_COMPLETED, Order::STATUS_CANCELLED]);
+                ->whereNotIn('status', OrderStatus::closed());
 
             if ($startDate !== null && $startDate !== '') {
                 $query->whereDate('started_at', $startDate);
