@@ -39,6 +39,8 @@ return [
         'staff_bot_token' => env('TELEGRAM_STAFF_BOT_TOKEN'),
         'staff_chat_id' => env('TELEGRAM_STAFF_CHAT_ID'),
         'orders_chat_id' => env('TELEGRAM_ORDERS_CHAT_ID'),
+        // Language of staff messages; empty means the site default.
+        'locale' => env('TELEGRAM_LOCALE'),
     ],
 
 ];
