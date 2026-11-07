@@ -202,10 +202,8 @@
                         <span class="text-ink-soft">{{ number_format($order->subtotal, 2, '.', ' ') }} €</span>
                     </div>
 
-                    @if($order->promoCode && $order->discount_total > 0)
-                        @php
-                            $promoDetails = $order->promoCode->getDiscountDetailsForOrder($order);
-                        @endphp
+                    {{-- Hidden once the promo no longer applies, e.g. after its item was removed. --}}
+                    @if($promoDetails !== null && $promoDetails['discount_amount'] > 0)
 
                         <div class="flex items-start justify-between gap-3 text-rose-300">
                             <div class="flex-1 min-w-0">
@@ -388,9 +386,11 @@
                             {{ __('staff-orders-promo-code-label') }}:
                             {{ $order->promoCode->public_code ?? (\Illuminate\Support\Str::substr($order->promoCode->qr_code, 0, 8) ?? '') }}
                         </div>
-                        <div class="text-ink-muted text-xs">
-                            {{ $order->promoCode->name }}
-                        </div>
+                        @if(filled($order->promoCode->description))
+                            <div class="text-ink-muted text-xs">
+                                {{ $order->promoCode->description }}
+                            </div>
+                        @endif
                     </div>
                 @elseif($order->status === \App\Enums\OrderStatus::Open)
                     @php

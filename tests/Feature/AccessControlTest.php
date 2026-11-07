@@ -169,3 +169,26 @@ test('the admin history page only opens for clients', function () {
         ->get(route('admin.users.show', ['locale' => 'en', 'user' => accountWithRole('client')]))
         ->assertOk();
 });
+
+test('staff accounts an admin creates can open the staff pages right away', function () {
+    $this->actingAs(accountWithRole('admin'))
+        ->post(route('admin.users.store', ['locale' => 'en']), [
+            'name' => 'New Staff', 'email' => 'new.staff@example.com', 'password' => 'secret123', 'role' => 'staff',
+        ])
+        ->assertRedirect();
+
+    $this->actingAs(User::where('email', 'new.staff@example.com')->firstOrFail())
+        ->get(route('staff.dashboard', ['locale' => 'en']))
+        ->assertOk();
+});
+
+test('a client with an open order cannot be deleted', function () {
+    $client = accountWithRole('client');
+    Order::create(['table_id' => $this->table->id, 'user_id' => $client->id, 'status' => OrderStatus::Open, 'source' => 'qr']);
+
+    $this->actingAs(accountWithRole('admin'))
+        ->delete(route('admin.users.destroy', ['locale' => 'en', 'user' => $client]))
+        ->assertSessionHas('error');
+
+    expect(User::find($client->id))->not->toBeNull();
+});

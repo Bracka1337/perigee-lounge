@@ -17,15 +17,16 @@ class OpenReservationOrder
 {
     public function handle(Reservation $reservation): ?Order
     {
+        $order = $reservation->order ?? $this->linkOrCreate($reservation);
+
+        // Refused: the guest isn't seated, so the reservation stays as it was.
+        if ($order === null) {
+            return null;
+        }
+
         if ($reservation->status === ReservationStatus::Pending) {
             $reservation->status = ReservationStatus::Active;
             $reservation->save();
-        }
-
-        $order = $reservation->order ?? $this->linkOrCreate($reservation);
-
-        if ($order === null) {
-            return null;
         }
 
         $reservation->table?->occupy();

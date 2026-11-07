@@ -438,3 +438,49 @@ test('pages that show order and reservation statuses render for every status', f
     expect((new ReservationCreated($reservation))->toMail($client)->render())
         ->toContain(strtoupper($reservation->status->value));
 });
+
+test('a reservation refused because its table has another reservation\'s order stays pending', function () {
+    $other = reservationOn($this->table, ReservationStatus::Active, now()->subHours(2));
+    Order::create(['reservation_id' => $other->id, 'table_id' => $this->table->id, 'status' => OrderStatus::Open, 'source' => 'phone']);
+    $reservation = reservationOn($this->table, ReservationStatus::Pending, now()->subMinutes(10));
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.from-reservation', ['locale' => 'en', 'reservation' => $reservation]))
+        ->assertSessionHas('error');
+
+    expect($reservation->fresh()->status)->toBe(ReservationStatus::Pending);
+});
+
+test('loyalty points are spent in whole cents only', function () {
+    $client = clientWithPoints(50, 'CENTS');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    $order->update(['user_id' => $client->id]);
+    $order->refresh()->recalculateTotals();
+    $order->save();
+
+    $this->actingAs($this->staff)
+        ->post(route('staff.orders.apply-loyalty', ['locale' => 'en', 'order' => $order]), ['amount' => 0.015])
+        ->assertSessionHasErrors('amount');
+
+    expect((float) $client->fresh()->loyalty_balance)->toBe(50.0);
+});
+
+test('the promo line is hidden once the promo no longer applies', function () {
+    $client = clientWithPoints(50, 'PROMO-GONE');
+    $order = openOrder($this->table);
+    addItem($order, $this->item, 20);
+    spendLoyalty($this->staff, $order, $client, 5);
+
+    $promo = new PromoCode;
+    $promo->forceFill([
+        'public_code' => 'ITEM', 'qr_code' => 'ITEM-QR', 'discount_type' => 'fixed', 'discount_value' => 3,
+        'scope' => 'item', 'menu_item_id' => MenuItem::where('id', '!=', $this->item->id)->value('id'), 'is_active' => true, 'used_count' => 0,
+    ])->save();
+    $order->update(['promo_code_id' => $promo->id]);
+
+    $this->actingAs($this->staff)
+        ->get(route('staff.orders.show', ['locale' => 'en', 'order' => $order]))
+        ->assertOk()
+        ->assertDontSee('-0.00 €');
+});
