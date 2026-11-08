@@ -45,7 +45,7 @@ php artisan db:seed
 composer dev
 ```
 
-Then open http://localhost:8000. `composer dev` also runs the queue worker (mail and Telegram messages) and the scheduler (expiring late reservations).
+Then open http://localhost:8000. `composer dev` also runs the queue worker (mail and Telegram messages) and the scheduler (expiring late reservations and refreshing the disposable-email domain list weekly).
 
 Demo accounts, for local use only:
 
@@ -66,7 +66,7 @@ Register a new account to try the client side. Email is written to the log by de
 - **Locale routing:** every page sits under `/{locale}`. `SetLocale` validates the prefix, sets it as the URL default so `route()` calls don't need it, and remembers it on the user. A path without a locale gets a 301 redirect to the default language.
 - **Translations from the database:** `DatabaseTranslator` extends Laravel's translator and reads interface text from a `translations` table, cached per key, so admins can edit any text on the site. Defaults live in `DefaultTranslationsSeeder`, and `php artisan translations:sync` adds new keys without overwriting edited ones.
 - **Activity log:** a `LogsActivity` trait records create, update and delete events on the main models for the admin log.
-- **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 8 with no baseline, and bans `dd()`, `dump()` and `env()` outside config files.
+- **Guard rails:** outside production, `Model::shouldBeStrict()` turns lazy loading (N+1), unknown attributes and dropped mass assignment into errors. Larastan runs at level 8 with no baseline, and bans debug calls (`dd()`, `dump()`, `var_dump()`, `print_r()`, `ray()`) and `env()` outside config files.
 - **Design tokens:** colours and fonts are defined once in `resources/css/app.css` through Tailwind's `@theme`.
 - **Queue and scheduler:** mail and Telegram messages are queued, so a slow mail server or Telegram API never holds up a guest. Every five minutes, `reservations:expire` expires bookings the guest is more than an hour late for.
 - **Telegram:** optional staff notifications for QR orders and reservations, set up with the `TELEGRAM_*` values in `.env`. Messages use `TELEGRAM_LOCALE` (default: the site language) and escape guest input.
