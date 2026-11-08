@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('staff', fn (User $user) => $user->isWorker());
         Gate::define('client', fn (User $user) => $user->isClient());
 
-        // Переопределяем валидатор indisposable с переводом
+        // Register the disposable-email rule with a translated message.
         Validator::extend('indisposable', Indisposable::class.'@validate', '');
         Validator::replacer('indisposable', function ($message, $attribute, $rule, $parameters) {
             return __('validation.indisposable', ['attribute' => $attribute]);
