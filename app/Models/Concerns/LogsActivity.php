@@ -132,8 +132,8 @@ trait LogsActivity
     /**
      * @return MorphMany<ActivityLog, $this>
      */
-    public function activityLogs()
+    public function activityLogs(): MorphMany
     {
-        return $this->morphMany(ActivityLog::class, 'subject');
+        return $this->morphMany(ActivityLog::class, 'model');
     }
 }
