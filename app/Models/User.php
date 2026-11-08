@@ -112,8 +112,6 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
-     * Получить заказы пользователя
-     *
      * @return HasMany<Order, $this>
      */
     public function orders(): HasMany
@@ -122,8 +120,6 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
-     * Получить промокоды пользователя
-     *
      * @return BelongsToMany<PromoCode, $this>
      */
     public function promoCodes(): BelongsToMany
@@ -134,8 +130,6 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     }
 
     /**
-     * Получить бонусы лояльности пользователя
-     *
      * @return HasMany<LoyaltyEarning, $this>
      */
     public function loyaltyEarnings(): HasMany

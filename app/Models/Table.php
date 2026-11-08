@@ -72,8 +72,6 @@ class Table extends Model
     }
 
     /**
-     * Получить бронирования
-     *
      * @return HasMany<Reservation, $this>
      */
     public function reservations(): HasMany

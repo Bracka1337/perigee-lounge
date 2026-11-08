@@ -44,8 +44,6 @@ class MenuItem extends Model
     }
 
     /**
-     * Получить элементы заказов
-     *
      * @return HasMany<OrderItem, $this>
      */
     public function orderItems(): HasMany
