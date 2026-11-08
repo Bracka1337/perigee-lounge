@@ -59,8 +59,6 @@ class Reservation extends Model
     }
 
     /**
-     * Получить пользователя
-     *
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -69,8 +67,6 @@ class Reservation extends Model
     }
 
     /**
-     * Получить столик
-     *
      * @return BelongsTo<Table, $this>
      */
     public function table(): BelongsTo
@@ -79,8 +75,6 @@ class Reservation extends Model
     }
 
     /**
-     * Получить заказ
-     *
      * @return HasOne<Order, $this>
      */
     public function order(): HasOne

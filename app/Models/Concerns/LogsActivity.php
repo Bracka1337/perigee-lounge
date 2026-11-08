@@ -8,21 +8,15 @@ use Illuminate\Support\Facades\Auth;
 
 trait LogsActivity
 {
-    /**
-     * Boot trait
-     */
     protected static function bootLogsActivity(): void
     {
-        // Логирование создания
         static::created(function ($model) {
             $model->logActivity('created', null, $model->getLoggableAttributes());
         });
 
-        // Логирование обновления
         static::updated(function ($model) {
             $changes = $model->getChanges();
 
-            // Игнорируем updated_at
             unset($changes['updated_at']);
 
             if (count($changes) > 0) {
@@ -31,7 +25,7 @@ trait LogsActivity
                     $old[$key] = $model->getOriginal($key);
                 }
 
-                // Фильтруем только реально измененные значения (с нормализацией чисел)
+                // Skip values that only changed type, e.g. "10.00" to 10.
                 $actualChanges = [];
                 $actualOld = [];
                 foreach ($changes as $key => $newValue) {
@@ -42,29 +36,22 @@ trait LogsActivity
                     }
                 }
 
-                // Логируем только если есть реальные изменения
                 if (count($actualChanges) > 0) {
                     $model->logActivity('updated', $actualOld, $actualChanges);
                 }
             }
         });
 
-        // Логирование удаления
         static::deleted(function ($model) {
             $model->logActivity('deleted', $model->getLoggableAttributes(), null);
         });
     }
 
-    /**
-     * Проверить, равны ли два значения с нормализацией чисел
-     */
     private function valuesAreEqual(mixed $oldValue, mixed $newValue): bool
     {
-        // Нормализуем оба значения
         $normalizedOld = $this->normalizeValue($oldValue);
         $normalizedNew = $this->normalizeValue($newValue);
 
-        // Если оба числа, сравниваем численно
         if (is_numeric($normalizedOld) && is_numeric($normalizedNew)) {
             return (float) $normalizedOld === (float) $normalizedNew;
         }
@@ -73,16 +60,14 @@ trait LogsActivity
     }
 
     /**
-     * Нормализовать значение для сравнения (числа, строки и т.д.)
+     * Cast numbers and numeric strings to float so "10.00" and 10 compare equal.
      */
     private function normalizeValue(mixed $value): mixed
     {
-        // Если это числовая строка, преобразуем в float для корректного сравнения
         if (is_string($value) && is_numeric($value)) {
             return (float) $value;
         }
 
-        // Если это число (int или float), преобразуем в float
         if (is_numeric($value) && ! is_string($value)) {
             return (float) $value;
         }
@@ -91,14 +76,11 @@ trait LogsActivity
     }
 
     /**
-     * Логировать активность
-     *
      * @param  array<string, mixed>|null  $oldValues
      * @param  array<string, mixed>|null  $newValues
      */
     protected function logActivity(string $action, ?array $oldValues, ?array $newValues): void
     {
-        // Фильтруем чувствительные данные
         $oldValues = $this->filterSensitiveData($oldValues);
         $newValues = $this->filterSensitiveData($newValues);
 
@@ -115,23 +97,18 @@ trait LogsActivity
     }
 
     /**
-     * Получить атрибуты для логирования
-     *
      * @return array<string, mixed>
      */
     protected function getLoggableAttributes(): array
     {
         $attributes = $this->getAttributes();
 
-        // Исключаем технические поля
         $excluded = ['created_at', 'updated_at', 'deleted_at', 'password', 'remember_token'];
 
         return array_diff_key($attributes, array_flip($excluded));
     }
 
     /**
-     * Фильтровать чувствительные данные
-     *
      * @param  array<string, mixed>|null  $data
      * @return array<string, mixed>|null
      */
@@ -153,12 +130,10 @@ trait LogsActivity
     }
 
     /**
-     * Получить логи активности для данной модели
-     *
      * @return MorphMany<ActivityLog, $this>
      */
-    public function activityLogs()
+    public function activityLogs(): MorphMany
     {
-        return $this->morphMany(ActivityLog::class, 'subject');
+        return $this->morphMany(ActivityLog::class, 'model');
     }
 }
