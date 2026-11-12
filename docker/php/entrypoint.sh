@@ -19,7 +19,8 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
 
   echo "Waiting for MySQL at db:3306..."
   for i in $(seq 1 60); do
-    if mysqladmin ping -h"db" -P"3306" -u"${DB_USERNAME:-perigee}" -p"${DB_PASSWORD:-perigee_pass}" --silent; then
+    # The image's client is MariaDB's, which rejects MySQL 8's self-signed certificate.
+    if mysqladmin ping --skip-ssl -h"db" -P"3306" -u"${DB_USERNAME:-perigee}" -p"${DB_PASSWORD:-perigee_pass}" --silent; then
       break
     fi
     sleep 1
@@ -32,7 +33,8 @@ if [ "${AUTO_SETUP:-0}" = "1" ]; then
   php artisan migrate --force || true
   # Seed only a database with no users, so restarts keep passwords and edits.
   # DatabaseSeeder runs in one transaction, so an interrupted seed leaves no users and retries.
-  user_count="$(php artisan tinker --execute='echo App\Models\User::count();' 2>&1 | tail -n 1)"
+  # Plain PHP, not tinker: tinker hangs without a terminal.
+  user_count="$(php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo App\Models\User::count();' 2>&1 | tail -n 1)"
   case "$user_count" in
     0) php artisan db:seed --force || true ;;
     ''|*[!0-9]*) echo "Skipping seed, could not read the user count: $user_count" ;;
