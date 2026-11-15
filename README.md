@@ -56,6 +56,31 @@ Demo accounts, for local use only:
 
 Register a new account to try the client side. Email is written to the log by default, so the verification link is in `storage/logs/laravel.log`.
 
+## Running with Docker
+
+One command builds and starts the site with MySQL and Nginx. No `.env` or local
+PHP and Node are needed:
+
+```bash
+docker compose up -d --build
+```
+
+Open http://localhost:8081 (set `APP_PORT` to use another port). The first start
+migrates and seeds the database, then serves the app. The demo accounts above
+work the same way.
+
+- `app`: PHP-FPM. The code, Composer dependencies and built assets are baked
+  into the image, so rebuild after code changes (`docker compose up -d --build`).
+- `queue` and `scheduler`: the same image, running the queue worker and the scheduler.
+- `nginx`: serves `public/` and passes PHP requests to `app`.
+- `db`: MySQL 8.4, also reachable from the host on port 33061 (`DB_FORWARD_PORT`).
+
+The database and `storage/` (uploaded menu photos, logs, the generated app key)
+live in named volumes, so restarts keep your data and the demo data is seeded
+only into a database with no users. `docker compose down -v` deletes both
+volumes for a fresh start. Mail is written to `storage/logs/laravel.log`
+(`docker compose exec app tail storage/logs/laravel.log`).
+
 ## Architecture
 
 - **Controllers stay thin.** Each one validates with a Form Request, checks access, calls one action and returns a response.
