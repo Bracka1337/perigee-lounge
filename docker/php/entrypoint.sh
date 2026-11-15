@@ -1,45 +1,29 @@
-#!/usr/bin/env sh
+#!/bin/sh
 set -e
-
 cd /var/www/html
 
-mkdir -p storage/framework/cache \
-         storage/framework/sessions \
-         storage/framework/views \
-         storage/logs \
-         bootstrap/cache
+# The storage volume starts as a copy of the image's storage folder.
+mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
+chown -R www-data:www-data storage
 
-chown -R www-data:www-data storage bootstrap/cache || true
-chmod -R 775 storage bootstrap/cache || true
+# Keep one app key across container rebuilds by storing it in the storage volume.
+# The queue and scheduler start after app is healthy, so the key already exists.
+if [ -z "$APP_KEY" ]; then
+  [ -f storage/app/.app-key ] || php -r 'echo "base64:".base64_encode(random_bytes(32));' > storage/app/.app-key
+  APP_KEY="$(cat storage/app/.app-key)"
+  export APP_KEY
+fi
+[ -f .env ] || touch .env
 
-if [ "${AUTO_SETUP:-0}" = "1" ]; then
-  if [ ! -f vendor/autoload.php ]; then
-    composer install --no-interaction --prefer-dist --optimize-autoloader
-  fi
-
-  echo "Waiting for MySQL at db:3306..."
-  for i in $(seq 1 60); do
-    # The image's client is MariaDB's, which rejects MySQL 8's self-signed certificate.
-    if mysqladmin ping --skip-ssl -h"db" -P"3306" -u"${DB_USERNAME:-perigee}" -p"${DB_PASSWORD:-perigee_pass}" --silent; then
-      break
-    fi
-    sleep 1
-  done
-
-  if [ -f .env ] && grep -q "^APP_KEY=$" .env; then
-    php artisan key:generate --force || true
-  fi
-  php artisan storage:link || true
-  php artisan migrate --force || true
+if [ "$1" = "php-fpm" ]; then
+  php artisan migrate --force
   # Seed only a database with no users, so restarts keep passwords and edits.
   # DatabaseSeeder runs in one transaction, so an interrupted seed leaves no users and retries.
-  # Plain PHP, not tinker: tinker hangs without a terminal.
-  user_count="$(php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo App\Models\User::count();' 2>&1 | tail -n 1)"
-  case "$user_count" in
-    0) php artisan db:seed --force || true ;;
-    ''|*[!0-9]*) echo "Skipping seed, could not read the user count: $user_count" ;;
-  esac
-  php artisan translations:sync || true
+  if [ "$(php -r 'require "vendor/autoload.php"; $app = require "bootstrap/app.php"; $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo App\Models\User::count();')" = "0" ]; then
+    php artisan db:seed --force
+  fi
+  php artisan translations:sync
+  php artisan optimize
 fi
 
 exec "$@"
