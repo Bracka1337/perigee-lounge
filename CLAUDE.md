@@ -3,10 +3,10 @@
 Guidance for AI coding assistants working in this repository.
 
 ## Project
-Perigee Lounge, a website and management system for a fictional hookah lounge: public pages in en/lv/ru under a `{locale}` route prefix, a database-driven menu, reservations, QR table ordering, loyalty points and promo codes, with client, staff and admin roles. Laravel 13 (PHP 8.3), Blade, Livewire, Tailwind CSS 4, Vite, Pest 4. SQLite locally, Docker setup with MySQL and Nginx.
+Perigee Lounge, a website and management system for a fictional hookah lounge: public pages in en/lv/ru under a `{locale}` route prefix, a database-driven menu, reservations, QR table ordering, loyalty points and promo codes, with client, staff and admin roles. Laravel 13 (PHP 8.3), Blade, Tailwind CSS 4, Vite, Pest 4. SQLite locally, Docker setup with MySQL and Nginx.
 
 ## Commands
-- `composer dev`: server, queue, logs and Vite together
+- `composer dev`: server, queue, scheduler, logs and Vite together
 - `composer test`: test suite (`php artisan test --parallel --compact` for the full run)
 - `composer stan`: Larastan, level 8, must stay at zero errors
 - `vendor/bin/pint`: code style
@@ -35,7 +35,7 @@ Perigee Lounge, a website and management system for a fictional hookah lounge: p
 - **Validation:** Form Requests. Never pass `$request->all()` to `create()`, `update()` or `fill()`.
 - **Mass assignment:** every model defines `$fillable`. Never `$guarded = []`.
 - **Queries:** eager-load relationships with `with()` (strict mode turns lazy loading into an error outside production) and paginate lists. No raw SQL with interpolated values; use bindings.
-- **Authorization:** every route, Livewire action and Livewire property that touches a record checks access through a gate or policy. Mark Livewire properties that must not change from the browser with `#[Locked]`.
+- **Authorization:** every route that touches a record checks access through a gate or policy.
 - **State changes** use POST, PUT, PATCH or DELETE with CSRF protection, never GET.
 - **Comparisons:** strict `===` / `!==`; compare tokens and promo/QR secrets with `hash_equals()`. Passwords only through `Hash::make()` / `Hash::check()`.
 - **Money and points:** order totals, loyalty points and promo-code usage change inside `DB::transaction()`, with `lockForUpdate()` or atomic updates where concurrent requests could race (for example two redemptions of the same code).
