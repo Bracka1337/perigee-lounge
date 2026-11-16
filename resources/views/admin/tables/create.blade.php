@@ -41,6 +41,8 @@
                 >
             </div>
 
+            @include('admin.tables.partials.room-select', ['selected' => old('room_id')])
+
             <div class="space-y-1.5">
                 <label for="capacity" class="block text-xs text-ink-muted">
                     {{ __('admin-tables-field-capacity') }}
