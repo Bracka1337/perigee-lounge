@@ -165,6 +165,61 @@ test('bad date filters fall back to today instead of failing', function (string 
     ['client.reservations.index', 'client', '99999-99-99'],
 ]);
 
+function closedOrderOn(Table $table, OrderStatus $status, string $createdAt): Order
+{
+    $order = openOrder($table);
+    $order->forceFill(['status' => $status, 'created_at' => $createdAt])->save();
+
+    return $order;
+}
+
+test('order history filters closed orders by date range and status', function () {
+    $before = closedOrderOn($this->table, OrderStatus::Completed, '2026-03-31 20:00:00');
+    $completed = closedOrderOn($this->table, OrderStatus::Completed, '2026-04-01 20:00:00');
+    $cancelled = closedOrderOn($this->table, OrderStatus::Cancelled, '2026-04-05 20:00:00');
+    $after = closedOrderOn($this->table, OrderStatus::Completed, '2026-04-06 20:00:00');
+
+    $history = fn (array $query) => $this->actingAs($this->staff)
+        ->get(route('staff.orders.index', ['locale' => 'en', ...$query]))
+        ->assertOk()
+        ->viewData('ordersHistory')
+        ->pluck('id')
+        ->all();
+
+    expect($history(['from' => '2026-04-01', 'to' => '2026-04-05']))->toBe([$cancelled->id, $completed->id])
+        ->and($history(['from' => '2026-04-01', 'to' => '2026-04-05', 'status' => 'cancelled']))->toBe([$cancelled->id])
+        ->and($history(['from' => '2026-04-06']))->toBe([$after->id])
+        ->and($history(['to' => '2026-03-31']))->toBe([$before->id])
+        ->and($history(['date' => '2026-04-01']))->toBe([$completed->id]);
+});
+
+test('order history is paginated and keeps its filters in page links', function () {
+    foreach (range(1, 16) as $i) {
+        closedOrderOn($this->table, OrderStatus::Completed, '2026-04-01 12:00:00');
+    }
+
+    $response = $this->actingAs($this->staff)
+        ->get(route('staff.orders.index', ['locale' => 'en', 'from' => '2026-04-01', 'to' => '2026-04-01', 'history_page' => 2]))
+        ->assertOk();
+
+    $page = $response->viewData('ordersHistory');
+    expect($page->total())->toBe(16)
+        ->and($page->count())->toBe(1)
+        ->and($page->previousPageUrl())->toContain('from=2026-04-01');
+});
+
+test('bad order history filters redirect to the unfiltered page with errors', function (array $query) {
+    $this->actingAs($this->staff)
+        ->get(route('staff.orders.index', ['locale' => 'en', ...$query]))
+        ->assertRedirect(route('staff.orders.index', ['locale' => 'en']))
+        ->assertSessionHasErrors();
+})->with([
+    'end before start' => [['from' => '2026-04-05', 'to' => '2026-04-01']],
+    'open is not a history status' => [['status' => 'open']],
+    'not a date' => [['from' => 'garbage']],
+    'array value' => [['to' => ['x']]],
+]);
+
 test('reservations reject a date with a time in it', function () {
     $this->actingAs($this->staff)
         ->post(route('staff.reservations.store', ['locale' => 'en']), [
