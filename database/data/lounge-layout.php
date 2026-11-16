@@ -128,6 +128,15 @@ return [
                 ],
             ],
             [
+                'name' => $name('Karaoke room', 'Karaoke istaba', 'Караоке'),
+                'kind' => 'seating', 'color' => 'rose',
+                'x' => 20, 'y' => 44, 'width' => 42, 'height' => 32,
+                'tables' => [
+                    ['K1', 8, 34, 61, 240, 120],
+                    ['K2', 4, 53, 61, 140, 80],
+                ],
+            ],
+            [
                 'name' => $name('Upstairs bar', 'Augšstāva bārs', 'Бар на втором этаже'),
                 'kind' => 'bar', 'color' => 'amber',
                 'x' => 68, 'y' => 0, 'width' => 32, 'height' => 24,
@@ -166,15 +175,6 @@ return [
                 'x' => 85, 'y' => 59, 'width' => 15, 'height' => 29,
                 'tables' => [
                     ['S4', 6, 92.5, 74.5, 130, 150],
-                ],
-            ],
-            [
-                'name' => $name('Karaoke room', 'Karaoke istaba', 'Караоке'),
-                'kind' => 'seating', 'color' => 'rose',
-                'x' => 20, 'y' => 44, 'width' => 42, 'height' => 32,
-                'tables' => [
-                    ['K1', 8, 34, 61, 240, 120],
-                    ['K2', 4, 53, 61, 140, 80],
                 ],
             ],
             [
