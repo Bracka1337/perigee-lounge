@@ -5,6 +5,10 @@ use App\Models\Table;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\TableSeeder;
+use Illuminate\Support\Facades\Storage;
+
+// Seeding installs the default pictures, which must not land in the real storage folder.
+beforeEach(fn () => Storage::fake('public'));
 
 test('seeding creates the demo data', function () {
     $this->seed(DatabaseSeeder::class);
