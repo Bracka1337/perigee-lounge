@@ -57,8 +57,9 @@ beforeEach(function () {
 // --- Default layout: data migration and seeders -------------------------------------------
 
 test('the data migration moves existing tables into rooms and keeps their ids', function () {
+    // The old layout without P2, which an admin removed at some point.
     $oldNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
-        'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'P1', 'P2', 'VIP'];
+        'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'P1', 'VIP'];
 
     foreach ($oldNames as $name) {
         DB::table('tables')->insert(['name' => $name, 'capacity' => 5, 'pos_x' => 1, 'pos_y' => 1, 'width' => 50, 'height' => 50]);
@@ -72,7 +73,8 @@ test('the data migration moves existing tables into rooms and keeps their ids', 
 
     expect(Floor::count())->toBe(2)
         ->and(Room::count())->toBe(20)
-        ->and(Table::count())->toBe(41)
+        ->and(Table::count())->toBe(40)
+        ->and(Table::where('name', 'P2')->exists())->toBeFalse()
         ->and(Table::whereIn('name', array_keys($idsBefore))->pluck('id', 'name')->all())->toBe($idsBefore);
 
     $vip = Table::with('room.floor')->where('name', 'VIP')->firstOrFail();
@@ -222,6 +224,7 @@ test('rooms that leave the plan or have bad values are rejected', function (arra
     'unknown color' => [['color' => 'neon']],
     'unknown kind' => [['kind' => 'pool']],
     'no English name' => [['name' => ['en' => '']]],
+    'blank English name' => [['name' => ['en' => '   ']]],
 ]);
 
 test('the plan editor cannot change a room of another floor', function () {
