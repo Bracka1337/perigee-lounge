@@ -267,6 +267,16 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Ipašie piedāvājumi',
                 'ru' => 'Cпецпредложения',
             ],
+            'menu-available-only' => [
+                'en' => 'Available only',
+                'lv' => 'Tikai pieejamie',
+                'ru' => 'Только доступные',
+            ],
+            'menu-no-available-in-category' => [
+                'en' => 'Nothing from this category is available right now.',
+                'lv' => 'Šobrīd nekas no šīs kategorijas nav pieejams.',
+                'ru' => 'Сейчас из этой категории ничего нет в наличии.',
+            ],
             'menu-unavailable' => [
                 'en' => 'Unavailable',
                 'lv' => 'Nav pieejams',
@@ -1792,6 +1802,36 @@ class DefaultTranslationsSeeder extends Seeder
                 'en' => 'Item is available',
                 'lv' => 'Pozīcija ir pieejama',
                 'ru' => 'Позиция доступна',
+            ],
+            'staff-menu-photo-rules' => [
+                'en' => 'JPG, PNG or WebP, up to 4 MB and 5000 px per side.',
+                'lv' => 'JPG, PNG vai WebP, līdz 4 MB un 5000 px katrā malā.',
+                'ru' => 'JPG, PNG или WebP, до 4 МБ и не больше 5000 px по каждой стороне.',
+            ],
+            'staff-menu-photo-unreadable' => [
+                'en' => 'This image could not be read. Try another file.',
+                'lv' => 'Šo attēlu neizdevās nolasīt. Mēģiniet citu failu.',
+                'ru' => 'Не удалось прочитать изображение. Попробуйте другой файл.',
+            ],
+            'staff-menu-photo-remove' => [
+                'en' => 'Remove photo',
+                'lv' => 'Noņemt foto',
+                'ru' => 'Удалить фото',
+            ],
+            'staff-menu-make-available' => [
+                'en' => 'Mark available',
+                'lv' => 'Atzīmēt kā pieejamu',
+                'ru' => 'Сделать доступным',
+            ],
+            'staff-menu-make-unavailable' => [
+                'en' => 'Mark unavailable',
+                'lv' => 'Atzīmēt kā nepieejamu',
+                'ru' => 'Сделать недоступным',
+            ],
+            'staff-menu-availability-updated' => [
+                'en' => 'Availability updated.',
+                'lv' => 'Pieejamība atjaunināta.',
+                'ru' => 'Доступность обновлена.',
             ],
             'staff-menu-item-badge-unavailable' => [
                 'en' => 'Unavailable',
