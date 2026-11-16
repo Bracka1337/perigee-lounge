@@ -18,7 +18,7 @@
     {{-- DATE --}}
     <div class="shrink-0 w-full md:w-auto">
         <form id="staffOrdersDateForm" method="GET" action="{{ url()->current() }}" class="w-full md:w-auto">
-            @foreach(request()->except(['date','page']) as $k => $v)
+            @foreach(request()->except(['date','page','history_page']) as $k => $v)
                 <input type="hidden" name="{{ $k }}" value="{{ $v }}">
             @endforeach
 
@@ -207,8 +207,58 @@
     <div class="rounded-2xl border border-line bg-surface p-4 md:p-5 overflow-hidden min-w-0">
         <h2 class="text-xs sm:text-xs text-ink-muted mb-4 inline-flex items-center gap-2">
             <x-icon category="Interface" name="Book" class="w-5 h-5"/>
-            {{ __('staff-orders-history-title', ['date' => $date->format('d.m.Y')]) }}
+            {{ __('staff-orders-history-heading') }}
         </h2>
+
+        <form method="GET" action="{{ url()->current() }}" class="mb-4 grid grid-cols-2 sm:grid-cols-[1fr_1fr_1.4fr_auto] gap-2 items-end">
+            @if(request()->has('date') && is_string(request()->query('date')))
+                <input type="hidden" name="date" value="{{ request()->query('date') }}">
+            @endif
+
+            <label class="block min-w-0">
+                <span class="block text-xs text-ink-muted mb-1">{{ __('staff-orders-history-from') }}</span>
+                <input type="date" name="from" value="{{ $historyFrom?->toDateString() }}"
+                       class="w-full min-h-11 rounded-xl border border-line bg-ground/60 px-3 text-xs text-ink focus:outline-none focus:border-nebula">
+            </label>
+
+            <label class="block min-w-0">
+                <span class="block text-xs text-ink-muted mb-1">{{ __('staff-orders-history-to') }}</span>
+                <input type="date" name="to" value="{{ $historyTo?->toDateString() }}"
+                       class="w-full min-h-11 rounded-xl border border-line bg-ground/60 px-3 text-xs text-ink focus:outline-none focus:border-nebula">
+            </label>
+
+            <label class="block min-w-0 col-span-2 sm:col-span-1">
+                <span class="block text-xs text-ink-muted mb-1">{{ __('staff-orders-status-label') }}</span>
+                <select name="status"
+                        class="w-full min-h-11 rounded-xl border border-line bg-ground/60 px-3 text-xs text-ink focus:outline-none focus:border-nebula">
+                    <option value="">{{ __('staff-orders-history-status-all') }}</option>
+                    @foreach(\App\Enums\OrderStatus::closed() as $closedStatus)
+                        <option value="{{ $closedStatus->value }}" @selected($historyStatus === $closedStatus)>
+                            {{ __('staff-orders-status-'.$closedStatus->value) }}
+                        </option>
+                    @endforeach
+                </select>
+            </label>
+
+            <div class="col-span-2 sm:col-span-1 flex items-center gap-2">
+                <button type="submit"
+                        class="min-h-11 flex-1 sm:flex-none px-4 rounded-xl bg-nebula text-on-nebula text-xs font-semibold hover:opacity-90 transition cursor-pointer">
+                    {{ __('staff-orders-history-filter') }}
+                </button>
+                @if(request()->hasAny(['from', 'to', 'status']))
+                    <a href="{{ route('staff.orders.index', ['locale' => $locale, 'date' => is_string(request()->query('date')) ? request()->query('date') : null]) }}"
+                       class="min-h-11 inline-flex items-center px-3 rounded-xl border border-line text-xs text-ink-muted hover:text-ink transition">
+                        {{ __('staff-orders-history-reset') }}
+                    </a>
+                @endif
+            </div>
+        </form>
+
+        @if($errors->hasAny(['from', 'to', 'status']))
+            <div class="mb-4 text-xs text-red-300 border border-red-500/60 bg-red-500/10 px-4 py-2 rounded-lg">
+                {{ $errors->first('from') ?: ($errors->first('to') ?: $errors->first('status')) }}
+            </div>
+        @endif
 
         <div class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
             @forelse($ordersHistory as $order)
@@ -274,10 +324,14 @@
                 </div>
             @empty
                 <p class="text-xs text-ink-muted">
-                    {{ __('staff-orders-history-empty') }}
+                    {{ __('staff-orders-history-no-results') }}
                 </p>
             @endforelse
         </div>
+
+        @if($ordersHistory->hasPages())
+            <div class="mt-4">{{ $ordersHistory->links() }}</div>
+        @endif
     </div>
 </div>
 @endsection
