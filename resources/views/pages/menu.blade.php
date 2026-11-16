@@ -3,6 +3,7 @@
 @section('seo_key', 'menu')
 
 @section('content')
+    @php $availableOnly ??= false; @endphp
     <div id="menu-top" class="mx-auto min-h-screen max-w-7xl scroll-mt-24 px-6 pb-20 pt-28">
         @if (session('success'))
             <div role="status" class="mb-6 rounded-xl border border-emerald-500/60 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
@@ -30,8 +31,8 @@
         @endisset
 
         @if ($categories->isNotEmpty())
-            <nav aria-label="{{ __('menu-button-to-categories') }}"
-                 class="sticky top-[69px] z-30 -mx-6 mb-10 flex gap-2 overflow-x-auto border-b border-line bg-ground/95 px-6 py-3 text-sm backdrop-blur">
+            <div class="sticky top-[69px] z-30 -mx-6 mb-10 flex items-center gap-3 border-b border-line bg-ground/95 px-6 py-3 text-sm backdrop-blur">
+            <nav aria-label="{{ __('menu-button-to-categories') }}" class="flex min-w-0 flex-1 gap-2 overflow-x-auto">
                 <a href="#menu-top" data-menu-chip
                    class="flex min-h-11 shrink-0 items-center rounded-full border border-line-strong px-5 transition hover:border-ink aria-[current=true]:border-ink aria-[current=true]:bg-ink aria-[current=true]:font-bold aria-[current=true]:text-on-nebula"
                    aria-current="true">
@@ -45,6 +46,22 @@
                     </a>
                 @endforeach
             </nav>
+
+            {{-- A GET form so the filter works without JS; menu.js adds the current category anchor on submit. --}}
+            <form method="GET" action="{{ url()->current() }}" data-menu-keep-category class="shrink-0">
+                <button type="submit" name="available" value="{{ $availableOnly ? '0' : '1' }}"
+                        aria-pressed="{{ $availableOnly ? 'true' : 'false' }}"
+                        class="flex min-h-11 items-center gap-2 rounded-full border px-4 transition hover:border-ink {{ $availableOnly ? 'border-nebula text-nebula' : 'border-line-strong' }}">
+                    <span aria-hidden="true"
+                          class="flex h-4 w-4 items-center justify-center rounded border {{ $availableOnly ? 'border-nebula bg-nebula text-on-nebula' : 'border-line-strong' }}">
+                        @if ($availableOnly)
+                            <svg viewBox="0 0 12 12" fill="none" class="h-3 w-3"><path d="M2.5 6.5l2.2 2.2L9.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        @endif
+                    </span>
+                    {{ __('menu-available-only') }}
+                </button>
+            </form>
+            </div>
         @endif
 
         @forelse ($categories as $category)
@@ -82,14 +99,19 @@
                                 $isAvailable = $catAvailable && ($item->is_available ?? true);
                             @endphp
 
-                            <article class="flex flex-col overflow-hidden rounded-2xl border bg-surface {{ $category->is_special ? 'border-nebula/60' : 'border-line' }} {{ $isAvailable ? '' : 'opacity-70' }}">
-                                @if ($item->image_path)
-                                    <img src="{{ asset('storage/'.$item->image_path) }}" alt="{{ $itemName }}" loading="lazy" class="h-44 w-full object-cover">
-                                @endif
+                            <article class="flex flex-col overflow-hidden rounded-2xl border bg-surface {{ $category->is_special ? 'border-nebula/60' : 'border-line' }}"
+                                     @unless ($isAvailable) data-unavailable @endunless>
+                                <x-menu-photo :src="$item->thumb_url" :alt="$itemName" :category="$catName" :muted="! $isAvailable">
+                                    @unless ($isAvailable)
+                                        <span class="absolute left-3 top-3 rounded-full border border-amber-400/70 bg-ground/90 px-3 py-1 text-xs font-bold text-amber-200">
+                                            {{ __('menu-unavailable') }}
+                                        </span>
+                                    @endunless
+                                </x-menu-photo>
 
                                 <div class="flex flex-1 flex-col p-6">
                                     <div class="mb-2 flex justify-between gap-4">
-                                        <h3 class="text-lg font-bold">{{ $itemName }}</h3>
+                                        <h3 class="text-lg font-bold {{ $isAvailable ? '' : 'text-ink-soft' }}">{{ $itemName }}</h3>
                                         <span class="whitespace-nowrap font-bold {{ $isAvailable ? '' : 'text-ink-muted line-through' }}">{{ $item->formatted_price }}</span>
                                     </div>
 
@@ -103,7 +125,7 @@
                                                     data-name="{{ $itemName }}"
                                                     data-desc="{{ $itemDesc }}"
                                                     data-price="{{ $item->formatted_price }}"
-                                                    data-image="{{ $item->image_path ? asset('storage/'.$item->image_path) : '' }}"
+                                                    data-image="{{ $item->image_url ?? '' }}"
                                                     data-category="{{ $catName }}"
                                                     data-allergens="{{ $item->t('allergens') }}"
                                                     class="min-h-11 rounded-full border border-line-strong px-5 text-sm transition hover:border-ink">
@@ -120,8 +142,6 @@
                                                     </button>
                                                 </form>
                                             @endisset
-                                        @else
-                                            <span class="text-sm text-amber-200">{{ __('menu-unavailable') }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -129,7 +149,7 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-ink-muted">{{ __('menu-no-position-category') }}</p>
+                    <p class="text-ink-muted">{{ __($availableOnly ? 'menu-no-available-in-category' : 'menu-no-position-category') }}</p>
                 @endif
             </section>
         @empty
@@ -139,7 +159,7 @@
 
     <dialog id="menu-item-modal" aria-labelledby="menu-item-modal-name"
             class="m-auto w-[min(32rem,calc(100vw-2rem))] rounded-2xl border border-line-strong bg-surface p-0 text-ink backdrop:bg-ground/80">
-        <img id="menu-item-modal-image" alt="" class="hidden h-52 w-full object-cover">
+        <img id="menu-item-modal-image" alt="" class="hidden aspect-[4/3] w-full object-cover">
 
         <div class="p-6">
             <p id="menu-item-modal-category" class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-nebula"></p>

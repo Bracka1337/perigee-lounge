@@ -77,7 +77,41 @@ function setupCategoryHighlight() {
     }, { passive: true });
 }
 
+// A photo whose file is missing shows the category placeholder instead of a broken image.
+function setupPhotoFallback() {
+    const showPlaceholder = (img) => {
+        img.hidden = true;
+        const placeholder = img.parentElement.querySelector('[data-menu-photo-placeholder]');
+        if (placeholder) placeholder.hidden = false;
+    };
+
+    document.querySelectorAll('img[data-menu-photo]').forEach((img) => {
+        if (img.complete && img.naturalWidth === 0 && img.currentSrc) {
+            showPlaceholder(img);
+        } else {
+            img.addEventListener('error', () => showPlaceholder(img), { once: true });
+        }
+    });
+
+    const modalImage = document.getElementById('menu-item-modal-image');
+    modalImage?.addEventListener('error', () => modalImage.classList.add('hidden'));
+}
+
+// The available-only switch reloads the page; carry the highlighted category along so it stays in view.
+function setupKeepCategory() {
+    document.querySelectorAll('form[data-menu-keep-category]').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const current = document.querySelector('[data-menu-chip][aria-current="true"]')?.getAttribute('href');
+            const action = new URL(form.action, window.location.href);
+            action.hash = current && current !== '#menu-top' ? current : '';
+            form.action = action.toString();
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     setupItemDialog();
     setupCategoryHighlight();
+    setupPhotoFallback();
+    setupKeepCategory();
 });

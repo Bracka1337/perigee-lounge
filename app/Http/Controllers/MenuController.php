@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuCategory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $categories = MenuCategory::with(['items' => function ($q) {
-            $q->orderBy('sort_order');
-        }])
-            ->orderBy('sort_order')
-            ->get();
+        $availableOnly = $request->boolean('available');
 
-        return view('pages.menu', compact('categories'));
+        return view('pages.menu', [
+            'categories' => MenuCategory::forMenu($availableOnly)->get(),
+            'availableOnly' => $availableOnly,
+        ]);
     }
 }

@@ -49,8 +49,8 @@ $locale = app()->getLocale();
                                 <div class="flex items-start gap-4">
                                     <!-- Image -->
                                     <div class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-ground/50 border border-line">
-                                        @if($row['item']->image_path)
-                                            <img src="{{ asset('storage/' . $row['item']->image_path) }}"
+                                        @if($row['item']->thumb_url)
+                                            <img src="{{ $row['item']->thumb_url }}"
                                                  alt="{{ $row['item']->name[$locale] ?? 'Dish' }}"
                                                  class="w-full h-full object-cover">
                                         @else

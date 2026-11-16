@@ -43,4 +43,20 @@ class MenuCategory extends Model
     {
         return $query->orderBy('sort_order');
     }
+
+    /**
+     * Categories with their items for the guest menus. With $availableOnly, items that can't be
+     * ordered are left out, but every category stays so a chosen category anchor still exists.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    public function scopeForMenu($query, bool $availableOnly = false)
+    {
+        return $query->orderBy('sort_order')->with(['items' => function ($items) use ($availableOnly) {
+            $items->orderBy('sort_order')->when($availableOnly, fn ($q) => $q
+                ->where('is_available', true)
+                ->whereHas('category', fn ($category) => $category->where('is_available', true)));
+        }]);
+    }
 }
