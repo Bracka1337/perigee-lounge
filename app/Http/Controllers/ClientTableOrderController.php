@@ -12,8 +12,8 @@ use App\Models\Order;
 use App\Models\Table;
 use App\Services\TableCart;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 /**
  * Ordering from a table's QR code: the client fills a session cart, then sends it
@@ -23,7 +23,7 @@ class ClientTableOrderController extends Controller
 {
     public function __construct(private TableCart $cart) {}
 
-    public function show(string $locale, string $code): View|RedirectResponse
+    public function show(Request $request, string $locale, string $code): View|RedirectResponse
     {
         if (! auth()->check()) {
             return redirect()->route('menu', ['locale' => $locale]);
@@ -39,8 +39,11 @@ class ClientTableOrderController extends Controller
             return $redirect;
         }
 
+        $availableOnly = $request->boolean('available');
+
         return view('pages.menu', [
-            'categories' => $this->menu(),
+            'categories' => MenuCategory::forMenu($availableOnly)->get(),
+            'availableOnly' => $availableOnly,
             'qrTable' => $table,
             'qrCode' => $code,
         ]);
@@ -102,7 +105,6 @@ class ClientTableOrderController extends Controller
             'cartTotal' => $summary['total'],
             'hasOpenOrder' => Order::active()->where('table_id', $table->id)->exists(),
             'code' => $code,
-            'categories' => $this->menu(),
         ]);
     }
 
@@ -177,15 +179,5 @@ class ClientTableOrderController extends Controller
     {
         return redirect()->route('client.table.cart.show', ['locale' => $locale, 'code' => $code])
             ->with('error', __($error));
-    }
-
-    /**
-     * @return Collection<int, MenuCategory>
-     */
-    private function menu()
-    {
-        return MenuCategory::with(['items' => fn ($query) => $query->orderBy('sort_order')])
-            ->orderBy('sort_order')
-            ->get();
     }
 }

@@ -76,9 +76,9 @@
                 @php($itemName = $item->name[$locale] ?? ($item->name['ru'] ?? reset($item->name) ?? ''))
                 @php($itemNameLower = mb_strtolower($itemName))
                 <div class="product-card rounded-2xl border border-line bg-surface p-3 flex flex-col gap-1" data-category="cat-{{ $category->id }}" data-name="{{ $itemNameLower }}">
-                    @if ($item->image_url)
+                    @if ($item->thumb_url)
                         <img
-                            src="{{ $item->image_url }}"
+                            src="{{ $item->thumb_url }}"
                             alt="{{ $itemName }}"
                             class="w-full h-32 object-cover rounded-xl bg-ground/40"
                             loading="lazy"
