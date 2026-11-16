@@ -25,8 +25,8 @@
         $image = asset('images/logo.png');
         $url = url()->current();
 
-        $locales = config('site.locales', ['ru','en','lv']);
-        $defaultLocale = config('site.default_locale', 'ru');
+        $locales = config('site.locales', ['en', 'lv', 'ru']);
+        $defaultLocale = config('site.default_locale', 'en');
         $currentLocale = app()->getLocale();
         $segments = request()->segments();
         $relativePath = implode('/', array_slice($segments, 1));

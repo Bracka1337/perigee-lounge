@@ -13,8 +13,8 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $route = $request->route();
         $locale = $route?->parameter('locale') ?? $default;

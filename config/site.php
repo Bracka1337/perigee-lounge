@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'locales' => ['ru', 'en', 'lv'],
+    'locales' => ['en', 'lv', 'ru'],
 
-    'default_locale' => 'ru',
+    'default_locale' => 'en',
 ];
