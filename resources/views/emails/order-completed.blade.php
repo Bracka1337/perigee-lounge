@@ -128,7 +128,7 @@
                                                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 8px; @if(!$loop->last) padding-bottom: 8px; border-bottom: 1px solid #e0e0e0; @endif">
                                                         <tr>
                                                             <td style="font-size: 13px; color: #1a1a1a; padding: 2px 0;">
-                                                                {{ $item->menuItem->name[app()->getLocale()] ?? $item->menuItem->name['ru'] ?? '' }}
+                                                                {{ $item->menuItem?->t('name') ?? '' }}
                                                             </td>
                                                             <td style="font-size: 13px; color: #1a1a1a; text-align: right; padding: 2px 0; white-space: nowrap;">
                                                                 {{ number_format($item->total_price, 2, '.', ' ') }} €
