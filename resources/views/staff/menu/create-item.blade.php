@@ -154,8 +154,11 @@
                     <div class="w-full bg-ground/60 border border-line rounded-2xl px-3.5 py-2.5">
                         <input type="file"
                                name="image"
+                               accept="image/jpeg,image/png,image/webp"
+                               aria-describedby="image-rules"
                                class="w-full text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border file:border-line-strong file:bg-line file:text-ink file:text-xs file: file: hover:file:bg-line">
                     </div>
+                    <p id="image-rules" class="text-xs text-ink-muted mt-1">{{ __('staff-menu-photo-rules') }}</p>
                     @error('image')
                     <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
                     @enderror

@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Staff\MenuItemRequest;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Services\MenuPhotoStore;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class MenuItemController extends Controller
 {
+    public function __construct(private MenuPhotoStore $photos) {}
+
     public function create(Request $request): View
     {
         $categoryId = $request->input('category_id');
@@ -20,40 +24,14 @@ class MenuItemController extends Controller
         return view('staff.menu.create-item', compact('category'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(MenuItemRequest $request): RedirectResponse
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $itemData = $request->itemData();
+        $itemData['is_available'] = $request->has('is_available') ? $request->boolean('is_available') : true;
 
-        $data = $request->validate([
-            'menu_category_id' => ['required', 'exists:menu_categories,id'],
-
-            'name' => ['required', 'array'],
-            "name.$default" => ['required', 'string', 'max:255'],
-            'name.*' => ['nullable', 'string', 'max:255'],
-
-            'description' => ['nullable', 'array'],
-            'description.*' => ['nullable', 'string'],
-
-            'allergens' => ['nullable', 'array'],
-            'allergens.*' => ['nullable', 'string'],
-
-            'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'max:2048'],
-            'is_available' => ['nullable', 'boolean'],
-        ]);
-
-        $itemData = [
-            'menu_category_id' => $data['menu_category_id'],
-            'name' => $data['name'],
-            'description' => $data['description'] ?? [],
-            'allergens' => $data['allergens'] ?? [],
-            'price' => $data['price'],
-            'is_available' => $request->has('is_available') ? $request->boolean('is_available') : true,
-        ];
-
-        if ($request->hasFile('image')) {
-            $itemData['image_path'] = $request->file('image')->store('menu', 'public');
+        $photo = $request->file('image');
+        if ($photo instanceof UploadedFile) {
+            $itemData = [...$itemData, ...$this->photos->store($photo)];
         }
 
         $maxOrder = MenuItem::where('menu_category_id', $itemData['menu_category_id'])->max('sort_order') ?? 0;
@@ -72,46 +50,28 @@ class MenuItemController extends Controller
         return view('staff.menu.edit-item', compact('menuItem', 'categories'));
     }
 
-    public function update(Request $request, string $locale, MenuItem $menuItem): RedirectResponse
+    public function update(MenuItemRequest $request, string $locale, MenuItem $menuItem): RedirectResponse
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $itemData = $request->itemData();
+        $itemData['is_available'] = $request->boolean('is_available');
 
-        $data = $request->validate([
-            'menu_category_id' => ['required', 'exists:menu_categories,id'],
+        $photo = $request->file('image');
+        $replacesPhoto = $photo instanceof UploadedFile || $request->boolean('remove_image');
 
-            'name' => ['required', 'array'],
-            "name.$default" => ['required', 'string', 'max:255'],
-            'name.*' => ['nullable', 'string', 'max:255'],
+        $oldPaths = [$menuItem->image_path, $menuItem->thumb_path];
 
-            'description' => ['nullable', 'array'],
-            'description.*' => ['nullable', 'string'],
-
-            'allergens' => ['nullable', 'array'],
-            'allergens.*' => ['nullable', 'string'],
-
-            'price' => ['required', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'max:2048'],
-            'is_available' => ['nullable', 'boolean'],
-        ]);
-
-        $itemData = [
-            'menu_category_id' => $data['menu_category_id'],
-            'name' => $data['name'],
-            'description' => $data['description'] ?? [],
-            'allergens' => $data['allergens'] ?? [],
-            'price' => $data['price'],
-            'is_available' => $request->boolean('is_available'),
-        ];
-
-        if ($request->hasFile('image')) {
-            if ($menuItem->image_path !== null && $menuItem->image_path !== '') {
-                Storage::disk('public')->delete($menuItem->image_path);
-            }
-            $itemData['image_path'] = $request->file('image')->store('menu', 'public');
+        if ($replacesPhoto) {
+            $itemData = [...$itemData, ...($photo instanceof UploadedFile
+                ? $this->photos->store($photo)
+                : ['image_path' => null, 'thumb_path' => null])];
         }
 
         $menuItem->update($itemData);
+
+        // Old files go only after the new paths are saved, so a failed update never leaves a broken image.
+        if ($replacesPhoto) {
+            $this->photos->delete(...$oldPaths);
+        }
 
         return redirect()->route('staff.menu-categories.index')
             ->with('success', __('staff-menu-item-updated'));
@@ -124,11 +84,8 @@ class MenuItemController extends Controller
                 ->with('error', __('staff-menu-item-delete-blocked'));
         }
 
-        if ($menuItem->image_path !== null && $menuItem->image_path !== '') {
-            Storage::disk('public')->delete($menuItem->image_path);
-        }
-
         $menuItem->delete();
+        $this->photos->delete($menuItem->image_path, $menuItem->thumb_path);
 
         return redirect()->route('staff.menu-categories.index')
             ->with('success', __('staff-menu-item-deleted'));

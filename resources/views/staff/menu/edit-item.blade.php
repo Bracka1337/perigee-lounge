@@ -181,7 +181,7 @@
 
                     @if($menuItem->image_path)
                         <div class="mb-2 flex items-center gap-3 rounded-2xl border border-line bg-ground/30 p-3">
-                            <img src="{{ asset('storage/'.$menuItem->image_path) }}"
+                            <img src="{{ $menuItem->thumb_url }}"
                                  alt="{{ $menuItem->t('name') ?? ($nameArr[$default] ?? '') }}"
                                  class="w-14 h-14 rounded-xl object-cover">
                             <div class="text-xs text-ink-muted">
@@ -191,14 +191,23 @@
                                 </div>
                                 <div class="text-ink-muted mt-0.5">{{ __('staff-field-image-keep-help') }}</div>
                             </div>
+                            <label class="ml-auto inline-flex min-h-11 items-center gap-2 rounded-full border border-red-500/80 px-3 text-xs text-red-200">
+                                <input type="checkbox" name="remove_image" value="1"
+                                       class="w-4 h-4 rounded border-line-strong bg-ground/60"
+                                       @checked(old('remove_image'))>
+                                <span>{{ __('staff-menu-photo-remove') }}</span>
+                            </label>
                         </div>
                     @endif
 
                     <div class="w-full bg-ground/60 border border-line rounded-2xl px-3.5 py-2.5">
                         <input type="file"
                                name="image"
+                               accept="image/jpeg,image/png,image/webp"
+                               aria-describedby="image-rules"
                                class="w-full text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-full file:border file:border-line-strong file:bg-line file:text-ink file:text-xs file: file: hover:file:bg-line">
                     </div>
+                    <p id="image-rules" class="text-xs text-ink-muted mt-1">{{ __('staff-menu-photo-rules') }}</p>
                     @error('image')
                     <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
                     @enderror
