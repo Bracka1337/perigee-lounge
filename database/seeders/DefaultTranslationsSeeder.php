@@ -5757,6 +5757,66 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Seko jūsu labojumiem, arī nesaglabātajiem.',
                 'ru' => 'Отражает ваши правки, включая несохранённые.',
             ],
+
+            'client-reservations-panel-render-caption' => [
+                'en' => '3D visualization',
+                'lv' => '3D vizualizācija',
+                'ru' => '3D-визуализация',
+            ],
+
+            'client-reservations-panel-table' => [
+                'en' => 'Table :name',
+                'lv' => 'Galdiņš :name',
+                'ru' => 'Столик :name',
+            ],
+
+            'client-reservations-panel-room' => [
+                'en' => 'Room',
+                'lv' => 'Telpa',
+                'ru' => 'Зал',
+            ],
+
+            'client-reservations-panel-floor' => [
+                'en' => 'Floor',
+                'lv' => 'Stāvs',
+                'ru' => 'Этаж',
+            ],
+
+            'client-reservations-panel-capacity' => [
+                'en' => 'Seats',
+                'lv' => 'Vietas',
+                'ru' => 'Мест',
+            ],
+
+            'client-reservations-panel-status' => [
+                'en' => 'Status',
+                'lv' => 'Statuss',
+                'ru' => 'Статус',
+            ],
+
+            'admin-floors-photos-title' => [
+                'en' => 'Room and table photos',
+                'lv' => 'Telpu un galdiņu attēli',
+                'ru' => 'Изображения залов и столиков',
+            ],
+
+            'admin-floors-photos-help' => [
+                'en' => 'Renders a fresh 3D picture of every room and table. Run it after you change the layout. It works in the background and takes a few minutes.',
+                'lv' => 'Izveido jaunu 3D attēlu katrai telpai un galdiņam. Palaidiet pēc plāna izmaiņām. Tas darbojas fonā un aizņem dažas minūtes.',
+                'ru' => 'Создаёт новое 3D-изображение каждого зала и столика. Запускайте после изменения плана. Работает в фоне и занимает несколько минут.',
+            ],
+
+            'admin-floors-photos-button' => [
+                'en' => 'Regenerate photos',
+                'lv' => 'Atjaunot attēlus',
+                'ru' => 'Обновить изображения',
+            ],
+
+            'admin-floors-photos-queued' => [
+                'en' => 'The photos are being regenerated. They will show up on the reservations page in a few minutes.',
+                'lv' => 'Attēli tiek atjaunoti. Tie parādīsies rezervāciju lapā pēc dažām minūtēm.',
+                'ru' => 'Изображения обновляются. Они появятся на странице бронирования через несколько минут.',
+            ],
         ];
     }
 }
