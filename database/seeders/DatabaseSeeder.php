@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             OpeningHoursSeeder::class,
             TableSeeder::class,
+            DefaultRendersSeeder::class,
         ]));
     }
 }
