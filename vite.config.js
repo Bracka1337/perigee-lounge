@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/vendor/chart.js',
                 'resources/js/vendor/sortable.js',
                 'resources/js/vendor/zxing.js',
+                'resources/js/room-editor.js',
             ],
             refresh: true,
         }),
