@@ -34,8 +34,8 @@ class Translation extends Model
         }
 
         $locale = $locale ?? app()->getLocale();
-        $locales = config('site.locales', ['ru']);
-        $defaultLocale = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $defaultLocale = config('site.default_locale', $locales[0] ?? 'en');
 
         return $values[$locale] ?? $values[$defaultLocale] ?? null;
     }

@@ -25,8 +25,8 @@ class DefaultTranslationsSeeder extends Seeder
      */
     public function normalize(string $key, array $values): array
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
         $value = [];
 
         foreach ($locales as $locale) {

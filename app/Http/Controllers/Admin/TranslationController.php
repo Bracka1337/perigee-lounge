@@ -13,8 +13,8 @@ class TranslationController extends Controller
 {
     public function index(Request $request): View|string
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $query = Translation::query();
 
@@ -44,16 +44,16 @@ class TranslationController extends Controller
 
     public function create(): View
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         return view('admin.translations.create', compact('locales', 'default'));
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $data = $request->validate([
             'key' => ['required', 'string', 'max:255', 'unique:translations,key'],
@@ -78,8 +78,8 @@ class TranslationController extends Controller
     {
         $translation = Translation::findOrFail($id);
 
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         return view('admin.translations.edit', compact('translation', 'locales', 'default'));
     }
@@ -88,8 +88,8 @@ class TranslationController extends Controller
     {
         $translation = Translation::findOrFail($id);
 
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $data = $request->validate([
             'key' => [

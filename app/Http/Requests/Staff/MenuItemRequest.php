@@ -24,8 +24,8 @@ class MenuItemRequest extends FormRequest
      */
     public function rules(): array
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         return [
             'menu_category_id' => ['required', 'integer', 'exists:menu_categories,id'],
