@@ -102,11 +102,11 @@ class TableController extends Controller
             [
                 'layout' => ['array'],
                 'layout.*.id' => ['required', 'integer'],
-                'layout.*.pos_x' => ['required', 'numeric'],
-                'layout.*.pos_y' => ['required', 'numeric'],
-                'layout.*.width' => ['required', 'numeric', 'min:1'],
-                'layout.*.height' => ['required', 'numeric', 'min:1'],
-                'layout.*.rotation' => ['required', 'numeric'],
+                'layout.*.pos_x' => ['required', 'numeric', 'min:0', 'max:100'],
+                'layout.*.pos_y' => ['required', 'numeric', 'min:0', 'max:100'],
+                'layout.*.width' => ['required', 'numeric', 'min:1', 'max:1000'],
+                'layout.*.height' => ['required', 'numeric', 'min:1', 'max:1000'],
+                'layout.*.rotation' => ['required', 'numeric', 'min:-360', 'max:360'],
             ],
         )->validate()['layout'];
 
