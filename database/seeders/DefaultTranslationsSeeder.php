@@ -2860,16 +2860,46 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Предстоящие резервации',
             ],
 
-            'staff-orders-history-title' => [
-                'en' => 'Completed/cancelled today (:date)',
-                'lv' => 'Pabeigti/atcelti šodien (:date)',
-                'ru' => 'Завершены/отменены сегодня (:date)',
+            'staff-orders-history-heading' => [
+                'en' => 'Order history',
+                'lv' => 'Pasūtījumu vēsture',
+                'ru' => 'История заказов',
             ],
 
-            'staff-orders-history-empty' => [
-                'en' => 'No completed or cancelled orders for this day.',
-                'lv' => 'Šai dienai nav pabeigtu vai atceltu pasūtījumu.',
-                'ru' => 'На эту дату нет завершённых или отменённых заказов.',
+            'staff-orders-history-from' => [
+                'en' => 'From',
+                'lv' => 'No',
+                'ru' => 'С',
+            ],
+
+            'staff-orders-history-to' => [
+                'en' => 'To',
+                'lv' => 'Līdz',
+                'ru' => 'По',
+            ],
+
+            'staff-orders-history-status-all' => [
+                'en' => 'Completed and cancelled',
+                'lv' => 'Pabeigti un atcelti',
+                'ru' => 'Завершённые и отменённые',
+            ],
+
+            'staff-orders-history-filter' => [
+                'en' => 'Show',
+                'lv' => 'Rādīt',
+                'ru' => 'Показать',
+            ],
+
+            'staff-orders-history-reset' => [
+                'en' => 'Reset',
+                'lv' => 'Atiestatīt',
+                'ru' => 'Сбросить',
+            ],
+
+            'staff-orders-history-no-results' => [
+                'en' => 'No completed or cancelled orders match these filters.',
+                'lv' => 'Šiem filtriem neatbilst neviens pabeigts vai atcelts pasūtījums.',
+                'ru' => 'Нет завершённых или отменённых заказов по этим фильтрам.',
             ],
 
             'staff-orders-reservations-empty' => [
