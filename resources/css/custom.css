@@ -39,3 +39,125 @@ body {
     background: var(--color-ground);
     min-height: 100%;
 }
+
+/* Lounge plan: rooms are tinted rectangles under the tables, each in its palette color. */
+.floor-room {
+    position: absolute;
+    overflow: hidden;
+    pointer-events: none;
+    border: 1px solid color-mix(in srgb, var(--room) 45%, transparent);
+    border-radius: 0.5rem;
+    background-color: color-mix(in srgb, var(--room) 9%, transparent);
+}
+
+.floor-room__label {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.3rem;
+    max-width: calc(100% - 0.75rem);
+    overflow: hidden;
+    color: var(--room);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Stairs are hatched like steps, the bar shows its counter, the entrance its door. */
+.floor-room--stairs {
+    background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--room) 30%, transparent) 0 1px, transparent 1px 9px);
+}
+
+.floor-room--bar::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 1.6rem;
+    height: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: color-mix(in srgb, var(--room) 50%, transparent);
+}
+
+.floor-room--entrance::after {
+    content: "";
+    position: absolute;
+    left: 30%;
+    right: 30%;
+    bottom: 0;
+    height: 0.2rem;
+    background-color: var(--room);
+}
+
+.floor-room-swatch {
+    width: 0.75rem;
+    height: 0.75rem;
+    flex-shrink: 0;
+    border: 1px solid var(--room);
+    border-radius: 0.25rem;
+    background-color: color-mix(in srgb, var(--room) 25%, transparent);
+}
+
+/* Rooms editor (admin): rooms can be dragged and resized, tables are shown faintly for reference. */
+.room-editor .floor-room {
+    pointer-events: auto;
+    cursor: move;
+    touch-action: none;
+}
+
+.room-editor .floor-room.is-selected {
+    outline: 2px solid var(--room);
+    outline-offset: 1px;
+    background-color: color-mix(in srgb, var(--room) 24%, transparent);
+}
+
+.room-editor__handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 55%, var(--room) 55%);
+}
+
+.room-editor__table {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    border: 1px dashed var(--color-line-strong);
+    border-radius: 0.75rem;
+    color: var(--color-ink-muted);
+    font-size: 0.6875rem;
+}
+
+.room-editor__color {
+    display: flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 9999px;
+}
+
+.room-editor__color > span:first-of-type {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    background-color: var(--room);
+}
+
+.room-editor__color > input:checked + span {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+}
+
+.room-editor__color > input:focus-visible + span {
+    outline: 2px solid var(--color-nebula);
+    outline-offset: 3px;
+}

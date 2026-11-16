@@ -11,6 +11,7 @@ use App\Models\Table;
 use App\Models\User;
 use App\Notifications\ReservationCancelled;
 use App\Notifications\ReservationCreated;
+use App\Services\LoungeLayout;
 use App\Services\TelegramNotifier;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -22,13 +23,11 @@ use Illuminate\Validation\ValidationException;
 
 class ClientReservationController extends Controller
 {
-    public function index(Request $request, string $locale, #[CurrentUser] User $user): View
+    public function index(Request $request, string $locale, #[CurrentUser] User $user, LoungeLayout $layout): View
     {
         $date = $this->dateFilter($request);
 
-        $tables = Table::where('is_active', true)
-            ->orderBy('id')
-            ->get();
+        $floors = $layout->floors();
 
         $reservations = Reservation::whereDate('start_at', $date->toDateString())
             ->whereIn('status', ReservationStatus::holdingTable())
@@ -52,7 +51,8 @@ class ClientReservationController extends Controller
 
         return view('client.reservations.index', [
             'date' => $date,
-            'tables' => $tables,
+            'floors' => $floors,
+            'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservations' => $reservations,
             'myReservations' => $myReservations,
             'occupiedTableIds' => $occupiedTableIds,
