@@ -1,0 +1,250 @@
+// Builds the lounge from the same floors, rooms and tables the 2D plan draws.
+//
+// Layout data: { floors: [{ id, name, rooms: [{ id, name, kind, color, x, y, width, height }],
+//   tables: [{ id, name, capacity, roomId, x, y, width, height, rotation, active }] }] }
+// Room rectangles are percentages of the plan. Table x/y are centre percentages and
+// width/height are pixels of the 1200 px wide reference plan, exactly as in the database.
+import {
+    BoxGeometry,
+    CanvasTexture,
+    Group,
+    Mesh,
+    MeshBasicMaterial,
+    PlaneGeometry,
+    Sprite,
+    SpriteMaterial,
+    SRGBColorSpace,
+} from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { addBar, addEntrance, addLamp, addPlant, addScreen, addStairs, addTableSet } from './furniture.js';
+import { Batch, COLORS, PLAN_DEPTH, PLAN_WIDTH, PX, STOREY, mix, planX, planZ, seededRandom } from './kit.js';
+
+const WALL_HEIGHT = 0.9;
+const WALL_THICKNESS = 0.12;
+
+export const STATUS_COLORS = {
+    free: COLORS.free,
+    pending: COLORS.pending,
+    active: COLORS.active,
+    inactive: COLORS.inactive,
+    selected: COLORS.selected,
+};
+
+function roomBox(room) {
+    const x0 = planX(room.x);
+    const z0 = planZ(room.y);
+    const width = (room.width / 100) * PLAN_WIDTH;
+    const depth = (room.height / 100) * PLAN_DEPTH;
+
+    return { x0, z0, x1: x0 + width, z1: z0 + depth, cx: x0 + width / 2, cz: z0 + depth / 2, width, depth };
+}
+
+// The wall that faces the middle of the plan gets the doorway.
+function doorSide(room) {
+    const dx = 50 - (room.x + room.width / 2);
+    const dy = 50 - (room.y + room.height / 2);
+
+    if (Math.abs(dx) / room.width > Math.abs(dy) / room.height) return dx > 0 ? 'right' : 'left';
+    return dy > 0 ? 'bottom' : 'top';
+}
+
+function addWall(batch, colors, side, box, hasDoor) {
+    const horizontal = side === 'top' || side === 'bottom';
+    const length = horizontal ? box.width : box.depth;
+    const gap = hasDoor ? Math.min(1.8, length * 0.5) : 0;
+    const pieces = hasDoor ? [[-length / 2, -gap / 2], [gap / 2, length / 2]] : [[-length / 2, length / 2]];
+
+    for (const [from, to] of pieces) {
+        const size = to - from;
+        const middle = (from + to) / 2;
+        const x = horizontal ? box.cx + middle : (side === 'left' ? box.x0 : box.x1);
+        const z = horizontal ? (side === 'top' ? box.z0 : box.z1) : box.cz + middle;
+        const [width, depth] = horizontal ? [size, WALL_THICKNESS] : [WALL_THICKNESS, size];
+
+        batch.box(colors.wall, width, WALL_HEIGHT, depth, x, 0, z);
+        batch.box(colors.neon, width, 0.04, depth * 0.5, x, WALL_HEIGHT, z);
+    }
+}
+
+function addRoom(batch, room, isTopFloor) {
+    const box = roomBox(room);
+    const random = seededRandom(`room-${room.name}-${room.x}-${room.y}`);
+    const colors = { wall: mix(room.color, COLORS.wall, 0.78), neon: `glow:${room.color}` };
+
+    batch.at(0, 0, 0);
+    batch.box(mix(room.color, COLORS.slab, 0.88), box.width, 0.04, box.depth, box.cx, 0, box.cz);
+
+    const door = doorSide(room);
+    for (const side of ['top', 'bottom', 'left', 'right']) {
+        // The entrance is open to the street, where its door frame stands.
+        if (room.kind === 'entrance' && side === 'bottom') continue;
+        addWall(batch, colors, side, box, side === door);
+    }
+
+    if (room.kind === 'bar') addBar(batch, box, random);
+    if (room.kind === 'stairs') addStairs(batch, box, isTopFloor);
+    if (room.kind === 'entrance') addEntrance(batch, box);
+
+    // Rooms built around a screen get one on their back wall, whatever language they are named in.
+    if (/cinema|kino|кино|karaoke|караоке|game|spēļu|игров/i.test(room.name)) addScreen(batch, box, room.color);
+
+    if (room.kind === 'seating' && box.width > 4 && box.depth > 4) {
+        const inset = 0.55;
+        const corners = [[box.x0 + inset, box.z0 + inset], [box.x1 - inset, box.z0 + inset], [box.x0 + inset, box.z1 - inset], [box.x1 - inset, box.z1 - inset]];
+        const first = Math.floor(random() * 4);
+        addLamp(batch, ...corners[first], random() > 0.5 ? COLORS.amber : COLORS.violet);
+        addPlant(batch, ...corners[(first + 2) % 4]);
+    }
+}
+
+function tableLabel(text) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 160;
+    canvas.height = 80;
+
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'rgba(7, 8, 15, 0.82)';
+    context.beginPath();
+    context.roundRect(8, 12, 144, 56, 18);
+    context.fill();
+    context.fillStyle = '#f2f1f7';
+    context.font = '600 34px "Manrope Variable", Manrope, system-ui, sans-serif';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, 80, 42, 128);
+
+    const texture = new CanvasTexture(canvas);
+    texture.colorSpace = SRGBColorSpace;
+
+    const sprite = new Sprite(new SpriteMaterial({ map: texture, depthTest: false, transparent: true }));
+    sprite.scale.set(2, 1, 1);
+    sprite.renderOrder = 10;
+    return sprite;
+}
+
+// A rectangle outline on the floor around a table, in the color of its status.
+function statusFrame(width, depth) {
+    const line = 0.07;
+    const parts = [
+        new BoxGeometry(width, 0.03, line).translate(0, 0, -depth / 2),
+        new BoxGeometry(width, 0.03, line).translate(0, 0, depth / 2),
+        new BoxGeometry(line, 0.03, depth).translate(-width / 2, 0, 0),
+        new BoxGeometry(line, 0.03, depth).translate(width / 2, 0, 0),
+    ];
+    const merged = mergeGeometries(parts, false);
+    parts.forEach((part) => part.dispose());
+    return merged;
+}
+
+/**
+ * @returns {{ root: Group, floors: Array, tables: Map<number, object>, setStatus: Function, height: Function }}
+ */
+export function buildLounge(layout, { labels = true } = {}) {
+    const root = new Group();
+    const tables = new Map();
+
+    const materials = {};
+    for (const [status, color] of Object.entries(STATUS_COLORS)) {
+        materials[status] = {
+            frame: new MeshBasicMaterial({ color }),
+            fill: new MeshBasicMaterial({ color, transparent: true, opacity: status === 'selected' ? 0.45 : 0.14, depthWrite: false }),
+        };
+    }
+    const pickMaterial = new MeshBasicMaterial({ visible: false });
+
+    const floors = layout.floors.map((floor, index) => {
+        const group = new Group();
+        const labelGroup = new Group();
+        const picks = [];
+        const y = index * STOREY;
+        const isTopFloor = index === layout.floors.length - 1;
+        const roomsById = new Map(floor.rooms.map((room) => [room.id, room]));
+
+        group.position.y = y;
+
+        const batch = new Batch();
+        batch.at(0, 0, 0);
+        batch.box(COLORS.slab, PLAN_WIDTH + 0.8, 0.3, PLAN_DEPTH + 0.8, 0, -0.3, 0);
+        batch.box(COLORS.walkway, PLAN_WIDTH + 0.2, 0.02, PLAN_DEPTH + 0.2, 0, 0, 0);
+
+        floor.rooms.forEach((room) => addRoom(batch, room, isTopFloor));
+
+        for (const table of floor.tables) {
+            const room = roomsById.get(table.roomId);
+            const width = table.width * PX;
+            const depth = table.height * PX;
+            const upright = depth > width;
+            const rotation = (-table.rotation * Math.PI) / 180;
+            const x = planX(table.x);
+            const z = planZ(table.y);
+
+            batch.at(x, 0.04, z, rotation + (upright ? Math.PI / 2 : 0));
+            addTableSet(batch, {
+                width,
+                depth,
+                capacity: table.capacity,
+                roomColor: room?.color ?? COLORS.violet,
+                premium: table.capacity >= 10 || /vip/i.test(room?.name ?? ''),
+                highTable: room?.kind === 'bar' && table.capacity <= 2,
+            }, seededRandom(`table-${table.name}`));
+
+            const status = table.active === false ? 'inactive' : (table.status ?? 'free');
+
+            const frame = new Mesh(statusFrame(width + 0.3, depth + 0.3), materials[status].frame);
+            frame.position.set(x, 0.07, z);
+            frame.rotation.y = rotation;
+
+            const fill = new Mesh(new PlaneGeometry(width + 0.3, depth + 0.3), materials[status].fill);
+            fill.position.set(x, 0.065, z);
+            fill.rotation.set(-Math.PI / 2, 0, rotation);
+
+            const pick = new Mesh(new BoxGeometry(width + 0.3, 1.3, depth + 0.3), pickMaterial);
+            pick.position.set(x, 0.65, z);
+            pick.rotation.y = rotation;
+            pick.userData.tableId = table.id;
+
+            group.add(frame, fill, pick);
+            picks.push(pick);
+
+            if (labels) {
+                const label = tableLabel(table.name);
+                label.position.set(x, 2.1, z);
+                labelGroup.add(label);
+            }
+
+            tables.set(table.id, { ...table, status, floorId: floor.id, frame, fill, position: { x, y, z }, size: { width, depth } });
+        }
+
+        group.add(...batch.build(), labelGroup);
+        root.add(group);
+
+        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room) })) };
+    });
+
+    // Paints a table's outline. `selected` wins over its own status.
+    function paint(tableId, selected = false) {
+        const table = tables.get(tableId);
+        if (!table) return;
+
+        const look = materials[selected ? 'selected' : table.status];
+        table.frame.material = look.frame;
+        table.fill.material = look.fill;
+        table.frame.scale.y = selected ? 2.5 : 1;
+    }
+
+    function dispose() {
+        root.traverse((child) => {
+            child.geometry?.dispose();
+            if (child.isSprite) {
+                child.material.map?.dispose();
+                child.material.dispose();
+            } else if (child.isMesh && !Object.values(materials).some((look) => look.frame === child.material || look.fill === child.material) && child.material !== pickMaterial) {
+                child.material.dispose();
+            }
+        });
+        Object.values(materials).forEach((look) => { look.frame.dispose(); look.fill.dispose(); });
+        pickMaterial.dispose();
+    }
+
+    return { root, floors, tables, paint, dispose };
+}
