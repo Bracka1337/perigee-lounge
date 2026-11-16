@@ -25,7 +25,19 @@ class MenuPhotoStore
      */
     public function store(UploadedFile $file): array
     {
-        [$image, $extension] = $this->load($file);
+        return $this->storeFromPath($file->getRealPath());
+    }
+
+    /**
+     * Saves an image file that is already on this machine, such as a render studio shot.
+     * $as re-encodes it in another format (jpg, png or webp).
+     *
+     * @return array{image_path: string, thumb_path: string}
+     */
+    public function storeFromPath(string|false $path, ?string $as = null): array
+    {
+        [$image, $extension] = $this->load($path);
+        $extension = $as ?? $extension;
 
         $name = Str::uuid()->toString().'.'.$extension;
         $paths = ['image_path' => 'menu/'.$name, 'thumb_path' => 'menu/thumbs/'.$name];
@@ -52,9 +64,8 @@ class MenuPhotoStore
     /**
      * @return array{0: GdImage, 1: string}
      */
-    private function load(UploadedFile $file): array
+    private function load(string|false $path): array
     {
-        $path = $file->getRealPath();
         $info = $path === false ? false : @getimagesize($path);
         $extension = match ($info === false ? null : $info[2]) {
             IMAGETYPE_JPEG => 'jpg',
