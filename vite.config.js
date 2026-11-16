@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/vendor/zxing.js',
                 'resources/js/room-editor.js',
                 'resources/js/lounge-toggle.js',
+                'resources/js/studio/index.js',
             ],
             refresh: true,
         }),

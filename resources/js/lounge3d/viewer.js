@@ -1,14 +1,10 @@
 // Interactive 3D view of the lounge: orbit and zoom, a floor cutaway, and tables that can be picked.
 import {
-    AmbientLight,
     Color,
-    DirectionalLight,
-    HemisphereLight,
     Mesh,
     MeshBasicMaterial,
     PerspectiveCamera,
     PlaneGeometry,
-    PointLight,
     Raycaster,
     Scene,
     Vector2,
@@ -17,7 +13,7 @@ import {
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { COLORS, PLAN_DEPTH, PLAN_WIDTH, STOREY } from './kit.js';
-import { buildLounge } from './scene.js';
+import { addLoungeLights, buildLounge } from './scene.js';
 
 export function supportsWebGL() {
     try {
@@ -26,29 +22,6 @@ export function supportsWebGL() {
     } catch {
         return false;
     }
-}
-
-// Lights shared by the viewer and the render studio: cool fill from above, warm amber
-// and violet pools at floor level.
-export function addLoungeLights(scene, y = 0) {
-    const lights = [
-        new HemisphereLight('#8d93d6', '#120e1a', 0.55),
-        new AmbientLight('#ffffff', 0.1),
-    ];
-
-    const sun = new DirectionalLight('#ffe6c4', 0.85);
-    sun.position.set(-12, 30, 18);
-    lights.push(sun);
-
-    for (const [color, x, z] of [[COLORS.amber, 10, -9], [COLORS.violet, -4, 5], [COLORS.amber, -12, -8], [COLORS.violet, 11, 8]]) {
-        const lamp = new PointLight(color, 95, 26, 1.5);
-        lamp.position.set(x, y + 4.2, z);
-        lamp.userData.followsFloor = true;
-        lights.push(lamp);
-    }
-
-    scene.add(...lights);
-    return lights;
 }
 
 /**

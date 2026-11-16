@@ -206,6 +206,6 @@ export function addPlant(batch, x, z) {
 export function addScreen(batch, room, color) {
     const width = Math.min(room.width * 0.6, 7);
 
-    batch.box(COLORS.wall, width + 0.3, 2.1, 0.12, room.cx, 0.5, room.z0 + 0.14);
-    batch.box(`glow:${mix(color, '#ffffff', 0.35)}`, width, 1.8, 0.04, room.cx, 0.65, room.z0 + 0.22);
+    batch.box(COLORS.wall, width + 0.3, 1.5, 0.12, room.cx, 0.4, room.z0 + 0.14);
+    batch.box(`glow:${mix(color, '#ffffff', 0.35)}`, width, 1.2, 0.04, room.cx, 0.55, room.z0 + 0.22);
 }
