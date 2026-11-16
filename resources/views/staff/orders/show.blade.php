@@ -83,8 +83,8 @@
                 @forelse($order->items as $item)
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 py-2 rounded-xl bg-ground/40 border border-line min-w-0">
                         <div class="flex items-center gap-3 min-w-0">
-                            @if($item->menuItem->image_path ?? false)
-                                <img src="{{ asset('storage/'.$item->menuItem->image_path) }}"
+                            @if($item->menuItem?->thumb_url)
+                                <img src="{{ $item->menuItem->thumb_url }}"
                                      alt="{{ $item->menuItem->name[$locale] ?? '' }}"
                                      class="w-10 h-10 rounded-lg object-cover shrink-0">
                             @endif

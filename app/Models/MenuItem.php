@@ -22,6 +22,7 @@ class MenuItem extends Model
         'description',
         'allergens',
         'image_path',
+        'thumb_path',
         'price',
         'sort_order',
         'is_available',
@@ -65,6 +66,16 @@ class MenuItem extends Model
     {
         $path = $this->image_path ?? $this->image ?? null;
 
-        return ($path !== null && $path !== '') ? Storage::url($path) : null;
+        return ($path !== null && $path !== '') ? Storage::disk('public')->url($path) : null;
+    }
+
+    /**
+     * The 400 px copy used in lists. Photos uploaded before thumbnails existed fall back to the full image.
+     */
+    public function getThumbUrlAttribute(): ?string
+    {
+        $path = $this->thumb_path;
+
+        return ($path !== null && $path !== '') ? Storage::disk('public')->url($path) : $this->image_url;
     }
 }
