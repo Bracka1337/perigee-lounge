@@ -9,8 +9,10 @@ A website and management system for a fictional hookah lounge. Guests browse the
 | Menu | Table ordering on a phone | Staff reservations |
 |---|---|---|
 | ![Menu](docs/screenshots/menu.png) | ![Table ordering](docs/screenshots/table-phone.png) | ![Staff reservations](docs/screenshots/staff-reservations.png) |
-| **Staff order history** | | |
-| ![Staff order history with date and status filters](docs/screenshots/staff-orders.png) | | |
+
+**Staff order history**
+
+![Staff order history with date and status filters](docs/screenshots/staff-orders.png)
 
 ## Features
 
