@@ -24,8 +24,8 @@ class MenuCategoryController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $data = $request->validate([
             'name' => ['required', 'array'],
@@ -62,8 +62,8 @@ class MenuCategoryController extends Controller
 
     public function update(Request $request, string $locale, MenuCategory $menuCategory): RedirectResponse
     {
-        $locales = config('site.locales', ['ru']);
-        $default = config('site.default_locale', $locales[0] ?? 'ru');
+        $locales = config('site.locales', ['en']);
+        $default = config('site.default_locale', $locales[0] ?? 'en');
 
         $data = $request->validate([
             'name' => ['required', 'array'],

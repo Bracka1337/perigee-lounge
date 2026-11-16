@@ -1,9 +1,9 @@
 @php
-    $locales = config('site.locales', ['ru', 'en', 'lv']);
+    $locales = config('site.locales', ['en', 'lv', 'ru']);
     $locale = request()->segment(1);
 
     if (! in_array($locale, $locales, true)) {
-        $locale = config('site.default_locale', 'ru');
+        $locale = config('site.default_locale', 'en');
     }
 
     app()->setLocale($locale);
