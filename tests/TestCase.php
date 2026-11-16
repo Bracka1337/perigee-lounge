@@ -11,6 +11,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        URL::defaults(['locale' => 'ru']);
+        URL::defaults(['locale' => 'en']);
     }
 }
