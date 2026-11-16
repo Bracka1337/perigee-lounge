@@ -26,16 +26,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    $locales = config('site.locales', ['ru']);
-    $default = config('site.default_locale', $locales[0] ?? 'ru');
+    $locales = config('site.locales', ['en']);
+    $default = config('site.default_locale', $locales[0] ?? 'en');
 
     return redirect()->route('home', ['locale' => $default]);
 });
 
 // Allow QR path without locale by redirecting to default locale
 Route::get('/menu/table-{code}', function (string $code) {
-    $locales = config('site.locales', ['ru']);
-    $default = config('site.default_locale', $locales[0] ?? 'ru');
+    $locales = config('site.locales', ['en']);
+    $default = config('site.default_locale', $locales[0] ?? 'en');
 
     // If user is not authenticated, redirect to regular menu
     if (! auth()->check()) {
@@ -47,8 +47,8 @@ Route::get('/menu/table-{code}', function (string $code) {
 
 // Catch all routes without locale prefix and redirect to default locale
 Route::fallback(function (Request $request) {
-    $locales = config('site.locales', ['ru']);
-    $default = config('site.default_locale', $locales[0] ?? 'ru');
+    $locales = config('site.locales', ['en']);
+    $default = config('site.default_locale', $locales[0] ?? 'en');
     $path = $request->path();
 
     // Check if the path already starts with a valid locale
@@ -66,7 +66,7 @@ Route::group([
     'prefix' => '{locale}',
     'middleware' => ['set.locale'],
     'where' => [
-        'locale' => implode('|', config('site.locales', ['ru', 'en', 'lv'])),
+        'locale' => implode('|', config('site.locales', ['en', 'lv', 'ru'])),
     ],
 ], function () {
 

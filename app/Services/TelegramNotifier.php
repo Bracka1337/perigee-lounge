@@ -106,10 +106,10 @@ class TelegramNotifier
     {
         $locale = config('services.telegram.locale');
         if (! is_string($locale) || $locale === '') {
-            $locale = config('site.default_locale', 'ru');
+            $locale = config('site.default_locale', 'en');
         }
 
-        return is_string($locale) ? $locale : 'ru';
+        return is_string($locale) ? $locale : 'en';
     }
 
     private static function t(string $key): string
