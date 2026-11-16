@@ -14,6 +14,7 @@ use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\ApplyPromoCodeRequest;
 use App\Http\Requests\Staff\AttachClientRequest;
+use App\Http\Requests\Staff\OrderHistoryRequest;
 use App\Http\Requests\Staff\SpendLoyaltyRequest;
 use App\Http\Requests\Staff\StoreOrderRequest;
 use App\Http\Requests\Staff\UpdateOrderItemRequest;
@@ -25,26 +26,39 @@ use App\Models\Table;
 use App\Notifications\OrderCompleted;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index(Request $request, string $locale): View
+    public function index(OrderHistoryRequest $request, string $locale): View
     {
         $selectedDate = $this->dateFilter($request);
 
+        // With no range given, history shows the selected day, as before.
+        $from = $request->historyFrom();
+        $to = $request->historyTo();
+        if ($from === null && $to === null) {
+            $from = $to = $selectedDate;
+        }
+        $status = $request->historyStatus();
+
         return view('staff.orders.index', [
             'date' => $selectedDate,
+            'historyFrom' => $from,
+            'historyTo' => $to,
+            'historyStatus' => $status,
             'tables' => Table::where('is_active', true)->orderBy('id')->get(),
-            // Open orders show regardless of date; history only for the selected day.
+            // Open orders show regardless of date.
             'ordersActive' => Order::active()->with(['table', 'user'])->orderByDesc('created_at')->get(),
             'ordersHistory' => Order::with(['table', 'user'])
-                ->whereDate('created_at', $selectedDate->toDateString())
-                ->whereIn('status', OrderStatus::closed())
+                ->when($from, fn ($query, Carbon $from) => $query->whereDate('created_at', '>=', $from->toDateString()))
+                ->when($to, fn ($query, Carbon $to) => $query->whereDate('created_at', '<=', $to->toDateString()))
+                ->whereIn('status', $status !== null ? [$status] : OrderStatus::closed())
                 ->orderByDesc('created_at')
-                ->get(),
+                ->orderByDesc('id')
+                ->paginate(15, pageName: 'history_page')
+                ->withQueryString(),
             'reservations' => Reservation::whereDate('start_at', $selectedDate->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())
                 ->whereDoesntHave('order')
