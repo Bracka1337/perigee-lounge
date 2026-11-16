@@ -10,9 +10,10 @@ use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StoreReservationRequest;
+use App\Models\Floor;
 use App\Models\Order;
 use App\Models\Reservation;
-use App\Models\Table;
+use App\Services\LoungeLayout;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -22,10 +23,11 @@ use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends Controller
 {
-    public function index(Request $request, string $locale): View
+    public function index(Request $request, string $locale, LoungeLayout $layout): View
     {
         $selectedDate = $this->dateFilter($request);
-        $tables = Table::where('is_active', true)->orderBy('id')->get();
+        $floors = $layout->floors();
+        $tables = $floors->flatMap(fn (Floor $floor) => $floor->tables);
 
         $occupiedTableIds = $tables->where('is_occupied', true)->pluck('id')
             ->merge(Order::active()->pluck('table_id'))
@@ -35,7 +37,8 @@ class ReservationController extends Controller
 
         return view('staff.reservations.index', [
             'date' => $selectedDate,
-            'tables' => $tables,
+            'floors' => $floors,
+            'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservationsForDay' => Reservation::whereDate('start_at', $selectedDate->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())
                 ->get()

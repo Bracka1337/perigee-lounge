@@ -18,14 +18,17 @@ use App\Http\Requests\Staff\OrderHistoryRequest;
 use App\Http\Requests\Staff\SpendLoyaltyRequest;
 use App\Http\Requests\Staff\StoreOrderRequest;
 use App\Http\Requests\Staff\UpdateOrderItemRequest;
+use App\Models\Floor;
 use App\Models\MenuCategory;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Reservation;
 use App\Models\Table;
 use App\Notifications\OrderCompleted;
+use App\Services\LoungeLayout;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -68,10 +71,14 @@ class OrderController extends Controller
         ]);
     }
 
-    public function create(string $locale): View
+    public function create(Request $request, string $locale, LoungeLayout $layout): View
     {
+        $floors = $layout->floors();
+
         return view('staff.orders.create', [
-            'tables' => Table::where('is_active', true)->orderBy('id')->get(),
+            'floors' => $floors,
+            'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
+            'tables' => $floors->flatMap(fn (Floor $floor) => $floor->tables)->sortBy('id')->values(),
             'menuCategories' => MenuCategory::with('items')->ordered()->get(),
             'reservedTableIds' => Reservation::whereDate('start_at', Carbon::now()->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())

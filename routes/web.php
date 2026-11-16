@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\FloorController;
+use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
@@ -128,6 +130,14 @@ Route::group([
 
             Route::post('tables/opening-hours', [TableController::class, 'updateOpeningHours'])
                 ->name('tables.opening-hours.update');
+
+            Route::get('floors', [FloorController::class, 'index'])->name('floors.index');
+            Route::post('floors', [FloorController::class, 'store'])->name('floors.store');
+            Route::put('floors/{floor}', [FloorController::class, 'update'])->whereNumber('floor')->name('floors.update');
+            Route::post('floors/{floor}/move', [FloorController::class, 'move'])->whereNumber('floor')->name('floors.move');
+            Route::delete('floors/{floor}', [FloorController::class, 'destroy'])->whereNumber('floor')->name('floors.destroy');
+            Route::put('floors/{floor}/rooms', [RoomController::class, 'update'])->whereNumber('floor')->name('floors.rooms.update');
+            Route::delete('rooms/{room}', [RoomController::class, 'destroy'])->whereNumber('room')->name('rooms.destroy');
 
             Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
         });
