@@ -334,3 +334,27 @@ test('pages with the plan still work before any floor exists', function () {
     $this->actingAs(loungeUser('staff'))->get(route('staff.reservations.index'))->assertOk()->assertSee('A1');
     $this->actingAs(loungeUser('admin'))->get(route('admin.tables.index'))->assertOk()->assertSee('A1');
 });
+
+test('the 3D view gets the same floors, rooms and tables as the plan', function () {
+    $this->seed(TableSeeder::class);
+    Table::where('name', 'T1')->update(['is_active' => false]);
+    app()->setLocale('lv');
+
+    $layout = app(LoungeLayout::class);
+    [$ground, $second] = $layout->toArray($layout->floors())['floors'];
+    $vipRoom = collect($ground['rooms'])->firstWhere('name', 'VIP');
+    $vipTable = collect($ground['tables'])->firstWhere('name', 'VIP');
+
+    expect($ground['name'])->toBe('Pirmais stāvs')
+        ->and($ground['rooms'])->toHaveCount(10)
+        ->and(collect($ground['tables'])->pluck('name'))->toHaveCount(24)->not->toContain('T1')
+        ->and($vipRoom)->toMatchArray(['kind' => 'seating', 'color' => '#F59A7C', 'x' => 68.0, 'width' => 32.0])
+        ->and($vipTable)->toMatchArray(['roomId' => $vipRoom['id'], 'capacity' => 20, 'x' => 84.0, 'width' => 210])
+        ->and(collect($second['tables'])->pluck('name'))->toContain('K1', 'S4');
+
+    $this->actingAs(loungeUser('client'))->get(route('client.reservations.index', ['locale' => 'en']))
+        ->assertOk()
+        ->assertSee('id="loungeLayoutData"', false)
+        ->assertSee('data-view="3d"', false)
+        ->assertSee('data-status="free"', false);
+});
