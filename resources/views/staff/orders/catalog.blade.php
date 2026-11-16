@@ -33,7 +33,7 @@
     <div class="md:hidden">
         <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar" id="categoryPills">
             @foreach ($categories as $category)
-                @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
+                @php($catName = $category->t('name') ?? '')
                 <button type="button"
                         class="category-pill px-3 py-2 rounded-full border border-line bg-surface text-xs text-ink-soft whitespace-nowrap"
                         data-category="cat-{{ $category->id }}">
@@ -48,7 +48,7 @@
         <h2 class="text-xs text-ink-muted mb-3">{{ __('common-categories') }}</h2>
         <ul class="space-y-2 text-sm text-ink-soft" id="categoryList">
             @foreach ($categories as $category)
-                @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
+                @php($catName = $category->t('name') ?? '')
                 <li>
                     <button type="button"
                             class="category-pill w-full text-left px-3 py-2 rounded-lg border border-transparent hover:border-line hover:bg-surface transition"
@@ -63,7 +63,7 @@
     {{-- Товары --}}
     <section class="md:w-3/4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3 self-start content-start" id="itemsGrid">
         @foreach ($categories as $category)
-            @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
+            @php($catName = $category->t('name') ?? '')
 
             <div id="cat-{{ $category->id }}" class="col-span-full pt-2 pb-1" data-category-header="cat-{{ $category->id }}">
                 <div class="flex items-center gap-2">
@@ -73,7 +73,7 @@
             </div>
 
             @foreach ($category->items as $item)
-                @php($itemName = $item->name[$locale] ?? ($item->name['ru'] ?? reset($item->name) ?? ''))
+                @php($itemName = $item->t('name') ?? '')
                 @php($itemNameLower = mb_strtolower($itemName))
                 <div class="product-card rounded-2xl border border-line bg-surface p-3 flex flex-col gap-1" data-category="cat-{{ $category->id }}" data-name="{{ $itemNameLower }}">
                     @if ($item->thumb_url)
