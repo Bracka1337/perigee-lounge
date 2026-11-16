@@ -5715,6 +5715,48 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Ar cieņu',
                 'ru' => 'С уважением',
             ],
+
+            'lounge-view-toggle-label' => [
+                'en' => 'Plan view',
+                'lv' => 'Plāna skats',
+                'ru' => 'Вид плана',
+            ],
+
+            'lounge-view-2d' => [
+                'en' => '2D',
+                'lv' => '2D',
+                'ru' => '2D',
+            ],
+
+            'lounge-view-3d' => [
+                'en' => '3D',
+                'lv' => '3D',
+                'ru' => '3D',
+            ],
+
+            'lounge-3d-loading' => [
+                'en' => 'Loading the 3D view…',
+                'lv' => 'Ielādē 3D skatu…',
+                'ru' => 'Загружаем 3D-вид…',
+            ],
+
+            'lounge-3d-hint' => [
+                'en' => 'Drag to look around, scroll to zoom, and click a free table to select it.',
+                'lv' => 'Velciet, lai apskatītos, ritiniet, lai tuvinātu, un noklikšķiniet uz brīva galdiņa, lai to izvēlētos.',
+                'ru' => 'Перетаскивайте, чтобы осмотреться, прокручивайте для приближения и нажмите на свободный столик, чтобы выбрать его.',
+            ],
+
+            'admin-rooms-preview-title' => [
+                'en' => '3D preview',
+                'lv' => '3D priekšskatījums',
+                'ru' => '3D-предпросмотр',
+            ],
+
+            'admin-rooms-preview-help' => [
+                'en' => 'Follows your edits, including unsaved ones.',
+                'lv' => 'Seko jūsu labojumiem, arī nesaglabātajiem.',
+                'ru' => 'Отражает ваши правки, включая несохранённые.',
+            ],
         ];
     }
 }
