@@ -34,7 +34,7 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'locale' => 'ru',
+        'locale' => 'en',
         'loyalty_code' => null,
         'loyalty_balance' => 0,
     ];
