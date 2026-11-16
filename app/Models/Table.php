@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Enums\ReservationStatus;
 use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Table extends Model
@@ -14,6 +15,7 @@ class Table extends Model
 
     protected $fillable = [
         'name',
+        'room_id',
         'capacity',
         'pos_x',
         'pos_y',
@@ -69,6 +71,14 @@ class Table extends Model
             $this->is_occupied = false;
             $this->save();
         }
+    }
+
+    /**
+     * @return BelongsTo<Room, $this>
+     */
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class);
     }
 
     /**
