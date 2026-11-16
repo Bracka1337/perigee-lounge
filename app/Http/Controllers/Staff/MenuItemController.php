@@ -31,7 +31,7 @@ class MenuItemController extends Controller
 
         $photo = $request->file('image');
         if ($photo instanceof UploadedFile) {
-            $itemData = [...$itemData, ...$this->photos->store($photo)];
+            $itemData = [...$itemData, ...$this->photos->store($photo), 'photo_generated' => false];
         }
 
         $maxOrder = MenuItem::where('menu_category_id', $itemData['menu_category_id'])->max('sort_order') ?? 0;
@@ -63,7 +63,7 @@ class MenuItemController extends Controller
         if ($replacesPhoto) {
             $itemData = [...$itemData, ...($photo instanceof UploadedFile
                 ? $this->photos->store($photo)
-                : ['image_path' => null, 'thumb_path' => null])];
+                : ['image_path' => null, 'thumb_path' => null]), 'photo_generated' => false];
         }
 
         $menuItem->update($itemData);
