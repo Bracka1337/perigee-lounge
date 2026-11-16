@@ -62,6 +62,45 @@ class LoungeLayout
     }
 
     /**
+     * The layout as plain data for the 3D view, which builds its scene from the same
+     * floors, rooms and tables as the 2D plan. Names are in the current language.
+     *
+     * @param  Collection<int, Floor>  $floors
+     * @return array{floors: array<int, array<string, mixed>>}
+     */
+    public function toArray(Collection $floors): array
+    {
+        return [
+            'floors' => $floors->values()->map(fn (Floor $floor) => [
+                'id' => $floor->id,
+                'name' => (string) $floor->t('name'),
+                'rooms' => $floor->rooms->values()->map(fn (Room $room) => [
+                    'id' => $room->id,
+                    'name' => (string) $room->t('name'),
+                    'kind' => $room->kind->value,
+                    'color' => $room->color->hex(),
+                    'x' => $room->x,
+                    'y' => $room->y,
+                    'width' => $room->width,
+                    'height' => $room->height,
+                ])->all(),
+                'tables' => $floor->tables->values()->map(fn (Table $table) => [
+                    'id' => $table->id,
+                    'name' => $table->name,
+                    'capacity' => $table->capacity,
+                    'roomId' => $table->room_id,
+                    'x' => $table->pos_x,
+                    'y' => $table->pos_y,
+                    'width' => $table->width,
+                    'height' => $table->height,
+                    'rotation' => $table->rotation,
+                    'active' => $table->is_active,
+                ])->all(),
+            ])->all(),
+        ];
+    }
+
+    /**
      * The floor to open first: the floor of the table that is already selected (after a
      * failed form submit), else the requested floor if it exists, else the first one.
      *

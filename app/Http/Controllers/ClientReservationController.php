@@ -52,6 +52,7 @@ class ClientReservationController extends Controller
         return view('client.reservations.index', [
             'date' => $date,
             'floors' => $floors,
+            'lounge3d' => $layout->toArray($floors),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservations' => $reservations,
             'myReservations' => $myReservations,
