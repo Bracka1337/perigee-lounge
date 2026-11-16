@@ -41,7 +41,7 @@
          data-sort-url="{{ route('staff.menu.sort') }}">
 
         @forelse($categories as $category)
-            @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
+            @php($catName = $category->t('name') ?? '')
             <div id="staff-category-{{ $category->id }}" class="scroll-mt-24 border border-line rounded-2xl bg-surface  p-4"
                  data-category-id="{{ $category->id }}">
                 <div class="flex items-center justify-between gap-3 mb-3 cursor-move handle-category">
@@ -163,7 +163,7 @@
                                                 class="px-3 py-1 rounded-full border border-red-400/70 text-xs text-red-300
                                                        hover:bg-red-500 hover:text-ink hover:border-red-500 transition
                                                        whitespace-normal sm:whitespace-nowrap js-delete-item-btn"
-                                                data-item-name="{{ $item->name[$locale] ?? ($item->name['ru'] ?? reset($item->name) ?? '') }}"
+                                                data-item-name="{{ $item->t('name') ?? '' }}"
                                                 data-form-id="delete-item-{{ $item->id }}">
                                             <x-icon category="Interface" name="Trash_Full" class="w-5 h-5"/>
                                         </button>
