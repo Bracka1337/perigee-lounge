@@ -1,5 +1,5 @@
 @php
-    $availableLocales = config('site.locales', ['ru']);
+    $availableLocales = config('site.locales', ['en']);
     $currentLocale = app()->getLocale();
     $route = request()->route();
     $routeName = $route?->getName();

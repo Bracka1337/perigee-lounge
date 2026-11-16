@@ -25,9 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (NotFoundHttpException $e) {
             $locale = request()->segment(1);
-            $locales = config('site.locales', ['ru', 'en', 'lv']);
+            $locales = config('site.locales', ['en', 'lv', 'ru']);
             if (! in_array($locale, $locales, true)) {
-                $locale = config('site.default_locale', 'ru');
+                $locale = config('site.default_locale', 'en');
             }
             app()->setLocale($locale);
 
@@ -36,9 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AccessDeniedHttpException $e) {
             $locale = request()->segment(1);
-            $locales = config('site.locales', ['ru', 'en', 'lv']);
+            $locales = config('site.locales', ['en', 'lv', 'ru']);
             if (! in_array($locale, $locales, true)) {
-                $locale = config('site.default_locale', 'ru');
+                $locale = config('site.default_locale', 'en');
             }
             app()->setLocale($locale);
 
