@@ -25,7 +25,7 @@ class SaveRoomLayout
                     ? new Room(['floor_id' => $floor->id])
                     : Room::query()->where('floor_id', $floor->id)->findOrFail((int) $id);
 
-                $english = (string) $data['name']['en'];
+                $english = trim((string) $data['name']['en']);
 
                 $room->fill([
                     'name' => [
@@ -47,6 +47,6 @@ class SaveRoomLayout
 
     private function orEnglish(?string $value, string $english): string
     {
-        return $value === null || trim($value) === '' ? $english : $value;
+        return $value === null || trim($value) === '' ? $english : trim($value);
     }
 }

@@ -45,7 +45,7 @@ class RoomLayoutRequest extends FormRequest
             'rooms.*' => ['array:id,name,kind,color,x,y,width,height'],
             'rooms.*.id' => ['nullable', 'integer', Rule::exists('rooms', 'id')->where('floor_id', $floorId)],
             'rooms.*.name' => ['required', 'array:en,lv,ru'],
-            'rooms.*.name.en' => ['required', 'string', 'max:60'],
+            'rooms.*.name.en' => ['required', 'string', 'max:60', 'regex:/\S/'],
             'rooms.*.name.lv' => ['nullable', 'string', 'max:60'],
             'rooms.*.name.ru' => ['nullable', 'string', 'max:60'],
             'rooms.*.kind' => ['required', Rule::enum(RoomKind::class)],
@@ -96,6 +96,7 @@ class RoomLayoutRequest extends FormRequest
             'rooms.array' => (string) __('admin-rooms-invalid'),
             'rooms.*.name.required' => (string) __('admin-rooms-name-required'),
             'rooms.*.name.en.required' => (string) __('admin-rooms-name-required'),
+            'rooms.*.name.en.regex' => (string) __('admin-rooms-name-required'),
         ];
 
         foreach (['x', 'y', 'width', 'height'] as $field) {
