@@ -42,10 +42,15 @@
                 </p>
             </div>
 
+            <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+
             <div class="overflow-x-auto">
-<div id="tables-plan"
-                 class="relative w-full min-w-[640px] aspect-[16/14] bg-surface rounded-2xl overflow-hidden border border-line">
-                @foreach($tables as $table)
+                @foreach ($floors as $floor)
+                    <div data-floor-panel="{{ $floor->id }}"
+                         @class(['js-tables-plan relative w-full min-w-[640px] aspect-[16/14] bg-surface rounded-2xl overflow-hidden border border-line', 'hidden' => $floor->id !== $activeFloorId])>
+                        <x-floor-plan.rooms :floor="$floor" />
+
+                        @foreach ($floor->tables as $table)
                     <div class="absolute js-table-item"
                          data-id="{{ $table->id }}"
                          data-pos-x="{{ $table->pos_x }}"
@@ -76,8 +81,9 @@
                         </div>
                     </div>
                 @endforeach
+                    </div>
+                @endforeach
             </div>
-</div>
 
             <div class="mt-4 flex justify-end">
                 <button type="button" id="save-layout"
@@ -330,9 +336,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const plan = document.getElementById('tables-plan');
-            if (!plan) return;
-
+            document.querySelectorAll('.js-tables-plan').forEach((plan) => {
             const items = plan.querySelectorAll('.js-table-item');
 
             let activeEl = null;
@@ -385,7 +389,8 @@
 
             function applyScale() {
                 const rect = plan.getBoundingClientRect();
-                const planWidth = rect.width || 1;
+                if (!rect.width) return;
+                const planWidth = rect.width;
 
                 let scale = planWidth / 1200;
                 if (scale < 0.35) scale = 0.35;
@@ -405,7 +410,9 @@
 
             initBaseSizes();
             applyScale();
-            window.addEventListener('resize', applyScale);
+            const resizeObserver = new ResizeObserver(applyScale);
+            resizeObserver.observe(plan);
+            window.addEventListener('pagehide', () => resizeObserver.disconnect(), { once: true });
 
             plan.addEventListener('mousedown', (e) => {
                 if (e.button !== 0) return;
@@ -509,13 +516,15 @@
                 highlightSelected(el);
             });
 
+            });
+
             const saveButton  = document.getElementById('save-layout');
             const layoutForm  = document.getElementById('tables-layout-form');
             const layoutInput = document.getElementById('layoutPayload');
 
             saveButton?.addEventListener('click', () => {
                 const itemsData = [];
-                plan.querySelectorAll('.js-table-item').forEach(el => {
+                document.querySelectorAll('.js-tables-plan .js-table-item').forEach(el => {
                     const rotation = parseFloat(el.dataset.rotation ?? 0);
                     const bw = parseFloat(el.dataset.baseWidth);
                     const bh = parseFloat(el.dataset.baseHeight);

@@ -80,13 +80,15 @@
             </h2>
         </div>
 
+        <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+
         <div class="overflow-x-auto">
-<div id="staffFloorPlan"
-             class="relative w-full min-w-[640px] aspect-[16/14] rounded-2xl border border-line bg-ground/60 overflow-hidden select-none">
-            <!-- Floor Plan Zones -->
-            <x-floor-plan-zones />
-            
-            @foreach($tables as $table)
+            @foreach ($floors as $floor)
+                <div data-floor-panel="{{ $floor->id }}" data-floor-plan="auto"
+                     @class(['relative w-full min-w-[560px] aspect-[16/14] rounded-2xl border border-line bg-ground/60 overflow-hidden select-none', 'hidden' => $floor->id !== $activeFloorId])>
+                    <x-floor-plan.rooms :floor="$floor" />
+
+                    @foreach ($floor->tables as $table)
                 @php
                     $tableReservations = $reservationsByTable->get($table->id, collect());
 
@@ -136,8 +138,9 @@
                     </div>
                 </button>
             @endforeach
+                </div>
+            @endforeach
         </div>
-</div>
 
         <div class="mt-4 flex flex-wrap gap-3 text-xs text-ink-muted">
             <div class="flex items-center gap-2">
@@ -154,28 +157,7 @@
             </div>
         </div>
 
-        <div class="mt-3 pt-3 border-t border-line flex flex-wrap gap-3 text-xs text-ink-muted">
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded bg-nebula/15 border border-nebula"></span>
-                <span>{{ __('floor-plan-zone-terrace') }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded bg-blue-500/30 border border-blue-400/40"></span>
-                <span>{{ __('floor-plan-zone-hall1') }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded bg-green-500/30 border border-green-400/40"></span>
-                <span>{{ __('floor-plan-zone-hall2') }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded bg-pink-500/30 border border-pink-400/40"></span>
-                <span>{{ __('floor-plan-zone-playstation') }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded bg-orange-500/30 border border-orange-400/40"></span>
-                <span>{{ __('floor-plan-zone-vip') }}</span>
-            </div>
-        </div>
+        <x-floor-plan.legend :floors="$floors" :active="$activeFloorId" />
     </div>
 
     {{-- FORM + LIST --}}
@@ -442,42 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function setupResponsiveFloorPlan(planId, tableSelector) {
-        const plan = document.getElementById(planId);
-        if (!plan) return;
-
-        const tables = plan.querySelectorAll(tableSelector);
-        if (!tables.length) return;
-
-        const designWidth = 1200;
-
-        const applyScale = () => {
-            const planWidth = plan.clientWidth || 1;
-
-            let scale = Math.min(1, planWidth / designWidth);
-            if (scale < 0.3) scale = 0.3;
-
-            tables.forEach(el => {
-                const baseW = parseFloat(el.dataset.baseWidth || 0);
-                const baseH = parseFloat(el.dataset.baseHeight || 0);
-                if (baseW > 0 && baseH > 0) {
-                    el.style.width = (baseW * scale) + 'px';
-                    el.style.height = (baseH * scale) + 'px';
-                }
-            });
-        };
-
-        applyScale();
-
-        if (window.ResizeObserver) {
-            const ro = new ResizeObserver(applyScale);
-            ro.observe(plan);
-        } else {
-            window.addEventListener('resize', applyScale);
-        }
-    }
-
-    setupResponsiveFloorPlan('staffFloorPlan', '.js-staff-table');
 
     // Auto-focus minutes after selecting hours in time input
     const timeHourInput = document.getElementById('staffReservationTimeHour');
