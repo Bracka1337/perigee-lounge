@@ -62,7 +62,8 @@ export function seededRandom(seed) {
 
 /**
  * Collects simple shapes by color and merges each color into one mesh, so a whole
- * floor costs a handful of draw calls. Colors prefixed with "glow:" do not react to light.
+ * floor costs a handful of draw calls. Colors prefixed with "glow:" do not react to light,
+ * and colors prefixed with "glass:" are see-through.
  */
 export class Batch {
     constructor() {
@@ -103,11 +104,12 @@ export class Batch {
         const meshes = [];
 
         for (const [color, geometries] of this.groups) {
-            const glow = color.startsWith('glow:');
-            const hex = glow ? color.slice(5) : color;
-            const material = glow
+            const [kind, hex] = color.includes(':') ? color.split(':') : ['solid', color];
+            const material = kind === 'glow'
                 ? new MeshBasicMaterial({ color: hex })
-                : new MeshPhongMaterial({ color: hex, flatShading: true, shininess: 12, specular: '#1c1c2a' });
+                : kind === 'glass'
+                    ? new MeshPhongMaterial({ color: hex, flatShading: true, shininess: 90, transparent: true, opacity: 0.34, depthWrite: false })
+                    : new MeshPhongMaterial({ color: hex, flatShading: true, shininess: 12, specular: '#1c1c2a' });
 
             const merged = mergeGeometries(geometries, false);
             geometries.forEach((geometry) => geometry.dispose());

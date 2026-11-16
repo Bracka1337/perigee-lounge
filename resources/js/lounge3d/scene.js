@@ -5,12 +5,16 @@
 // Room rectangles are percentages of the plan. Table x/y are centre percentages and
 // width/height are pixels of the 1200 px wide reference plan, exactly as in the database.
 import {
+    AmbientLight,
     BoxGeometry,
     CanvasTexture,
+    DirectionalLight,
     Group,
+    HemisphereLight,
     Mesh,
     MeshBasicMaterial,
     PlaneGeometry,
+    PointLight,
     Sprite,
     SpriteMaterial,
     SRGBColorSpace,
@@ -29,6 +33,29 @@ export const STATUS_COLORS = {
     inactive: COLORS.inactive,
     selected: COLORS.selected,
 };
+
+// Lights shared by the viewer and the render studio: cool fill from above, warm amber
+// and violet pools at floor level.
+export function addLoungeLights(scene, y = 0) {
+    const lights = [
+        new HemisphereLight('#8d93d6', '#120e1a', 0.55),
+        new AmbientLight('#ffffff', 0.1),
+    ];
+
+    const sun = new DirectionalLight('#ffe6c4', 0.85);
+    sun.position.set(-12, 30, 18);
+    lights.push(sun);
+
+    for (const [color, x, z] of [[COLORS.amber, 10, -9], [COLORS.violet, -4, 5], [COLORS.amber, -12, -8], [COLORS.violet, 11, 8]]) {
+        const lamp = new PointLight(color, 95, 26, 1.5);
+        lamp.position.set(x, y + 4.2, z);
+        lamp.userData.followsFloor = true;
+        lights.push(lamp);
+    }
+
+    scene.add(...lights);
+    return lights;
+}
 
 function roomBox(room) {
     const x0 = planX(room.x);
