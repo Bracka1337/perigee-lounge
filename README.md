@@ -9,18 +9,23 @@ A website and management system for a fictional hookah lounge. Guests browse the
 | Menu | Table ordering on a phone | Staff reservations |
 |---|---|---|
 | ![Menu](docs/screenshots/menu.png) | ![Table ordering](docs/screenshots/table-phone.png) | ![Staff reservations](docs/screenshots/staff-reservations.png) |
+| **Staff order history** | | |
+| ![Staff order history with date and status filters](docs/screenshots/staff-orders.png) | | |
 
 ## Features
 
 **Guests and clients**
 - Public pages and a database-driven menu in three languages, under `/en`, `/lv` and `/ru`
+- Menu photos in a 4:3 frame with a placeholder for items without one, and an available-only filter
 - Table reservations on a floor plan, checked against opening hours and existing bookings
 - QR table ordering with a cart
 - Loyalty balance and promo codes with QR codes
 
 **Staff**
 - Orders, reservations and floor plan
-- Menu management with drag-and-drop sorting and image uploads
+- Order history filtered by date range and status, with pagination
+- Menu management with drag-and-drop sorting and photo uploads, resized into a full-size copy and a thumbnail
+- One-click availability toggles for menu items
 - Promo codes with percent or fixed discounts, limited to a category or item
 - QR scanner for loyalty and promo codes
 
