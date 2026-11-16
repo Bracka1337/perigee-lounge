@@ -106,6 +106,11 @@
                         };
 
                         $disabled = $status !== 'free' || !$table->is_active;
+                        $statusLabels = [
+                            'free' => __('client-reservations-legend-free'),
+                            'pending' => __('client-reservations-legend-pending'),
+                            'active' => __('client-reservations-legend-active'),
+                        ];
                     @endphp
 
                     <button type="button"
@@ -115,6 +120,10 @@
                             data-capacity="{{ $table->capacity }}"
                             data-disabled="{{ $disabled ? '1' : '0' }}"
                             data-status="{{ $status }}"
+                            data-status-label="{{ $statusLabels[$status] }}"
+                            data-room="{{ $table->room?->t('name') }}"
+                            data-floor="{{ $floor->t('name') }}"
+                            data-render="{{ $tableRenders[$table->id] ?? '' }}"
                             data-rotation="{{ $table->rotation }}"
                             data-base-width="{{ $table->width }}"
                             data-base-height="{{ $table->height }}"
@@ -158,6 +167,25 @@
                 <x-icon category="Interface" name="Book" class="w-5 h-5"/>
                 {{ __('client-reservations-sidebar-title') }}
             </h2>
+
+            {{-- Details of the selected table, with its generated picture when there is one. --}}
+            <div id="clientTablePanel" class="mb-4 hidden overflow-hidden rounded-2xl border border-line bg-ground/60" aria-live="polite">
+                <figure data-panel-figure class="relative hidden">
+                    <img data-panel-image alt="" width="600" height="400" class="aspect-[3/2] w-full object-cover">
+                    <figcaption class="absolute left-2 top-2 rounded-full bg-ground/85 px-2.5 py-1 text-[11px] text-ink-soft">
+                        {{ __('client-reservations-panel-render-caption') }}
+                    </figcaption>
+                </figure>
+                <div class="space-y-2 p-3">
+                    <p class="text-sm font-semibold text-ink" data-panel-name></p>
+                    <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
+                        @foreach (['room' => __('client-reservations-panel-room'), 'floor' => __('client-reservations-panel-floor'), 'capacity' => __('client-reservations-panel-capacity'), 'status' => __('client-reservations-panel-status')] as $field => $fieldLabel)
+                            <dt class="text-ink-muted" data-panel-row="{{ $field }}">{{ $fieldLabel }}</dt>
+                            <dd class="text-ink-soft" data-panel-row="{{ $field }}" data-panel-value="{{ $field }}"></dd>
+                        @endforeach
+                    </dl>
+                </div>
+            </div>
 
             <form id="clientReservationForm"
                   method="POST"
@@ -334,6 +362,30 @@
 
             let selectedBtn = null;
 
+            const panel = document.getElementById('clientTablePanel');
+            const panelTitle = @json(__('client-reservations-panel-table', ['name' => '__NAME__']));
+
+            function showTablePanel(btn) {
+                if (!panel) return;
+
+                const values = { room: btn.dataset.room, floor: btn.dataset.floor, capacity: btn.dataset.capacity, status: btn.dataset.statusLabel };
+                panel.querySelector('[data-panel-name]').textContent = panelTitle.replace('__NAME__', btn.dataset.name);
+                Object.entries(values).forEach(([field, value]) => {
+                    panel.querySelectorAll(`[data-panel-row="${field}"]`).forEach((row) => row.classList.toggle('hidden', !value));
+                    panel.querySelector(`[data-panel-value="${field}"]`).textContent = value ?? '';
+                });
+
+                const figure = panel.querySelector('[data-panel-figure]');
+                const image = panel.querySelector('[data-panel-image]');
+                figure.classList.toggle('hidden', !btn.dataset.render);
+                if (btn.dataset.render) {
+                    image.src = btn.dataset.render;
+                    image.alt = panelTitle.replace('__NAME__', btn.dataset.name);
+                }
+
+                panel.classList.remove('hidden');
+            }
+
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const disabled = btn.dataset.disabled === '1';
@@ -351,6 +403,7 @@
                     const capacity = btn.dataset.capacity;
 
                     tableIdInput.value = id;
+                    showTablePanel(btn);
                     label.textContent = name + ' · ' + '{{ __('client-reservations-guests-label') }}' + ' ' + capacity;
                 });
             });

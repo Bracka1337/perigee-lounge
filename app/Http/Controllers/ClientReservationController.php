@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Notifications\ReservationCancelled;
 use App\Notifications\ReservationCreated;
 use App\Services\LoungeLayout;
+use App\Services\LoungeRenders;
 use App\Services\TelegramNotifier;
 use Carbon\Carbon;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -23,7 +24,7 @@ use Illuminate\Validation\ValidationException;
 
 class ClientReservationController extends Controller
 {
-    public function index(Request $request, string $locale, #[CurrentUser] User $user, LoungeLayout $layout): View
+    public function index(Request $request, string $locale, #[CurrentUser] User $user, LoungeLayout $layout, LoungeRenders $renders): View
     {
         $date = $this->dateFilter($request);
 
@@ -53,6 +54,7 @@ class ClientReservationController extends Controller
             'date' => $date,
             'floors' => $floors,
             'lounge3d' => $layout->toArray($floors),
+            'tableRenders' => $renders->urlsFor($floors),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservations' => $reservations,
             'myReservations' => $myReservations,
