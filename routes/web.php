@@ -13,6 +13,7 @@ use App\Http\Controllers\ClientReservationController;
 use App\Http\Controllers\ClientTableOrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Staff\MenuAvailabilityController;
 use App\Http\Controllers\Staff\MenuCategoryController;
 use App\Http\Controllers\Staff\MenuItemController;
 use App\Http\Controllers\Staff\MenuSortController;
@@ -138,6 +139,9 @@ Route::group([
             Route::get('/dashboard', [StaffController::class, 'index'])->name('dashboard');
             Route::resource('menu-categories', MenuCategoryController::class)->except(['show']);
             Route::resource('menu-items', MenuItemController::class)->except(['show', 'index']);
+
+            Route::patch('menu-items/{menuItem}/availability', [MenuAvailabilityController::class, 'item'])->name('menu-items.availability');
+            Route::patch('menu-categories/{menuCategory}/availability', [MenuAvailabilityController::class, 'category'])->name('menu-categories.availability');
 
             Route::post('/menu/sort', [MenuSortController::class, 'update'])->name('menu.sort');
             Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
