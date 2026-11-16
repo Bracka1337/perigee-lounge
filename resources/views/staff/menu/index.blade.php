@@ -42,7 +42,7 @@
 
         @forelse($categories as $category)
             @php($catName = $category->name[$locale] ?? ($category->name['ru'] ?? reset($category->name) ?? ''))
-            <div class="border border-line rounded-2xl bg-surface  p-4"
+            <div id="staff-category-{{ $category->id }}" class="scroll-mt-24 border border-line rounded-2xl bg-surface  p-4"
                  data-category-id="{{ $category->id }}">
                 <div class="flex items-center justify-between gap-3 mb-3 cursor-move handle-category">
                     <div>
@@ -71,6 +71,12 @@
                         @endif
                     </div>
                     <div class="flex items-center gap-2 text-xs">
+                        @include('staff.menu.partials.availability-toggle', [
+                            'action' => route('staff.menu-categories.availability', $category),
+                            'available' => $category->is_available,
+                            'name' => $category->t('name'),
+                        ])
+
                         <a href="{{ route('staff.menu-categories.edit', $category) }}"
                            class="px-3 py-1 rounded-full border border-line-strong hover:bg-ink hover:text-on-nebula transition">
                             {{-- {{ __('staff-menu-category-edit-button') }} --}}
@@ -107,10 +113,11 @@
                         <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-ground/40 border border-line cursor-move handle-item"
                              data-item-id="{{ $item->id }}">
                             <div class="flex items-center gap-3">
-                                @if($item->image_path)
-                                    <img src="{{ asset('storage/'.$item->image_path) }}"
+                                @if($item->thumb_url)
+                                    <img src="{{ $item->thumb_url }}"
                                          alt="{{ $item->t('name') }}"
-                                         class="w-10 h-10 rounded-lg object-cover">
+                                         loading="lazy"
+                                         class="w-10 h-10 rounded-lg object-cover {{ $item->is_available ? '' : 'grayscale opacity-60' }}">
                                 @endif
 
                                 <div>
@@ -135,6 +142,12 @@
                                 <span class="text-sm text-ink-soft whitespace-nowrap">
                                     {{ number_format($item->price, 2, '.', ' ') }} €
                                 </span>
+
+                                @include('staff.menu.partials.availability-toggle', [
+                                    'action' => route('staff.menu-items.availability', $item),
+                                    'available' => $item->is_available,
+                                    'name' => $item->t('name'),
+                                ])
 
                                 <a href="{{ route('staff.menu-items.edit', $item) }}"
                                    class="text-xs text-ink-muted hover:text-ink">
