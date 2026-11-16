@@ -14,21 +14,27 @@ use Illuminate\Support\Facades\DB;
  * Floors and rooms are matched by their English name and tables by name, so running it
  * again updates what is there. Existing tables are moved, resized and put in their room,
  * and keep their id, capacity and active flag. Nothing is ever deleted.
+ *
+ * Tables listed in $updateOnly are moved when they exist but never created. The data migration
+ * passes the tables of the old layout there, so one that an admin removed does not come back.
  */
 class ApplyDefaultLayout
 {
-    public function handle(): void
+    /**
+     * @param  list<string>  $updateOnly
+     */
+    public function handle(array $updateOnly = []): void
     {
         /** @var list<array{name: array<string, string>, rooms: list<array<string, mixed>>}> $layout */
         $layout = require database_path('data/lounge-layout.php');
 
-        DB::transaction(fn () => Model::withoutEvents(function () use ($layout): void {
+        DB::transaction(fn () => Model::withoutEvents(function () use ($layout, $updateOnly): void {
             foreach ($layout as $floorOrder => $floorData) {
                 $floor = Floor::query()->where('name->en', $floorData['name']['en'])->first() ?? new Floor;
                 $floor->fill(['name' => $floorData['name'], 'sort_order' => $floorOrder])->save();
 
                 foreach ($floorData['rooms'] as $roomOrder => $roomData) {
-                    $this->writeRoom($floor, $roomOrder, $roomData);
+                    $this->writeRoom($floor, $roomOrder, $roomData, $updateOnly);
                 }
             }
         }));
@@ -36,8 +42,9 @@ class ApplyDefaultLayout
 
     /**
      * @param  array<string, mixed>  $data
+     * @param  list<string>  $updateOnly
      */
-    private function writeRoom(Floor $floor, int $order, array $data): void
+    private function writeRoom(Floor $floor, int $order, array $data, array $updateOnly): void
     {
         /** @var array<string, string> $name */
         $name = $data['name'];
@@ -63,8 +70,13 @@ class ApplyDefaultLayout
         $tables = $data['tables'] ?? [];
 
         foreach ($tables as [$tableName, $capacity, $posX, $posY, $width, $height]) {
-            $table = Table::query()->where('name', $tableName)->first()
-                ?? new Table(['name' => $tableName, 'capacity' => $capacity, 'is_active' => true]);
+            $table = Table::query()->where('name', $tableName)->first();
+
+            if ($table === null && in_array($tableName, $updateOnly, true)) {
+                continue;
+            }
+
+            $table ??= new Table(['name' => $tableName, 'capacity' => $capacity, 'is_active' => true]);
 
             $table->fill([
                 'room_id' => $room->id,
