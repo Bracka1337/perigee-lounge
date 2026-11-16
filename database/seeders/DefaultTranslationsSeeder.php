@@ -4216,34 +4216,376 @@ class DefaultTranslationsSeeder extends Seeder
                 'ru' => 'Регистрация успешна, но письмо с подтверждением не удалось отправить. Пожалуйста, попробуйте позже.',
             ],
 
-            'floor-plan-zone-terrace' => [
-                'en' => 'Terrace',
-                'lv' => 'Terase',
-                'ru' => 'Терраса',
+            'floor-plan-floors' => [
+                'en' => 'Floors',
+                'lv' => 'Stāvi',
+                'ru' => 'Этажи',
             ],
 
-            'floor-plan-zone-hall1' => [
-                'en' => 'Hall 1',
-                'lv' => 'Zāle 1',
-                'ru' => 'Зал 1',
+            'admin-header-floors' => [
+                'en' => 'Floors',
+                'lv' => 'Stāvi',
+                'ru' => 'Этажи',
             ],
 
-            'floor-plan-zone-hall2' => [
-                'en' => 'Hall 2',
-                'lv' => 'Zāle 2',
-                'ru' => 'Зал 2',
+            'admin-floors-title' => [
+                'en' => 'Floors and rooms',
+                'lv' => 'Stāvi un telpas',
+                'ru' => 'Этажи и залы',
             ],
 
-            'floor-plan-zone-playstation' => [
-                'en' => 'PlayStation Zone',
-                'lv' => 'PlayStation zona',
-                'ru' => 'Зона с плейстейшн',
+            'admin-floors-subtitle' => [
+                'en' => 'Add floors, then draw the rooms of each floor on its plan.',
+                'lv' => 'Pievienojiet stāvus un uzzīmējiet katra stāva telpas plānā.',
+                'ru' => 'Добавьте этажи и нарисуйте залы каждого этажа на плане.',
             ],
 
-            'floor-plan-zone-vip' => [
-                'en' => 'VIP',
-                'lv' => 'VIP',
-                'ru' => 'VIP',
+            'admin-floors-alert-success-title' => [
+                'en' => 'Done',
+                'lv' => 'Gatavs',
+                'ru' => 'Готово',
+            ],
+
+            'admin-floors-alert-error-title' => [
+                'en' => 'Not saved',
+                'lv' => 'Nav saglabāts',
+                'ru' => 'Не сохранено',
+            ],
+
+            'admin-floors-list-title' => [
+                'en' => 'Floors',
+                'lv' => 'Stāvi',
+                'ru' => 'Этажи',
+            ],
+
+            'admin-floors-empty' => [
+                'en' => 'No floors yet. Add the first one to start drawing rooms.',
+                'lv' => 'Stāvu vēl nav. Pievienojiet pirmo, lai sāktu zīmēt telpas.',
+                'ru' => 'Этажей пока нет. Добавьте первый, чтобы начать рисовать залы.',
+            ],
+
+            'admin-floors-add-title' => [
+                'en' => 'Add a floor',
+                'lv' => 'Pievienot stāvu',
+                'ru' => 'Добавить этаж',
+            ],
+
+            'admin-floors-rename-title' => [
+                'en' => 'Floor name',
+                'lv' => 'Stāva nosaukums',
+                'ru' => 'Название этажа',
+            ],
+
+            'admin-floors-name-en' => [
+                'en' => 'Name (English)',
+                'lv' => 'Nosaukums (angliski)',
+                'ru' => 'Название (английский)',
+            ],
+
+            'admin-floors-name-lv' => [
+                'en' => 'Name (Latvian)',
+                'lv' => 'Nosaukums (latviski)',
+                'ru' => 'Название (латышский)',
+            ],
+
+            'admin-floors-name-ru' => [
+                'en' => 'Name (Russian)',
+                'lv' => 'Nosaukums (krieviski)',
+                'ru' => 'Название (русский)',
+            ],
+
+            'admin-floors-name-hint' => [
+                'en' => 'Empty Latvian and Russian names use the English one.',
+                'lv' => 'Ja latviešu vai krievu nosaukums ir tukšs, tiek izmantots angļu nosaukums.',
+                'ru' => 'Пустые латышское и русское названия берутся из английского.',
+            ],
+
+            'admin-floors-add-button' => [
+                'en' => 'Add floor',
+                'lv' => 'Pievienot stāvu',
+                'ru' => 'Добавить этаж',
+            ],
+
+            'admin-floors-save-button' => [
+                'en' => 'Save name',
+                'lv' => 'Saglabāt nosaukumu',
+                'ru' => 'Сохранить название',
+            ],
+
+            'admin-floors-move-up' => [
+                'en' => 'Move up',
+                'lv' => 'Pārvietot augstāk',
+                'ru' => 'Переместить выше',
+            ],
+
+            'admin-floors-move-down' => [
+                'en' => 'Move down',
+                'lv' => 'Pārvietot zemāk',
+                'ru' => 'Переместить ниже',
+            ],
+
+            'admin-floors-delete-button' => [
+                'en' => 'Delete floor',
+                'lv' => 'Dzēst stāvu',
+                'ru' => 'Удалить этаж',
+            ],
+
+            'admin-floors-delete-confirm' => [
+                'en' => 'Confirm delete',
+                'lv' => 'Apstiprināt dzēšanu',
+                'ru' => 'Подтвердить удаление',
+            ],
+
+            'admin-floors-rooms-count' => [
+                'en' => 'Rooms: :count',
+                'lv' => 'Telpas: :count',
+                'ru' => 'Залов: :count',
+            ],
+
+            'admin-floors-created' => [
+                'en' => 'Floor added.',
+                'lv' => 'Stāvs pievienots.',
+                'ru' => 'Этаж добавлен.',
+            ],
+
+            'admin-floors-updated' => [
+                'en' => 'Floor renamed.',
+                'lv' => 'Stāvs pārdēvēts.',
+                'ru' => 'Этаж переименован.',
+            ],
+
+            'admin-floors-deleted' => [
+                'en' => 'Floor deleted.',
+                'lv' => 'Stāvs dzēsts.',
+                'ru' => 'Этаж удалён.',
+            ],
+
+            'admin-floors-delete-has-rooms' => [
+                'en' => 'This floor still has rooms. Delete or move them first.',
+                'lv' => 'Šajā stāvā vēl ir telpas. Vispirms tās dzēsiet vai pārvietojiet.',
+                'ru' => 'На этом этаже ещё есть залы. Сначала удалите или перенесите их.',
+            ],
+
+            'admin-floors-name-required' => [
+                'en' => 'Enter the English name.',
+                'lv' => 'Ievadiet nosaukumu angliski.',
+                'ru' => 'Введите название на английском.',
+            ],
+
+            'admin-rooms-plan-title' => [
+                'en' => 'Plan: :floor',
+                'lv' => 'Plāns: :floor',
+                'ru' => 'План: :floor',
+            ],
+
+            'admin-rooms-plan-help' => [
+                'en' => 'Drag a room to move it and drag its corner to resize it. Select a room to rename or recolor it.',
+                'lv' => 'Velciet telpu, lai to pārvietotu, un velciet tās stūri, lai mainītu izmēru. Izvēlieties telpu, lai mainītu nosaukumu vai krāsu.',
+                'ru' => 'Перетащите зал, чтобы переместить его, и потяните за угол, чтобы изменить размер. Выберите зал, чтобы переименовать или перекрасить его.',
+            ],
+
+            'admin-rooms-add-button' => [
+                'en' => 'Add room',
+                'lv' => 'Pievienot telpu',
+                'ru' => 'Добавить зал',
+            ],
+
+            'admin-rooms-save-button' => [
+                'en' => 'Save rooms',
+                'lv' => 'Saglabāt telpas',
+                'ru' => 'Сохранить залы',
+            ],
+
+            'admin-rooms-unsaved-hint' => [
+                'en' => 'You have unsaved changes.',
+                'lv' => 'Ir nesaglabātas izmaiņas.',
+                'ru' => 'Есть несохранённые изменения.',
+            ],
+
+            'admin-rooms-selected-title' => [
+                'en' => 'Selected room',
+                'lv' => 'Izvēlētā telpa',
+                'ru' => 'Выбранный зал',
+            ],
+
+            'admin-rooms-none-selected' => [
+                'en' => 'Select a room on the plan to edit it.',
+                'lv' => 'Izvēlieties telpu plānā, lai to rediģētu.',
+                'ru' => 'Выберите зал на плане, чтобы изменить его.',
+            ],
+
+            'admin-rooms-new-name' => [
+                'en' => 'New room',
+                'lv' => 'Jauna telpa',
+                'ru' => 'Новый зал',
+            ],
+
+            'admin-rooms-field-kind' => [
+                'en' => 'Type',
+                'lv' => 'Veids',
+                'ru' => 'Тип',
+            ],
+
+            'admin-rooms-field-color' => [
+                'en' => 'Color',
+                'lv' => 'Krāsa',
+                'ru' => 'Цвет',
+            ],
+
+            'admin-rooms-tables-count' => [
+                'en' => 'Tables: :count',
+                'lv' => 'Galdiņi: :count',
+                'ru' => 'Столиков: :count',
+            ],
+
+            'admin-rooms-delete-button' => [
+                'en' => 'Delete room',
+                'lv' => 'Dzēst telpu',
+                'ru' => 'Удалить зал',
+            ],
+
+            'admin-rooms-delete-confirm' => [
+                'en' => 'Confirm delete',
+                'lv' => 'Apstiprināt dzēšanu',
+                'ru' => 'Подтвердить удаление',
+            ],
+
+            'admin-rooms-delete-help' => [
+                'en' => 'A room with tables cannot be deleted. Move its tables to another room first.',
+                'lv' => 'Telpu ar galdiņiem nevar dzēst. Vispirms pārvietojiet galdiņus uz citu telpu.',
+                'ru' => 'Зал со столиками удалить нельзя. Сначала перенесите столики в другой зал.',
+            ],
+
+            'admin-rooms-saved' => [
+                'en' => 'Rooms saved.',
+                'lv' => 'Telpas saglabātas.',
+                'ru' => 'Залы сохранены.',
+            ],
+
+            'admin-rooms-deleted' => [
+                'en' => 'Room deleted.',
+                'lv' => 'Telpa dzēsta.',
+                'ru' => 'Зал удалён.',
+            ],
+
+            'admin-rooms-delete-has-tables' => [
+                'en' => 'This room still has tables. Move them to another room first.',
+                'lv' => 'Šajā telpā vēl ir galdiņi. Vispirms pārvietojiet tos uz citu telpu.',
+                'ru' => 'В этом зале ещё есть столики. Сначала перенесите их в другой зал.',
+            ],
+
+            'admin-rooms-out-of-bounds' => [
+                'en' => 'A room has to stay inside the plan and be at least 4% wide and high.',
+                'lv' => 'Telpai jāpaliek plāna robežās un jābūt vismaz 4% platai un augstai.',
+                'ru' => 'Зал должен оставаться в пределах плана и быть не меньше 4% в ширину и высоту.',
+            ],
+
+            'admin-rooms-name-required' => [
+                'en' => 'Every room needs an English name.',
+                'lv' => 'Katrai telpai vajag nosaukumu angliski.',
+                'ru' => 'Каждому залу нужно название на английском.',
+            ],
+
+            'admin-rooms-invalid' => [
+                'en' => 'The room layout could not be read. Reload the page and try again.',
+                'lv' => 'Telpu plānu neizdevās nolasīt. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'Не удалось прочитать план залов. Обновите страницу и попробуйте снова.',
+            ],
+
+            'room-kind-seating' => [
+                'en' => 'Seating',
+                'lv' => 'Sēdvietas',
+                'ru' => 'Посадочный зал',
+            ],
+
+            'room-kind-bar' => [
+                'en' => 'Bar',
+                'lv' => 'Bārs',
+                'ru' => 'Бар',
+            ],
+
+            'room-kind-entrance' => [
+                'en' => 'Entrance',
+                'lv' => 'Ieeja',
+                'ru' => 'Вход',
+            ],
+
+            'room-kind-stairs' => [
+                'en' => 'Stairs',
+                'lv' => 'Kāpnes',
+                'ru' => 'Лестница',
+            ],
+
+            'room-kind-service' => [
+                'en' => 'Service area',
+                'lv' => 'Saimniecības zona',
+                'ru' => 'Служебная зона',
+            ],
+
+            'room-color-violet' => [
+                'en' => 'Violet',
+                'lv' => 'Violeta',
+                'ru' => 'Фиолетовый',
+            ],
+
+            'room-color-amber' => [
+                'en' => 'Amber',
+                'lv' => 'Dzintara',
+                'ru' => 'Янтарный',
+            ],
+
+            'room-color-teal' => [
+                'en' => 'Teal',
+                'lv' => 'Tirkīza',
+                'ru' => 'Бирюзовый',
+            ],
+
+            'room-color-rose' => [
+                'en' => 'Rose',
+                'lv' => 'Rozā',
+                'ru' => 'Розовый',
+            ],
+
+            'room-color-sky' => [
+                'en' => 'Sky',
+                'lv' => 'Debeszila',
+                'ru' => 'Голубой',
+            ],
+
+            'room-color-lime' => [
+                'en' => 'Lime',
+                'lv' => 'Laima zaļa',
+                'ru' => 'Лаймовый',
+            ],
+
+            'room-color-coral' => [
+                'en' => 'Coral',
+                'lv' => 'Koraļļu',
+                'ru' => 'Коралловый',
+            ],
+
+            'room-color-slate' => [
+                'en' => 'Slate',
+                'lv' => 'Pelēkzila',
+                'ru' => 'Серо-синий',
+            ],
+
+            'admin-tables-field-room' => [
+                'en' => 'Room',
+                'lv' => 'Telpa',
+                'ru' => 'Зал',
+            ],
+
+            'admin-tables-room-none' => [
+                'en' => 'No room',
+                'lv' => 'Bez telpas',
+                'ru' => 'Без зала',
+            ],
+
+            'admin-tables-rooms-link' => [
+                'en' => 'Edit floors and rooms',
+                'lv' => 'Rediģēt stāvus un telpas',
+                'ru' => 'Изменить этажи и залы',
             ],
 
             // Логи активности
