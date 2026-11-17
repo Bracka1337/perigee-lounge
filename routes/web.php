@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\FloorController;
+use App\Http\Controllers\Admin\LoungePhotoController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TranslationController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ClientReservationController;
 use App\Http\Controllers\ClientTableOrderController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RenderStudioController;
 use App\Http\Controllers\Staff\MenuAvailabilityController;
 use App\Http\Controllers\Staff\MenuCategoryController;
 use App\Http\Controllers\Staff\MenuItemController;
@@ -33,6 +35,10 @@ Route::get('/', function () {
 
     return redirect()->route('home', ['locale' => $default]);
 });
+
+// Render studio: one three.js scene per URL, photographed by the render commands.
+// It answers only where the studio is enabled, see RenderStudioRequest.
+Route::get('/render-studio', RenderStudioController::class)->name('render-studio');
 
 // Allow QR path without locale by redirecting to default locale
 Route::get('/menu/table-{code}', function (string $code) {
@@ -138,6 +144,7 @@ Route::group([
             Route::delete('floors/{floor}', [FloorController::class, 'destroy'])->whereNumber('floor')->name('floors.destroy');
             Route::put('floors/{floor}/rooms', [RoomController::class, 'update'])->whereNumber('floor')->name('floors.rooms.update');
             Route::delete('rooms/{room}', [RoomController::class, 'destroy'])->whereNumber('room')->name('rooms.destroy');
+            Route::post('floors/photos', [LoungePhotoController::class, 'store'])->name('floors.photos.store');
 
             Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');
         });

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Services\Render\BrowserRenderer;
+use App\Services\Render\Renderer;
 use App\Translation\DatabaseTranslator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -15,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(Renderer::class, BrowserRenderer::class);
+
         $this->app->extend('translator', function ($translator, $app) {
             return new DatabaseTranslator(
                 $translator->getLoader(),

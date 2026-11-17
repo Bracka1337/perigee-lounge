@@ -71,6 +71,16 @@
                 @endif
             </div>
 
+            @if ($studioEnabled)
+                <form method="POST" action="{{ route('admin.floors.photos.store', ['locale' => $locale]) }}"
+                      class="space-y-3 rounded-2xl border border-line bg-ground/70 p-4">
+                    @csrf
+                    <h2 class="text-xs text-ink-muted">{{ __('admin-floors-photos-title') }}</h2>
+                    <p class="text-xs text-ink-muted">{{ __('admin-floors-photos-help') }}</p>
+                    <button type="submit" class="{{ $ghostButton }}">{{ __('admin-floors-photos-button') }}</button>
+                </form>
+            @endif
+
             <form method="POST" action="{{ route('admin.floors.store', ['locale' => $locale]) }}"
                   class="space-y-3 rounded-2xl border border-line bg-ground/70 p-4">
                 @csrf
