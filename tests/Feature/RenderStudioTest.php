@@ -83,17 +83,17 @@ test('render-lounge stores a picture for every room and table', function () {
     $table = Table::firstOrFail();
 
     $this->artisan('perigee:render-lounge', ['--url' => 'http://lounge.test:8001'])
-        ->expectsOutputToContain('Rendered 60 lounge pictures.')
+        ->expectsOutputToContain('Rendered 65 lounge pictures.')
         ->assertSuccessful();
 
     $disk = Storage::disk('public');
-    expect($disk->files('renders/rooms'))->toHaveCount(20)
+    expect($disk->files('renders/rooms'))->toHaveCount(25)
         ->and($disk->files('renders/tables'))->toHaveCount(40)
         ->and($disk->exists("renders/rooms/{$room->id}.webp"))->toBeTrue()
         ->and($disk->exists("renders/tables/{$table->id}.webp"))->toBeTrue()
         ->and(getimagesizefromstring((string) $disk->get("renders/tables/{$table->id}.webp"))['mime'] ?? null)->toBe('image/webp');
 
-    expect($renderer->shots)->toHaveCount(60)
+    expect($renderer->shots)->toHaveCount(65)
         ->and($renderer->shots[0]['url'])->toStartWith('http://lounge.test:8001/render-studio?')->toContain('scene=room', 'signature=')
         ->and([$renderer->shots[0]['width'], $renderer->shots[0]['height']])->toBe([1200, 800])
         ->and(File::exists(dirname($renderer->shots[0]['path'])))->toBeFalse();
@@ -237,7 +237,7 @@ test('only an admin can queue new lounge photos', function () {
     $this->actingAs(studioUser('staff'))->post(route('admin.floors.photos.store'))->assertForbidden();
     Queue::assertNothingPushed();
 
-    $this->actingAs(studioUser('admin'))->from(route('admin.floors.index'))
+    $this->actingAs(studioUser('admin'))->from(route('admin.floor-plan'))
         ->withHeader('Host', 'internal.example')
         ->post(route('admin.floors.photos.store'))
         ->assertRedirect()
@@ -258,7 +258,16 @@ test('deleting a table or a room also deletes its picture', function () {
     $admin = studioUser('admin');
 
     $this->actingAs($admin)->delete(route('admin.tables.destroy', ['table' => $table]))->assertRedirect();
-    $this->actingAs($admin)->delete(route('admin.rooms.destroy', ['room' => $room]))->assertSessionMissing('error');
+    // The bar has no tables, so saving its floor without it removes the room.
+    $plan = ['rooms' => Room::where('floor_id', $room->floor_id)->whereKeyNot($room->id)->get()->map(fn (Room $other) => [
+        'id' => $other->id, 'name' => $other->name, 'kind' => $other->kind->value, 'color' => $other->color->value,
+        'x' => $other->x, 'y' => $other->y, 'width' => $other->width, 'height' => $other->height,
+    ])->all(), 'tables' => Table::whereIn('room_id', Room::where('floor_id', $room->floor_id)->pluck('id'))->get()->map(fn (Table $other) => [
+        'id' => $other->id, 'name' => $other->name, 'capacity' => $other->capacity, 'x' => $other->pos_x, 'y' => $other->pos_y,
+        'width' => $other->width, 'height' => $other->height, 'rotation' => $other->rotation, 'is_active' => $other->is_active,
+    ])->all()];
+    $this->actingAs($admin)->put(route('admin.floors.plan.update', ['floor' => $room->floor_id]), ['plan_payload' => json_encode($plan)])
+        ->assertSessionHasNoErrors();
 
     Storage::disk('public')->assertMissing([$renders->tablePath($table->id), $renders->roomPath($room->id)]);
 });
@@ -308,7 +317,7 @@ test('the default set fills records without a picture and replaces nothing', fun
     app()->instance(DefaultRenders::class, $defaults);
 
     // Render everything and export it as the default set, as a developer would.
-    $this->artisan('perigee:render-lounge', ['--export' => true])->expectsOutputToContain('Exported 60 pictures')->assertSuccessful();
+    $this->artisan('perigee:render-lounge', ['--export' => true])->expectsOutputToContain('Exported 65 pictures')->assertSuccessful();
     $this->artisan('perigee:render-menu', ['--export' => true])->expectsOutputToContain('Exported 2 photos')->assertSuccessful();
 
     expect(File::exists($folder.'/tables/vip.webp'))->toBeTrue()
@@ -324,10 +333,10 @@ test('the default set fills records without a picture and replaces nothing', fun
     $kept = app(LoungeRenders::class)->tablePath(Table::where('name', 'T1')->value('id'));
     Storage::disk('public')->put($kept, 'already here');
 
-    expect($defaults->install())->toBe(60);
+    expect($defaults->install())->toBe(65);
 
     expect(Storage::disk('public')->get($kept))->toBe('already here')
-        ->and(Storage::disk('public')->files('renders/rooms'))->toHaveCount(20)
+        ->and(Storage::disk('public')->files('renders/rooms'))->toHaveCount(25)
         ->and(Storage::disk('public')->files('renders/tables'))->toHaveCount(40)
         ->and($item->refresh()->photo_generated)->toBeTrue()
         ->and($item->image_path)->toStartWith('menu/')

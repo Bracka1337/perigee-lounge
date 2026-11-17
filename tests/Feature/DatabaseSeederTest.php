@@ -13,7 +13,8 @@ beforeEach(fn () => Storage::fake('public'));
 test('seeding creates the demo data', function () {
     $this->seed(DatabaseSeeder::class);
 
-    expect(User::count())->toBe(2)
+    expect(User::count())->toBe(3)
+        ->and(User::where('email', 'client@perigee.test')->value('role'))->toBe('client')
         ->and(MenuItem::count())->toBeGreaterThan(0)
         ->and(Table::count())->toBeGreaterThan(0);
 });

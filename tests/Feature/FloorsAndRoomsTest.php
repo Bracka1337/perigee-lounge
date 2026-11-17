@@ -5,6 +5,7 @@ use App\Models\Room;
 use App\Models\Table;
 use App\Models\User;
 use App\Services\LoungeLayout;
+use Database\Seeders\AdminUserSeeder;
 use Database\Seeders\DefaultTranslationsSeeder;
 use Database\Seeders\TableSeeder;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,11 @@ function loungeUser(string $role): User
     return $user;
 }
 
+function loungeFloor(string $name = 'Ground floor', int $order = 0): Floor
+{
+    return Floor::create(['name' => ['en' => $name, 'lv' => $name, 'ru' => $name], 'sort_order' => $order]);
+}
+
 function loungeRoom(Floor $floor, array $attributes = []): Room
 {
     return Room::create([
@@ -24,109 +30,125 @@ function loungeRoom(Floor $floor, array $attributes = []): Room
         'name' => ['en' => 'Hall', 'lv' => 'Zāle', 'ru' => 'Зал'],
         'kind' => 'seating',
         'color' => 'violet',
-        'x' => 10, 'y' => 10, 'width' => 40, 'height' => 40,
+        'x' => 0, 'y' => 0, 'width' => 10, 'height' => 8,
         ...$attributes,
     ]);
 }
 
-function loungeFloor(string $name = 'Ground floor', int $order = 0): Floor
+/**
+ * The floor as the plan editor would post it, with optional changes.
+ *
+ * @return array{rooms: list<array<string, mixed>>, tables: list<array<string, mixed>>}
+ */
+function planOf(Floor $floor): array
 {
-    return Floor::create(['name' => ['en' => $name, 'lv' => $name, 'ru' => $name], 'sort_order' => $order]);
-}
+    $floor->load('rooms.tables');
 
-function roomPayload(array $overrides = []): array
-{
     return [
-        'name' => ['en' => 'Cellar', 'lv' => '', 'ru' => ''],
-        'kind' => 'seating',
-        'color' => 'teal',
-        'x' => 10, 'y' => 10, 'width' => 30, 'height' => 30,
-        ...$overrides,
+        'rooms' => $floor->rooms->map(fn (Room $room) => [
+            'id' => $room->id, 'name' => $room->name, 'kind' => $room->kind->value, 'color' => $room->color->value,
+            'is_bookable_whole' => $room->is_bookable_whole, 'x' => $room->x, 'y' => $room->y, 'width' => $room->width, 'height' => $room->height,
+        ])->values()->all(),
+        'tables' => $floor->rooms->flatMap(fn (Room $room) => $room->tables)->map(fn (Table $table) => [
+            'id' => $table->id, 'name' => $table->name, 'capacity' => $table->capacity, 'x' => $table->pos_x, 'y' => $table->pos_y,
+            'width' => $table->width, 'height' => $table->height, 'rotation' => $table->rotation, 'is_active' => $table->is_active,
+        ])->values()->all(),
     ];
 }
 
-function runLayoutMigration(): void
+function savePlan(User $admin, Floor $floor, array $plan)
+{
+    return test()->actingAs($admin)->put(route('admin.floors.plan.update', ['floor' => $floor]), ['plan_payload' => json_encode($plan)]);
+}
+
+function runLayoutMigrations(): void
 {
     (require database_path('migrations/2026_11_16_210300_apply_default_lounge_layout.php'))->up();
+    (require database_path('migrations/2026_11_17_100000_store_lounge_layout_in_metres.php'))->up();
 }
 
 beforeEach(function () {
     $this->seed(DefaultTranslationsSeeder::class);
 });
 
-// --- Default layout: data migration and seeders -------------------------------------------
+// --- Default layout: data migrations and seeders ------------------------------------------
 
-test('the data migration moves existing tables into rooms and keeps their ids', function () {
-    // The old layout without P2, which an admin removed at some point.
-    $oldNames = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
-        'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'P1', 'VIP'];
-
-    foreach ($oldNames as $name) {
+test('an old database ends up in metres with every table kept and inside a room', function () {
+    // The layout before floors existed, minus P2, which an admin removed at some point.
+    foreach (['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
+        'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'P1', 'VIP'] as $name) {
         DB::table('tables')->insert(['name' => $name, 'capacity' => 5, 'pos_x' => 1, 'pos_y' => 1, 'width' => 50, 'height' => 50]);
     }
-    DB::table('tables')->insert(['name' => 'Custom', 'capacity' => 3, 'pos_x' => 44, 'pos_y' => 44, 'width' => 50, 'height' => 50]);
-
+    DB::table('tables')->insert(['name' => 'Custom', 'capacity' => 3, 'pos_x' => 50, 'pos_y' => 40, 'width' => 80, 'height' => 120]);
     $idsBefore = Table::pluck('id', 'name')->all();
 
-    runLayoutMigration();
-    runLayoutMigration();
+    runLayoutMigrations();
 
     expect(Floor::count())->toBe(2)
-        ->and(Room::count())->toBe(20)
+        ->and(Room::count())->toBe(25)
+        ->and(Room::where('kind', 'corridor')->count())->toBe(5)
         ->and(Table::count())->toBe(40)
         ->and(Table::where('name', 'P2')->exists())->toBeFalse()
         ->and(Table::whereIn('name', array_keys($idsBefore))->pluck('id', 'name')->all())->toBe($idsBefore);
 
-    $vip = Table::with('room.floor')->where('name', 'VIP')->firstOrFail();
+    $vip = Table::with('room')->where('name', 'VIP')->firstOrFail();
     expect($vip->room->t('name'))->toBe('VIP')
-        ->and($vip->room->floor->sort_order)->toBe(0)
         ->and($vip->capacity)->toBe(5)
-        ->and((float) $vip->pos_x)->toBe(84.0);
+        ->and($vip->room->contains($vip->pos_x, $vip->pos_y))->toBeTrue()
+        ->and($vip->width)->toBe(525);
 
-    $cabin = Table::with('room.floor')->where('name', 'S1')->firstOrFail();
-    expect($cabin->room->floor->sort_order)->toBe(1);
-
+    // A table the layout does not know keeps its place, converted to metres and centimetres.
     $custom = Table::where('name', 'Custom')->firstOrFail();
-    expect($custom->room_id)->toBeNull()
-        ->and((float) $custom->pos_x)->toBe(44.0);
+    expect($custom->pos_x)->toBe(15.0)
+        ->and($custom->pos_y)->toBe(10.5)
+        ->and([$custom->width, $custom->height])->toBe([200, 300]);
 });
 
-test('the data migration leaves a database without tables empty', function () {
-    runLayoutMigration();
+test('the data migrations leave a database without tables empty', function () {
+    runLayoutMigrations();
 
-    expect(Floor::count())->toBe(0)
-        ->and(Table::count())->toBe(0);
+    expect(Floor::count())->toBe(0)->and(Table::count())->toBe(0);
 });
 
-test('seeding gives two floors with every table inside its room', function () {
+test('seeding gives two floors without gaps or overlaps and every table inside its room', function () {
     $this->seed(TableSeeder::class);
 
-    expect(Floor::count())->toBe(2)
-        ->and(Room::count())->toBe(20)
-        ->and(Table::count())->toBe(40);
+    expect(Floor::count())->toBe(2)->and(Room::count())->toBe(25)->and(Table::count())->toBe(40);
 
-    foreach (Room::all() as $room) {
-        expect($room->x + $room->width)->toBeLessThanOrEqual(100.0, "{$room->t('name')} leaves the plan")
-            ->and($room->y + $room->height)->toBeLessThanOrEqual(100.0, "{$room->t('name')} leaves the plan");
+    foreach (Floor::with('rooms')->get() as $floor) {
+        $rooms = $floor->rooms->values();
+        $area = $rooms->sum(fn (Room $room) => $room->width * $room->height);
+        $minX = $rooms->min('x');
+        $minY = $rooms->min('y');
+        $maxX = $rooms->max(fn (Room $room) => $room->x + $room->width);
+        $maxY = $rooms->max(fn (Room $room) => $room->y + $room->height);
+
+        // The rooms cover the building exactly once: no gaps and no overlaps.
+        expect($area)->toBe(($maxX - $minX) * ($maxY - $minY), "{$floor->t('name')} has gaps or overlaps");
     }
 
     foreach (Table::with('room')->get() as $table) {
-        expect($table->room)->not->toBeNull("{$table->name} has no room")
-            ->and($table->room->contains((float) $table->pos_x, (float) $table->pos_y))->toBeTrue("{$table->name} is outside its room");
+        expect($table->room->contains($table->pos_x, $table->pos_y))->toBeTrue("{$table->name} is outside its room");
     }
+});
+
+test('the seeder adds a demo client that can sign in', function () {
+    $this->seed(AdminUserSeeder::class);
+
+    $client = User::where('email', 'client@perigee.test')->firstOrFail();
+    expect($client->isClient())->toBeTrue()->and($client->hasVerifiedEmail())->toBeTrue();
 });
 
 // --- Access -------------------------------------------------------------------------------
 
-test('only admins can open or change floors and rooms', function (string $role, int $status) {
+test('only admins can open or change the floor plan', function (string $role, int $status) {
     $floor = loungeFloor();
-    $room = loungeRoom($floor);
+    loungeRoom($floor);
     $user = loungeUser($role);
 
-    $this->actingAs($user)->get(route('admin.floors.index'))->assertStatus($status);
+    $this->actingAs($user)->get(route('admin.floor-plan'))->assertStatus($status);
+    savePlan($user, $floor, planOf($floor))->assertStatus($status === 200 ? 302 : $status);
     $this->actingAs($user)->post(route('admin.floors.store'), ['name' => ['en' => 'Roof']])->assertStatus($status === 200 ? 302 : $status);
-    $this->actingAs($user)->put(route('admin.floors.rooms.update', ['floor' => $floor]), ['rooms_payload' => '[]'])->assertStatus($status === 200 ? 302 : $status);
-    $this->actingAs($user)->delete(route('admin.rooms.destroy', ['room' => $room]))->assertStatus($status === 200 ? 302 : $status);
 
     expect(Floor::where('name->en', 'Roof')->exists())->toBe($role === 'admin');
 })->with([
@@ -135,8 +157,12 @@ test('only admins can open or change floors and rooms', function (string $role, 
     ['client', 403],
 ]);
 
-test('guests are sent to login from the floors page', function () {
-    $this->get(route('admin.floors.index'))->assertRedirectContains('/login');
+test('guests are sent to login, and the old pages lead to the floor plan', function () {
+    $this->get(route('admin.floor-plan'))->assertRedirectContains('/login');
+
+    $admin = loungeUser('admin');
+    $this->actingAs($admin)->get('/en/admin/tables')->assertRedirect(route('admin.floor-plan'));
+    $this->actingAs($admin)->get('/en/admin/floors')->assertRedirect(route('admin.floor-plan'));
 });
 
 // --- Floors -------------------------------------------------------------------------------
@@ -147,184 +173,170 @@ test('an admin can add, rename and reorder floors', function () {
 
     $this->actingAs($admin)->post(route('admin.floors.store'), ['name' => ['en' => 'Roof', 'lv' => 'Jumts', 'ru' => '']])
         ->assertSessionHasNoErrors();
-
     $roof = Floor::where('name->en', 'Roof')->firstOrFail();
     expect($roof->name)->toBe(['en' => 'Roof', 'lv' => 'Jumts', 'ru' => 'Roof']);
 
-    $this->actingAs($admin)->put(route('admin.floors.update', ['floor' => $roof]), ['name' => ['en' => 'Rooftop']])
-        ->assertSessionHasNoErrors();
+    $this->actingAs($admin)->put(route('admin.floors.update', ['floor' => $roof]), ['name' => ['en' => 'Rooftop']])->assertSessionHasNoErrors();
     expect($roof->refresh()->t('name'))->toBe('Rooftop');
 
-    $this->actingAs($admin)->post(route('admin.floors.move', ['floor' => $roof]), ['direction' => 'up'])->assertRedirect();
+    $this->actingAs($admin)->post(route('admin.floors.move', ['floor' => $roof]), ['direction' => 'up'])
+        ->assertRedirect(route('admin.floor-plan', ['floor' => $roof->id]));
     expect(Floor::orderBy('sort_order')->pluck('id')->all())->toBe([$roof->id, $ground->id]);
-
-    $this->actingAs($admin)->post(route('admin.floors.store'), ['name' => ['en' => '']])->assertSessionHasErrors('name.en');
 });
 
 test('a floor with rooms cannot be deleted, an empty one can', function () {
     $admin = loungeUser('admin');
     $floor = loungeFloor();
-    $room = loungeRoom($floor);
+    loungeRoom($floor);
 
-    $this->actingAs($admin)->from(route('admin.floors.index'))
+    $this->actingAs($admin)->from(route('admin.floor-plan'))
         ->delete(route('admin.floors.destroy', ['floor' => $floor]))
-        ->assertRedirect(route('admin.floors.index'))
         ->assertSessionHas('error', 'This floor still has rooms. Delete or move them first.');
-    expect(Floor::count())->toBe(1);
 
-    $room->delete();
-
+    savePlan($admin, $floor, ['rooms' => [], 'tables' => []])->assertSessionHasNoErrors();
     $this->actingAs($admin)->delete(route('admin.floors.destroy', ['floor' => $floor]))->assertSessionMissing('error');
+
     expect(Floor::count())->toBe(0);
 });
 
-// --- Rooms --------------------------------------------------------------------------------
+// --- Saving the plan ----------------------------------------------------------------------
 
-test('the plan editor adds new rooms and updates existing ones', function () {
+test('saving the plan adds, changes and removes rooms and places tables in them', function () {
+    $admin = loungeUser('admin');
+    $floor = loungeFloor();
+    $hall = loungeRoom($floor);
+    $old = loungeRoom($floor, ['name' => ['en' => 'Old', 'lv' => 'Old', 'ru' => 'Old'], 'x' => 10, 'width' => 4]);
+    $table = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 2, 'pos_y' => 2, 'width' => 200, 'height' => 200]);
+
+    $plan = planOf($floor);
+    $plan['rooms'] = [
+        [...$plan['rooms'][0], 'name' => ['en' => 'Big hall', 'lv' => '', 'ru' => ''], 'color' => 'amber', 'is_bookable_whole' => true],
+        ['id' => null, 'name' => ['en' => 'Bar', 'lv' => 'Bārs', 'ru' => 'Бар'], 'kind' => 'bar', 'color' => 'teal', 'x' => 10, 'y' => 0, 'width' => 6, 'height' => 8],
+    ];
+    $plan['tables'][0] = [...$plan['tables'][0], 'x' => 13, 'y' => 4, 'rotation' => 90, 'capacity' => 2];
+    $plan['tables'][] = ['id' => null, 'name' => 'A2', 'capacity' => 6, 'x' => 5, 'y' => 5, 'width' => 300, 'height' => 200, 'rotation' => 0, 'is_active' => false];
+
+    savePlan($admin, $floor, $plan)
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('admin.floor-plan', ['floor' => $floor->id]));
+
+    $hall->refresh();
+    $bar = Room::where('name->en', 'Bar')->firstOrFail();
+    expect(Room::find($old->id))->toBeNull()
+        ->and($hall->t('name'))->toBe('Big hall')
+        ->and($hall->name['lv'])->toBe('Big hall')
+        ->and($hall->is_bookable_whole)->toBeTrue()
+        ->and($table->refresh()->room_id)->toBe($bar->id)
+        ->and($table->rotation)->toBe(90)
+        ->and($table->capacity)->toBe(2)
+        ->and(Table::where('name', 'A2')->firstOrFail()->only(['room_id', 'is_active', 'width']))
+        ->toBe(['room_id' => $hall->id, 'is_active' => false, 'width' => 300]);
+});
+
+test('rooms may touch but not overlap', function () {
+    $admin = loungeUser('admin');
+    $floor = loungeFloor();
+    loungeRoom($floor);
+
+    $touching = planOf($floor);
+    $touching['rooms'][] = ['id' => null, 'name' => ['en' => 'Next door'], 'kind' => 'seating', 'color' => 'lime', 'x' => 10, 'y' => 0, 'width' => 5, 'height' => 8];
+    savePlan($admin, $floor, $touching)->assertSessionHasNoErrors();
+
+    $overlapping = planOf($floor);
+    $overlapping['rooms'][] = ['id' => null, 'name' => ['en' => 'Clash'], 'kind' => 'seating', 'color' => 'rose', 'x' => 14, 'y' => 7, 'width' => 3, 'height' => 3];
+    savePlan($admin, $floor, $overlapping)->assertSessionHasErrors();
+
+    expect(Room::where('name->en', 'Clash')->exists())->toBeFalse();
+});
+
+test('the plan rejects bad rooms and tables', function (string $case) {
     $admin = loungeUser('admin');
     $floor = loungeFloor();
     $room = loungeRoom($floor);
+    Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $room->id, 'pos_x' => 2, 'pos_y' => 2, 'width' => 200, 'height' => 200]);
+    Table::create(['name' => 'Taken', 'capacity' => 4]);
 
-    $payload = [
-        roomPayload(['id' => $room->id, 'name' => ['en' => 'Big hall', 'lv' => 'Lielā zāle', 'ru' => 'Большой зал'], 'color' => 'amber', 'x' => 0, 'y' => 0, 'width' => 60, 'height' => 100]),
-        roomPayload(['x' => 62.5, 'y' => 70, 'width' => 37.5, 'height' => 30]),
-    ];
+    $plan = planOf($floor);
+    match ($case) {
+        'room too small' => $plan['rooms'][0]['width'] = 0.5,
+        'unknown color' => $plan['rooms'][0]['color'] = 'neon',
+        'blank room name' => $plan['rooms'][0]['name']['en'] = '   ',
+        'table outside every room' => $plan['tables'][0]['x'] = 30,
+        'table name used on another floor' => $plan['tables'][0]['name'] = 'taken',
+        'two tables with one name' => $plan['tables'][] = [...$plan['tables'][0], 'id' => null],
+        'tiny table' => $plan['tables'][0]['width'] = 10,
+    };
 
-    $this->actingAs($admin)
-        ->put(route('admin.floors.rooms.update', ['floor' => $floor]), ['rooms_payload' => json_encode($payload)])
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('admin.floors.index', ['floor' => $floor->id]));
+    savePlan($admin, $floor, $plan)->assertSessionHasErrors();
+    expect($room->refresh()->width)->toBe(10.0)->and(Table::count())->toBe(2);
+})->with(['room too small', 'unknown color', 'blank room name', 'table outside every room',
+    'table name used on another floor', 'two tables with one name', 'tiny table']);
 
-    $room->refresh();
-    $cellar = Room::where('name->en', 'Cellar')->firstOrFail();
-
-    expect(Room::count())->toBe(2)
-        ->and($room->t('name'))->toBe('Big hall')
-        ->and($room->color->value)->toBe('amber')
-        ->and($room->width)->toBe(60.0)
-        ->and($cellar->floor_id)->toBe($floor->id)
-        ->and($cellar->name['ru'])->toBe('Cellar')
-        ->and($cellar->x)->toBe(62.5);
-});
-
-test('rooms that leave the plan or have bad values are rejected', function (array $overrides) {
-    $admin = loungeUser('admin');
-    $floor = loungeFloor();
-
-    $this->actingAs($admin)
-        ->put(route('admin.floors.rooms.update', ['floor' => $floor]), ['rooms_payload' => json_encode([roomPayload($overrides)])])
-        ->assertSessionHasErrors();
-
-    expect(Room::count())->toBe(0);
-})->with([
-    'past the right edge' => [['x' => 80, 'width' => 30]],
-    'past the bottom edge' => [['y' => 75, 'height' => 30]],
-    'negative position' => [['x' => -5]],
-    'too small' => [['width' => 1]],
-    'unknown color' => [['color' => 'neon']],
-    'unknown kind' => [['kind' => 'pool']],
-    'no English name' => [['name' => ['en' => '']]],
-    'blank English name' => [['name' => ['en' => '   ']]],
-]);
-
-test('the plan editor cannot change a room of another floor', function () {
+test('a room of another floor cannot be changed through this floor', function () {
     $admin = loungeUser('admin');
     $floor = loungeFloor();
     $foreign = loungeRoom(loungeFloor('Second floor', 1));
 
-    $this->actingAs($admin)
-        ->put(route('admin.floors.rooms.update', ['floor' => $floor]), ['rooms_payload' => json_encode([roomPayload(['id' => $foreign->id])])])
-        ->assertSessionHasErrors();
+    savePlan($admin, $floor, ['rooms' => [planOf($foreign->floor)['rooms'][0]], 'tables' => []])->assertSessionHasErrors();
 
-    expect($foreign->refresh()->t('name'))->toBe('Hall');
+    expect($foreign->refresh()->floor_id)->not->toBe($floor->id);
 });
 
-test('a room with tables cannot be deleted, an empty one can', function () {
+test('a room that still has tables cannot be removed from the plan', function () {
     $admin = loungeUser('admin');
-    $room = loungeRoom(loungeFloor());
-    $table = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $room->id]);
+    $floor = loungeFloor();
+    $room = loungeRoom($floor);
+    Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $room->id, 'pos_x' => 2, 'pos_y' => 2]);
 
-    $this->actingAs($admin)->from(route('admin.floors.index'))
-        ->delete(route('admin.rooms.destroy', ['room' => $room]))
+    // The table is left out of the plan, so it would stay in a room that no longer exists.
+    $this->actingAs($admin)->from(route('admin.floor-plan'))
+        ->put(route('admin.floors.plan.update', ['floor' => $floor]), ['plan_payload' => json_encode(['rooms' => [], 'tables' => []])])
         ->assertSessionHas('error', 'This room still has tables. Move them to another room first.');
-    expect(Room::count())->toBe(1);
 
-    $table->delete();
-
-    $this->actingAs($admin)->delete(route('admin.rooms.destroy', ['room' => $room]))->assertSessionMissing('error');
-    expect(Room::count())->toBe(0);
+    expect(Room::find($room->id))->not->toBeNull();
 });
 
-// --- Tables and floors --------------------------------------------------------------------
-
-test('the table form moves a table to another room and into its bounds', function () {
+test('a table can be moved to a room on another floor, and deleted', function () {
     $admin = loungeUser('admin');
     $hall = loungeRoom(loungeFloor());
-    $cabin = loungeRoom(loungeFloor('Second floor', 1), ['x' => 60, 'y' => 60, 'width' => 20, 'height' => 30]);
-    $table = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 20, 'pos_y' => 20]);
+    $cabin = loungeRoom(loungeFloor('Second floor', 1), ['x' => 20, 'y' => 10, 'width' => 4, 'height' => 6]);
+    $table = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 2, 'pos_y' => 2]);
 
     $this->actingAs($admin)
         ->put(route('admin.tables.update', ['table' => $table]), ['name' => 'A1', 'capacity' => 4, 'room_id' => $cabin->id, 'is_active' => 1])
-        ->assertSessionHasNoErrors();
+        ->assertRedirect(route('admin.floor-plan', ['floor' => $cabin->floor_id]));
 
     $table->refresh();
-    expect($table->room_id)->toBe($cabin->id)
-        ->and((float) $table->pos_x)->toBe(70.0)
-        ->and((float) $table->pos_y)->toBe(75.0);
+    expect($table->room_id)->toBe($cabin->id)->and($table->pos_x)->toBe(22.0)->and($table->pos_y)->toBe(13.0);
 
-    $this->actingAs($admin)
-        ->put(route('admin.tables.update', ['table' => $table]), ['name' => 'A1', 'capacity' => 4, 'room_id' => 999999])
-        ->assertSessionHasErrors('room_id');
+    $this->actingAs($admin)->delete(route('admin.tables.destroy', ['table' => $table]))->assertRedirect();
+    expect(Table::find($table->id))->toBeNull();
 });
 
-test('saving the table layout puts a table in the room it was dropped in', function () {
-    $admin = loungeUser('admin');
-    $floor = loungeFloor();
-    $hall = loungeRoom($floor);
-    $bar = loungeRoom($floor, ['name' => ['en' => 'Bar', 'lv' => 'Bārs', 'ru' => 'Бар'], 'x' => 60, 'y' => 10, 'width' => 30, 'height' => 30]);
-    $moved = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 20, 'pos_y' => 20]);
-    $inWalkway = Table::create(['name' => 'A2', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 30, 'pos_y' => 30]);
+// --- Pages that show the plan -------------------------------------------------------------
 
-    $layout = [
-        ['id' => $moved->id, 'pos_x' => 75, 'pos_y' => 25, 'width' => 100, 'height' => 80, 'rotation' => 0],
-        ['id' => $inWalkway->id, 'pos_x' => 55, 'pos_y' => 80, 'width' => 100, 'height' => 80, 'rotation' => 0],
-    ];
-
-    $this->actingAs($admin)
-        ->post(route('admin.tables.layout.update'), ['layout_payload' => json_encode($layout)])
-        ->assertSessionHasNoErrors();
-
-    expect($moved->refresh()->room_id)->toBe($bar->id)
-        ->and($inWalkway->refresh()->room_id)->toBe($hall->id)
-        ->and((float) $inWalkway->pos_x)->toBe(55.0);
-});
-
-test('each floor lists only its own tables and the requested floor opens first', function () {
+test('each floor lists only its own tables, drawn to the building scale', function () {
     $this->seed(TableSeeder::class);
-    Table::create(['name' => 'Loose', 'capacity' => 2]);
     Table::where('name', 'T1')->update(['is_active' => false]);
 
-    [$ground, $second] = app(LoungeLayout::class)->floors()->all();
+    $layout = app(LoungeLayout::class);
+    [$ground, $second] = $layout->floors()->all();
 
-    expect($ground->tables->pluck('name'))->toContain('VIP', 'Loose')->not->toContain('S1', 'T1')
-        ->and($second->tables->pluck('name')->all())->toEqualCanonicalizing(
-            ['L1', 'L2', 'L3', 'L4', 'C1', 'C2', 'C3', 'U1', 'U2', 'S1', 'S2', 'S3', 'S4', 'K1', 'K2']
-        );
+    expect($ground->tables->pluck('name'))->toContain('VIP')->not->toContain('S1', 'T1')
+        ->and($second->tables)->toHaveCount(15);
+
+    $frame = $layout->frame($layout->floors());
+    expect($frame->aspectRatio())->toBe('31 / 27');
 
     $client = loungeUser('client');
-
     $this->actingAs($client)->get(route('client.reservations.index'))
         ->assertOk()
         ->assertViewHas('activeFloorId', $ground->id)
-        ->assertSee('Karaoke room')
+        ->assertSee('aspect-ratio: 31 / 27', false)
         ->assertSee('data-floor-tab="'.$second->id.'"', false);
 
-    $this->actingAs($client)->get(route('client.reservations.index', ['floor' => $second->id]))
-        ->assertViewHas('activeFloorId', $second->id);
-
-    $this->actingAs(loungeUser('staff'))->get(route('staff.orders.create', ['floor' => 'nope']))
-        ->assertOk()
-        ->assertViewHas('activeFloorId', $ground->id);
+    $this->actingAs($client)->get(route('client.reservations.index', ['floor' => $second->id]))->assertViewHas('activeFloorId', $second->id);
+    $this->actingAs(loungeUser('staff'))->get(route('staff.orders.create', ['floor' => 'nope']))->assertOk()->assertViewHas('activeFloorId', $ground->id);
 });
 
 test('pages with the plan still work before any floor exists', function () {
@@ -332,29 +344,26 @@ test('pages with the plan still work before any floor exists', function () {
 
     $this->actingAs(loungeUser('client'))->get(route('client.reservations.index'))->assertOk()->assertSee('A1');
     $this->actingAs(loungeUser('staff'))->get(route('staff.reservations.index'))->assertOk()->assertSee('A1');
-    $this->actingAs(loungeUser('admin'))->get(route('admin.tables.index'))->assertOk()->assertSee('A1');
+    $this->actingAs(loungeUser('admin'))->get(route('admin.floor-plan'))->assertOk();
 });
 
-test('the 3D view gets the same floors, rooms and tables as the plan', function () {
+test('the 3D view gets the same floors, rooms and tables as the plan, in metres', function () {
     $this->seed(TableSeeder::class);
     Table::where('name', 'T1')->update(['is_active' => false]);
+    Room::where('name->en', 'VIP')->update(['is_bookable_whole' => true]);
     app()->setLocale('lv');
 
     $layout = app(LoungeLayout::class);
-    [$ground, $second] = $layout->toArray($layout->floors())['floors'];
+    $data = $layout->toArray($layout->floors());
+    [$ground, $second] = $data['floors'];
     $vipRoom = collect($ground['rooms'])->firstWhere('name', 'VIP');
     $vipTable = collect($ground['tables'])->firstWhere('name', 'VIP');
 
-    expect($ground['name'])->toBe('Pirmais stāvs')
-        ->and($ground['rooms'])->toHaveCount(10)
+    expect($data['frame'])->toBe(['x' => -0.5, 'y' => -0.5, 'width' => 31.0, 'depth' => 27.0])
+        ->and($ground['name'])->toBe('Pirmais stāvs')
+        ->and($ground['rooms'])->toHaveCount(12)
         ->and(collect($ground['tables'])->pluck('name'))->toHaveCount(24)->not->toContain('T1')
-        ->and($vipRoom)->toMatchArray(['kind' => 'seating', 'color' => '#F59A7C', 'x' => 68.0, 'width' => 32.0])
-        ->and($vipTable)->toMatchArray(['roomId' => $vipRoom['id'], 'capacity' => 20, 'x' => 84.0, 'width' => 210])
+        ->and($vipRoom)->toMatchArray(['kind' => 'seating', 'color' => '#F59A7C', 'x' => 21.0, 'width' => 9.0, 'bookableWhole' => true])
+        ->and($vipTable)->toMatchArray(['roomId' => $vipRoom['id'], 'capacity' => 20, 'width' => 525])
         ->and(collect($second['tables'])->pluck('name'))->toContain('K1', 'S4');
-
-    $this->actingAs(loungeUser('client'))->get(route('client.reservations.index', ['locale' => 'en']))
-        ->assertOk()
-        ->assertSee('id="loungeLayoutData"', false)
-        ->assertSee('data-view="3d"', false)
-        ->assertSee('data-status="free"', false);
 });
