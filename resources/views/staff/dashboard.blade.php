@@ -42,7 +42,7 @@
                                         {{ $res->start_at->format('d.m H:i') }}
                                     </div>
                                     <div class="text-ink">
-                                        {{ __('staff-reservations-table-label') }} {{ $res->table->name ?? '#' }}
+                                        {{ $res->room_id ? __('room-booking-label').' '.($res->room?->t('name') ?? '') : __('staff-reservations-table-label').' '.($res->table->name ?? '#') }}
                                     </div>
                                     <div class="text-xs text-ink-muted">
                                         {{ $res->guest_name ?? ($res->user->name ?? __('common-guest')) }}
