@@ -7,6 +7,7 @@ use App\Enums\DoorKind;
 use App\Enums\FixtureType;
 use App\Enums\RoomColor;
 use App\Enums\RoomKind;
+use App\Enums\RoomMood;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\FloorPlanRequest;
 use App\Models\Door;
@@ -41,6 +42,7 @@ class FloorPlanController extends Controller
                     'name' => ['en' => $room->name['en'] ?? '', 'lv' => $room->name['lv'] ?? '', 'ru' => $room->name['ru'] ?? ''],
                     'kind' => $room->kind->value,
                     'color' => $room->color->value,
+                    'mood' => $room->mood->value,
                     'is_bookable_whole' => $room->is_bookable_whole,
                     'x' => $room->x,
                     'y' => $room->y,
@@ -54,6 +56,7 @@ class FloorPlanController extends Controller
                 'fixtures' => $active->fixtures->map(fn (Fixture $fixture) => [
                     'id' => $fixture->id, 'type' => $fixture->type->value, 'x' => $fixture->x, 'y' => $fixture->y,
                     'rotation' => $fixture->rotation, 'width' => $fixture->width, 'depth' => $fixture->depth, 'points' => $fixture->points,
+                    'settings' => $fixture->settings,
                 ])->values(),
                 'tables' => $active->tables->map(fn (Table $table) => [
                     'id' => $table->id,
@@ -82,7 +85,9 @@ class FloorPlanController extends Controller
                 'fixtureTypes' => collect(FixtureType::cases())->mapWithKeys(fn (FixtureType $type) => [$type->value => [
                     'label' => __($type->labelKey()), 'group' => $type->group(), 'size' => $type->size(),
                 ]]),
-                'fixtureGroups' => collect(['entertainment', 'bar', 'decor'])->mapWithKeys(fn (string $group) => [$group => __('fixture-group-'.$group)]),
+                'moods' => collect(RoomMood::cases())->mapWithKeys(fn (RoomMood $mood) => [$mood->value => __($mood->labelKey())]),
+                'lightColors' => collect(FixtureType::LIGHT_COLORS)->map(fn (string $hex, string $name) => ['hex' => $hex, 'label' => __('light-color-'.$name)]),
+                'fixtureGroups' => collect(['entertainment', 'bar', 'decor', 'lights'])->mapWithKeys(fn (string $group) => [$group => __('fixture-group-'.$group)]),
                 'otherFloors' => $floors->reject(fn (Floor $floor) => $floor->id === $active->id)
                     ->map(fn (Floor $floor) => ['id' => $floor->id, 'name' => $floor->t('name'), 'rooms' => $floor->rooms
                         ->reject(fn (Room $room) => $room->kind === RoomKind::Corridor)

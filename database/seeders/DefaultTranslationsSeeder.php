@@ -6477,6 +6477,132 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Bāra letei ir no 2 līdz 8 stūriem.',
                 'ru' => 'У барной стойки от 2 до 8 углов.',
             ],
+
+            'room-mood-warm' => [
+                'en' => 'Warm lounge',
+                'lv' => 'Silts lounge',
+                'ru' => 'Тёплый лаунж',
+            ],
+
+            'room-mood-neon' => [
+                'en' => 'Neon',
+                'lv' => 'Neons',
+                'ru' => 'Неон',
+            ],
+
+            'room-mood-cinema' => [
+                'en' => 'Dim cinema',
+                'lv' => 'Prieblāvs kino',
+                'ru' => 'Приглушённое кино',
+            ],
+
+            'room-mood-bright' => [
+                'en' => 'Bright bar',
+                'lv' => 'Gaišs bārs',
+                'ru' => 'Светлый бар',
+            ],
+
+            'fixture-group-lights' => [
+                'en' => 'Lights',
+                'lv' => 'Gaismas',
+                'ru' => 'Свет',
+            ],
+
+            'fixture-pendant-light' => [
+                'en' => 'Pendant light',
+                'lv' => 'Piekaramā lampa',
+                'ru' => 'Подвесной светильник',
+            ],
+
+            'fixture-floor-lamp' => [
+                'en' => 'Floor lamp',
+                'lv' => 'Stāvlampa',
+                'ru' => 'Торшер',
+            ],
+
+            'fixture-neon-strip' => [
+                'en' => 'Neon strip',
+                'lv' => 'Neona lente',
+                'ru' => 'Неоновая полоса',
+            ],
+
+            'fixture-led-strip' => [
+                'en' => 'LED strip',
+                'lv' => 'LED lente',
+                'ru' => 'Светодиодная лента',
+            ],
+
+            'light-color-amber' => [
+                'en' => 'Amber',
+                'lv' => 'Dzintara',
+                'ru' => 'Янтарный',
+            ],
+
+            'light-color-violet' => [
+                'en' => 'Violet',
+                'lv' => 'Violeta',
+                'ru' => 'Фиолетовый',
+            ],
+
+            'light-color-rose' => [
+                'en' => 'Rose',
+                'lv' => 'Rozā',
+                'ru' => 'Розовый',
+            ],
+
+            'light-color-teal' => [
+                'en' => 'Teal',
+                'lv' => 'Tirkīza',
+                'ru' => 'Бирюзовый',
+            ],
+
+            'light-color-white' => [
+                'en' => 'Warm white',
+                'lv' => 'Silti balta',
+                'ru' => 'Тёплый белый',
+            ],
+
+            'admin-plan-room-mood' => [
+                'en' => 'Light mood',
+                'lv' => 'Gaismas noskaņa',
+                'ru' => 'Настроение света',
+            ],
+
+            'admin-plan-room-mood-help' => [
+                'en' => 'How the room is lit in the 3D view.',
+                'lv' => 'Kā telpa ir apgaismota 3D skatā.',
+                'ru' => 'Как зал освещён в 3D-виде.',
+            ],
+
+            'admin-plan-light-color' => [
+                'en' => 'Light colour',
+                'lv' => 'Gaismas krāsa',
+                'ru' => 'Цвет света',
+            ],
+
+            'admin-plan-light-strength' => [
+                'en' => 'Strength',
+                'lv' => 'Stiprums',
+                'ru' => 'Яркость',
+            ],
+
+            'admin-plan-light-help' => [
+                'en' => 'The 3D view lights the 12 brightest spots of a floor for real; the rest only glow.',
+                'lv' => '3D skats īsti apgaismo 12 spožākās vietas stāvā; pārējās tikai spīd.',
+                'ru' => '3D-вид по-настоящему освещает 12 самых ярких мест этажа, остальные только светятся.',
+            ],
+
+            'lounge-3d-day' => [
+                'en' => 'Day',
+                'lv' => 'Diena',
+                'ru' => 'День',
+            ],
+
+            'lounge-3d-evening' => [
+                'en' => 'Evening',
+                'lv' => 'Vakars',
+                'ru' => 'Вечер',
+            ],
         ];
     }
 }

@@ -97,6 +97,7 @@ class LoungeLayout
                     'name' => (string) $room->t('name'),
                     'kind' => $room->kind->value,
                     'bookableWhole' => $room->is_bookable_whole,
+                    'mood' => $room->mood->value,
                     'color' => $room->color->hex(),
                     'x' => $room->x,
                     'y' => $room->y,
@@ -130,6 +131,7 @@ class LoungeLayout
                     'width' => $fixture->width,
                     'depth' => $fixture->depth,
                     'points' => $fixture->points,
+                    'settings' => $fixture->settings,
                 ])->values()->all(),
             ])->all(),
         ];
