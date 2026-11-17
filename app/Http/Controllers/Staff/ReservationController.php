@@ -38,6 +38,7 @@ class ReservationController extends Controller
         return view('staff.reservations.index', [
             'date' => $selectedDate,
             'floors' => $floors,
+            'frame' => $layout->frame($floors),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservationsForDay' => Reservation::whereDate('start_at', $selectedDate->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())

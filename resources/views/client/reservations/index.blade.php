@@ -82,9 +82,7 @@
 
             <div class="overflow-x-auto" data-plan-2d>
                 @foreach ($floors as $floor)
-                    <div data-floor-panel="{{ $floor->id }}" data-floor-plan="auto"
-                         @class(['relative w-full min-w-[560px] aspect-[16/14] rounded-2xl border border-line bg-ground/70 overflow-hidden select-none', 'hidden' => $floor->id !== $activeFloorId])>
-                        <x-floor-plan.rooms :floor="$floor" />
+                    <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId">
 
                         @foreach ($floor->tables as $table)
                     @php
@@ -124,23 +122,13 @@
                             data-room="{{ $table->room?->t('name') }}"
                             data-floor="{{ $floor->t('name') }}"
                             data-render="{{ $tableRenders[$table->id] ?? '' }}"
-                            data-rotation="{{ $table->rotation }}"
-                            data-base-width="{{ $table->width }}"
-                            data-base-height="{{ $table->height }}"
-                            style="
-                                left: {{ $table->pos_x }}%;
-                                top: {{ $table->pos_y }}%;
-                                width: {{ $table->width }}px;
-                                height: {{ $table->height }}px;
-                                transform: translate(-50%, -50%) rotate({{ $table->rotation }}deg);
-                                opacity: {{ $table->is_active ? '1' : '0.3' }};
-                            ">
+                            style="{{ $frame->tableStyle($table) }} opacity: {{ $table->is_active ? '1' : '0.3' }};">
                         <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                             {{ $table->name }}
                         </div>
                     </button>
                 @endforeach
-                    </div>
+                    </x-floor-plan.stage>
                 @endforeach
             </div>
 
