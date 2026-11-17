@@ -35,7 +35,6 @@ class MenuSeeder extends Seeder
                     'description' => $item['description'],
                     'allergens' => $item['allergens'] ?? null,
                     'price' => $item['price'],
-                    'image_path' => null,
                     'sort_order' => $index,
                 ];
 

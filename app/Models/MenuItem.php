@@ -23,6 +23,7 @@ class MenuItem extends Model
         'allergens',
         'image_path',
         'thumb_path',
+        'photo_generated',
         'price',
         'sort_order',
         'is_available',
@@ -33,6 +34,7 @@ class MenuItem extends Model
         'description' => 'array',
         'allergens' => 'array',
         'is_available' => 'boolean',
+        'photo_generated' => 'boolean',
         'price' => 'float',
     ];
 

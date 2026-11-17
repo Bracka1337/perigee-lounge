@@ -11,13 +11,14 @@ use App\Http\Requests\Admin\FloorRequest;
 use App\Http\Requests\Admin\MoveFloorRequest;
 use App\Models\Floor;
 use App\Services\LoungeLayout;
+use App\Services\Render\RenderStudio;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class FloorController extends Controller
 {
-    public function index(Request $request, string $locale, LoungeLayout $layout): View
+    public function index(Request $request, string $locale, LoungeLayout $layout, RenderStudio $studio): View
     {
         $floors = $layout->floors(activeTablesOnly: false)->filter(fn (Floor $floor) => $floor->exists)->values();
 
@@ -27,6 +28,7 @@ class FloorController extends Controller
             'activeFloor' => $floors->firstWhere('id', $request->integer('floor')) ?? $floors->first(),
             'kinds' => RoomKind::cases(),
             'colors' => RoomColor::cases(),
+            'studioEnabled' => $studio->enabled(),
         ]);
     }
 

@@ -10,6 +10,7 @@ use App\Models\Floor;
 use App\Models\OpeningHour;
 use App\Models\Table;
 use App\Services\LoungeLayout;
+use App\Services\LoungeRenders;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -61,9 +62,10 @@ class TableController extends Controller
             ->with('status', __('admin-tables-updated'));
     }
 
-    public function destroy(string $locale, Table $table): RedirectResponse
+    public function destroy(string $locale, Table $table, LoungeRenders $renders): RedirectResponse
     {
         $table->delete();
+        $renders->forget($table);
 
         return redirect()->route('admin.tables.index', ['locale' => $locale])
             ->with('status', __('admin-tables-deleted'));
