@@ -65,30 +65,9 @@ body {
     white-space: nowrap;
 }
 
-/* Stairs are hatched like steps, the bar shows its counter, the entrance its door. */
+/* Stairs are hatched like steps. */
 .floor-room--stairs {
     background-image: repeating-linear-gradient(90deg, color-mix(in srgb, var(--room) 30%, transparent) 0 1px, transparent 1px 9px);
-}
-
-.floor-room--bar::after {
-    content: "";
-    position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 1.6rem;
-    height: 0.5rem;
-    border-radius: 0.25rem;
-    background-color: color-mix(in srgb, var(--room) 50%, transparent);
-}
-
-.floor-room--entrance::after {
-    content: "";
-    position: absolute;
-    left: 30%;
-    right: 30%;
-    bottom: 0;
-    height: 0.2rem;
-    background-color: var(--room);
 }
 
 .floor-room-swatch {
@@ -129,6 +108,11 @@ body {
 
 .plan-zoom-button:hover {
     background-color: var(--color-line);
+}
+
+.floor-room--label-only {
+    border-color: transparent;
+    background: none;
 }
 
 .floor-room--corridor {
@@ -317,4 +301,142 @@ body {
 
 .plan-popover > summary::-webkit-details-marker {
     display: none;
+}
+
+/* Doors and fixtures on the plans. Drawn in metres, strokes stay a fixed number of pixels. */
+.plan-door-gap {
+    stroke: var(--color-surface);
+    stroke-width: 6px;
+    vector-effect: non-scaling-stroke;
+}
+
+.plan-door {
+    stroke: var(--color-ink-muted);
+    stroke-width: 1.5px;
+    stroke-dasharray: 3 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.plan-door--double {
+    stroke-dasharray: 6 2;
+}
+
+.plan-door--sliding {
+    stroke-dasharray: none;
+    stroke-width: 2.5px;
+}
+
+.plan-fixture rect {
+    fill: color-mix(in srgb, var(--color-ink-muted) 22%, transparent);
+    stroke: color-mix(in srgb, var(--color-ink-muted) 60%, transparent);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+}
+
+.plan-fixture--entertainment rect {
+    fill: color-mix(in srgb, var(--color-nebula) 30%, transparent);
+    stroke: var(--color-nebula);
+}
+
+.plan-fixture--decor rect {
+    fill: color-mix(in srgb, #56b07f 30%, transparent);
+    stroke: #56b07f;
+}
+
+.plan-fixture-front {
+    stroke: var(--color-ink);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+}
+
+.plan-bar {
+    fill: none;
+    stroke: #c9822e;
+    stroke-width: 0.6;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: 0.8;
+}
+
+/* Doors and items in the floor plan editor. */
+.plan-item rect {
+    fill: color-mix(in srgb, var(--color-ink-muted) 22%, var(--color-surface));
+    stroke: var(--color-ink-muted);
+    stroke-width: 1.5;
+    cursor: move;
+}
+
+.plan-item.plan-fixture--entertainment rect {
+    fill: color-mix(in srgb, var(--color-nebula) 28%, var(--color-surface));
+    stroke: var(--color-nebula);
+}
+
+.plan-item.plan-fixture--decor rect {
+    fill: color-mix(in srgb, #56b07f 28%, var(--color-surface));
+    stroke: #56b07f;
+}
+
+.plan-item text {
+    fill: var(--color-ink);
+    pointer-events: none;
+}
+
+.plan-item-front {
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+    pointer-events: none;
+}
+
+.plan-bar-line {
+    fill: none;
+    stroke: #c9822e;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: none !important;
+    pointer-events: none;
+}
+
+.plan-bar-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: none !important;
+    cursor: move;
+}
+
+.plan-item.is-selected rect {
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+}
+
+.plan-item.is-selected .plan-bar-line {
+    stroke: #f5b860;
+}
+
+.plan-item.is-invalid rect,
+.plan-door-item.is-invalid .plan-door {
+    stroke: #f87171;
+}
+
+.plan-item.is-invalid .plan-bar-line {
+    stroke: #f87171;
+}
+
+.plan-door-hit {
+    stroke: transparent;
+    vector-effect: none !important;
+    cursor: move;
+}
+
+.plan-door-item.is-selected .plan-door {
+    stroke: var(--color-nebula);
+    stroke-width: 4px;
+    stroke-dasharray: none;
+}
+
+.plan-room-label {
+    fill: var(--room);
+    letter-spacing: 0.06em;
+    pointer-events: none;
 }

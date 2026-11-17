@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Door;
+use App\Models\Fixture;
 use App\Models\Floor;
 use App\Models\Room;
 use App\Models\Table;
@@ -21,11 +23,13 @@ class LoungeLayout
      */
     public function floors(bool $activeTablesOnly = true): Collection
     {
-        $floors = Floor::query()->with('rooms')->orderBy('sort_order')->orderBy('id')->get();
+        $floors = Floor::query()->with(['rooms', 'doors', 'fixtures'])->orderBy('sort_order')->orderBy('id')->get();
 
         if ($floors->isEmpty()) {
             $placeholder = (new Floor)->forceFill(['id' => 0, 'name' => [], 'sort_order' => 0]);
             $placeholder->setRelation('rooms', new Collection);
+            $placeholder->setRelation('doors', new Collection);
+            $placeholder->setRelation('fixtures', new Collection);
             $floors->push($placeholder);
         }
 
@@ -111,6 +115,22 @@ class LoungeLayout
                     'rotation' => $table->rotation,
                     'active' => $table->is_active,
                 ])->all(),
+                'doors' => $floor->doors->map(fn (Door $door) => [
+                    'kind' => $door->kind->value,
+                    'orientation' => $door->orientation,
+                    'x' => $door->x,
+                    'y' => $door->y,
+                    'width' => $door->width,
+                ])->values()->all(),
+                'fixtures' => $floor->fixtures->map(fn (Fixture $fixture) => [
+                    'type' => $fixture->type->value,
+                    'x' => $fixture->x,
+                    'y' => $fixture->y,
+                    'rotation' => $fixture->rotation,
+                    'width' => $fixture->width,
+                    'depth' => $fixture->depth,
+                    'points' => $fixture->points,
+                ])->values()->all(),
             ])->all(),
         ];
     }

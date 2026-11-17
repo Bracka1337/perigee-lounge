@@ -7,11 +7,18 @@
     <div data-plan-stage class="plan-stage relative w-full" style="aspect-ratio: {{ $frame->aspectRatio() }};">
         @foreach ($floor->rooms as $room)
             <div class="floor-room floor-room--{{ $room->kind->value }}"
-                 style="{{ $frame->roomStyle($room) }} --room: {{ $room->color->hex() }};">
-                @if ($room->kind !== \App\Enums\RoomKind::Corridor)
+                 style="{{ $frame->roomStyle($room) }} --room: {{ $room->color->hex() }};"></div>
+        @endforeach
+
+        <x-floor-plan.furnishings :floor="$floor" :frame="$frame" />
+
+        {{-- Room names go above the doors and fixtures, so nothing covers them. --}}
+        @foreach ($floor->rooms as $room)
+            @if ($room->kind !== \App\Enums\RoomKind::Corridor)
+                <div class="floor-room floor-room--label-only" style="{{ $frame->roomStyle($room) }} --room: {{ $room->color->hex() }};">
                     <span class="floor-room__label">{{ $room->t('name') }}</span>
-                @endif
-            </div>
+                </div>
+            @endif
         @endforeach
 
         {{ $slot }}
