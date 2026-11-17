@@ -111,6 +111,23 @@ class FloorPlanRequest extends FormRequest
                 $names = array_map(fn (array $table) => mb_strtolower(trim($table['name'])), $this->tables());
                 $taken = Table::query()->whereNotIn('id', $ids)->pluck('name')->map(fn ($name) => mb_strtolower((string) $name))->all();
 
+                // A floor only saves its own tables (and tables that have no room yet), and it has to
+                // send all of them, so none can be left behind in a room that moved.
+                $floor = $this->route('floor');
+                $roomIds = $floor instanceof Floor ? $floor->rooms()->pluck('id') : collect();
+                $own = Table::query()->whereIn('room_id', $roomIds)->pluck('id')->all();
+                $unplaced = Table::query()->whereNull('room_id')->pluck('id')->all();
+
+                foreach ($this->tables() as $i => $table) {
+                    if (isset($table['id']) && ! in_array((int) $table['id'], [...$own, ...$unplaced], true)) {
+                        $validator->errors()->add("tables.{$i}.id", (string) __('admin-plan-table-other-floor', ['name' => $table['name']]));
+                    }
+                }
+
+                if (array_diff($own, array_map('intval', $ids)) !== []) {
+                    $validator->errors()->add('tables', (string) __('admin-plan-out-of-date'));
+                }
+
                 foreach (array_intersect($names, $taken) as $i => $name) {
                     $validator->errors()->add("tables.{$i}.name", (string) __('admin-plan-table-name-taken', ['name' => $this->tables()[$i]['name']]));
                 }

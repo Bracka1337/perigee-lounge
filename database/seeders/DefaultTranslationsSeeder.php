@@ -6219,6 +6219,18 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Gaitenis',
                 'ru' => 'Коридор',
             ],
+
+            'admin-plan-table-other-floor' => [
+                'en' => 'Table :name belongs to another floor. Reload the page and try again.',
+                'lv' => 'Galdiņš :name pieder citam stāvam. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'Столик :name относится к другому этажу. Обновите страницу и попробуйте снова.',
+            ],
+
+            'admin-plan-out-of-date' => [
+                'en' => 'The plan changed in the meantime. Reload the page and try again.',
+                'lv' => 'Plāns pa to laiku ir mainījies. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'План тем временем изменился. Обновите страницу и попробуйте снова.',
+            ],
         ];
     }
 }

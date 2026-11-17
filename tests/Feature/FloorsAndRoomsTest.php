@@ -282,16 +282,35 @@ test('a room of another floor cannot be changed through this floor', function ()
     expect($foreign->refresh()->floor_id)->not->toBe($floor->id);
 });
 
+test('a floor cannot take over or leave out tables', function () {
+    $admin = loungeUser('admin');
+    $ground = loungeFloor();
+    $hall = loungeRoom($ground);
+    $upstairs = loungeRoom(loungeFloor('Second floor', 1));
+    $own = Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $hall->id, 'pos_x' => 2, 'pos_y' => 2]);
+    $foreign = Table::create(['name' => 'K9', 'capacity' => 8, 'room_id' => $upstairs->id, 'pos_x' => 3, 'pos_y' => 3]);
+
+    // A table of the other floor, sent with this floor's plan, is refused.
+    $plan = planOf($ground);
+    $plan['tables'][] = [...$plan['tables'][0], 'id' => $foreign->id, 'name' => 'K9', 'capacity' => 2, 'x' => 5, 'y' => 5];
+    savePlan($admin, $ground, $plan)->assertSessionHasErrors('tables.1.id');
+    expect($foreign->refresh()->room_id)->toBe($upstairs->id)->and($foreign->capacity)->toBe(8);
+
+    // Leaving one of the floor's own tables out is refused too.
+    savePlan($admin, $ground, [...planOf($ground), 'tables' => []])->assertSessionHasErrors('tables');
+    expect($own->refresh()->room_id)->toBe($hall->id);
+});
+
 test('a room that still has tables cannot be removed from the plan', function () {
     $admin = loungeUser('admin');
     $floor = loungeFloor();
     $room = loungeRoom($floor);
     Table::create(['name' => 'A1', 'capacity' => 4, 'room_id' => $room->id, 'pos_x' => 2, 'pos_y' => 2]);
 
-    // The table is left out of the plan, so it would stay in a room that no longer exists.
+    // Sending the table elsewhere is not possible here, so the room has to stay.
     $this->actingAs($admin)->from(route('admin.floor-plan'))
         ->put(route('admin.floors.plan.update', ['floor' => $floor]), ['plan_payload' => json_encode(['rooms' => [], 'tables' => []])])
-        ->assertSessionHas('error', 'This room still has tables. Move them to another room first.');
+        ->assertSessionHasErrors('tables');
 
     expect(Room::find($room->id))->not->toBeNull();
 });
