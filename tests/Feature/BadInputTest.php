@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\OrderStatus;
+use App\Models\Floor;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -64,18 +65,22 @@ test('the menu sort endpoint rejects malformed JSON', function (array $payload) 
     'item is an object' => [['categories' => [['id' => 1, 'items' => [['a' => 1]]]]]],
 ]);
 
-test('the table layout rejects bad values and missing keys', function (array $row) {
+test('the floor plan rejects malformed plans', function (mixed $payload) {
+    $floor = Floor::firstOrFail();
+
     $this->actingAs(($this->as)('admin'))
-        ->post(route('admin.tables.layout.update', ['locale' => 'en']), ['layout_payload' => json_encode([$row])])
+        ->put(route('admin.floors.plan.update', ['locale' => 'en', 'floor' => $floor]), ['plan_payload' => $payload])
         ->assertSessionHasErrors();
 })->with([
-    'text position' => [['id' => 1, 'pos_x' => 'abc', 'pos_y' => 1, 'width' => 1, 'height' => 1, 'rotation' => 0]],
-    'missing keys' => [['id' => 1]],
+    'not JSON' => ['{rooms'],
+    'no tables key' => [json_encode(['rooms' => []])],
+    'text position' => [json_encode(['rooms' => [['name' => ['en' => 'A'], 'kind' => 'seating', 'color' => 'lime', 'x' => 'abc', 'y' => 0, 'width' => 2, 'height' => 2]], 'tables' => []])],
+    'unknown room key' => [json_encode(['rooms' => [['name' => ['en' => 'A'], 'kind' => 'seating', 'color' => 'lime', 'x' => 0, 'y' => 0, 'width' => 2, 'height' => 2, 'evil' => 1]], 'tables' => []])],
 ]);
 
 test('opening hours accept only weekdays 0 to 6 with known fields', function (array $hours) {
     $this->actingAs(($this->as)('admin'))
-        ->post(route('admin.tables.opening-hours.update', ['locale' => 'en']), ['hours' => $hours])
+        ->post(route('admin.opening-hours.update', ['locale' => 'en']), ['hours' => $hours])
         ->assertSessionHasErrors();
 })->with([
     'unknown weekday' => [[99 => ['is_open' => 1, 'opens_at' => '18:00', 'closes_at' => '23:00']]],
