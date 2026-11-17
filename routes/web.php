@@ -3,8 +3,9 @@
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\FloorController;
+use App\Http\Controllers\Admin\FloorPlanController;
 use App\Http\Controllers\Admin\LoungePhotoController;
-use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\Admin\OpeningHourController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
@@ -129,21 +130,22 @@ Route::group([
             Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
             Route::resource('users', UserController::class);
             Route::resource('translations', TranslationController::class)->except(['show'])->whereNumber('translation');
-            Route::resource('tables', TableController::class)->except(['show']);
-
-            Route::post('tables/layout', [TableController::class, 'updateLayout'])
-                ->name('tables.layout.update');
-
-            Route::post('tables/opening-hours', [TableController::class, 'updateOpeningHours'])
-                ->name('tables.opening-hours.update');
-
-            Route::get('floors', [FloorController::class, 'index'])->name('floors.index');
+            // The lounge layout: floors, rooms and tables on one page.
+            Route::get('floor-plan', [FloorPlanController::class, 'show'])->name('floor-plan');
+            Route::put('floors/{floor}/plan', [FloorPlanController::class, 'update'])->whereNumber('floor')->name('floors.plan.update');
             Route::post('floors', [FloorController::class, 'store'])->name('floors.store');
             Route::put('floors/{floor}', [FloorController::class, 'update'])->whereNumber('floor')->name('floors.update');
             Route::post('floors/{floor}/move', [FloorController::class, 'move'])->whereNumber('floor')->name('floors.move');
             Route::delete('floors/{floor}', [FloorController::class, 'destroy'])->whereNumber('floor')->name('floors.destroy');
-            Route::put('floors/{floor}/rooms', [RoomController::class, 'update'])->whereNumber('floor')->name('floors.rooms.update');
-            Route::delete('rooms/{room}', [RoomController::class, 'destroy'])->whereNumber('room')->name('rooms.destroy');
+            Route::put('tables/{table}', [TableController::class, 'update'])->whereNumber('table')->name('tables.update');
+            Route::delete('tables/{table}', [TableController::class, 'destroy'])->whereNumber('table')->name('tables.destroy');
+
+            // The old Tables and Floors pages now live on the floor plan.
+            Route::get('tables', fn (string $locale) => redirect()->route('admin.floor-plan', ['locale' => $locale]))->name('tables.index');
+            Route::get('floors', fn (string $locale) => redirect()->route('admin.floor-plan', ['locale' => $locale]))->name('floors.index');
+
+            Route::get('opening-hours', [OpeningHourController::class, 'index'])->name('opening-hours.index');
+            Route::post('opening-hours', [OpeningHourController::class, 'update'])->name('opening-hours.update');
             Route::post('floors/photos', [LoungePhotoController::class, 'store'])->name('floors.photos.store');
 
             Route::get('/logs', [ActivityLogController::class, 'index'])->name('logs.index');

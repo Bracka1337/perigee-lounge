@@ -100,64 +100,221 @@ body {
     background-color: color-mix(in srgb, var(--room) 25%, transparent);
 }
 
-/* Rooms editor (admin): rooms can be dragged and resized, tables are shown faintly for reference. */
-.room-editor .floor-room {
-    pointer-events: auto;
-    cursor: move;
-    touch-action: none;
+/* Zoomable plan (floor-plan.js). The stage scales from its top-left corner. */
+.plan-stage {
+    transform-origin: 0 0;
+    will-change: transform;
 }
 
-.room-editor .floor-room.is-selected {
-    outline: 2px solid var(--room);
-    outline-offset: 1px;
-    background-color: color-mix(in srgb, var(--room) 24%, transparent);
+.plan-viewport[data-zoomed="true"] {
+    cursor: grab;
 }
 
-.room-editor__handle {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 1.75rem;
-    height: 1.75rem;
-    cursor: nwse-resize;
-    background: linear-gradient(135deg, transparent 55%, var(--room) 55%);
+.plan-viewport[data-zoomed="true"]:active {
+    cursor: grabbing;
 }
 
-.room-editor__table {
-    position: absolute;
-    display: flex;
+.plan-zoom-button {
+    display: inline-flex;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
-    border: 1px dashed var(--color-line-strong);
-    border-radius: 0.75rem;
-    color: var(--color-ink-muted);
-    font-size: 0.6875rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 9999px;
+    background-color: color-mix(in srgb, var(--color-ground) 85%, transparent);
+    color: var(--color-ink);
+    font-size: 1rem;
 }
 
-.room-editor__color {
+.plan-zoom-button:hover {
+    background-color: var(--color-line);
+}
+
+.floor-room--corridor {
+    border-color: transparent;
+    background-color: color-mix(in srgb, var(--color-line) 45%, transparent);
+}
+
+/* Floor plan editor (admin). The canvas is an SVG in metres; strokes stay one pixel wide. */
+.plan-canvas * {
+    vector-effect: non-scaling-stroke;
+}
+
+.plan-grid-bg {
+    fill: var(--color-surface);
+}
+
+.plan-grid-line {
+    stroke: color-mix(in srgb, var(--color-line) 70%, transparent);
+    stroke-width: 1;
+}
+
+.plan-grid-major {
+    stroke: var(--color-line-strong);
+    stroke-opacity: 0.5;
+    stroke-width: 1;
+}
+
+.plan-below {
+    fill: none;
+    stroke: var(--color-ink-muted);
+    stroke-opacity: 0.35;
+    stroke-dasharray: 4 4;
+    stroke-width: 1;
+    pointer-events: none;
+}
+
+.plan-room rect {
+    fill: color-mix(in srgb, var(--room) 14%, var(--color-surface));
+    stroke: color-mix(in srgb, var(--room) 70%, transparent);
+    stroke-width: 1.5;
+    cursor: move;
+}
+
+.plan-room:hover rect {
+    fill: color-mix(in srgb, var(--room) 22%, var(--color-surface));
+}
+
+.plan-room.is-corridor rect {
+    fill: color-mix(in srgb, var(--color-line) 55%, var(--color-surface));
+    stroke: var(--color-line-strong);
+    stroke-dasharray: 6 4;
+}
+
+.plan-room.is-selected rect {
+    stroke: var(--color-ink);
+    stroke-width: 2.5;
+}
+
+.plan-room.is-invalid rect,
+.plan-table.is-invalid rect {
+    stroke: #f87171;
+    stroke-width: 2.5;
+    fill: rgb(127 29 29 / 0.35);
+}
+
+.plan-room text {
+    fill: var(--room);
+    letter-spacing: 0.06em;
+    pointer-events: none;
+}
+
+.plan-size {
+    fill: var(--color-ink-muted);
+    pointer-events: none;
+}
+
+.plan-table rect {
+    fill: var(--color-line);
+    stroke: var(--color-line-strong);
+    stroke-width: 1.5;
+    cursor: move;
+}
+
+.plan-table.is-selected rect {
+    fill: color-mix(in srgb, var(--color-nebula) 35%, var(--color-line));
+    stroke: var(--color-nebula);
+    stroke-width: 2.5;
+}
+
+.plan-table.is-inactive rect {
+    stroke-dasharray: 4 3;
+    opacity: 0.55;
+}
+
+.plan-table text {
+    fill: var(--color-ink);
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.plan-handle {
+    fill: var(--color-ink);
+    stroke: var(--color-ground);
+    stroke-width: 1.5;
+}
+
+.plan-handle--nw, .plan-handle--se { cursor: nwse-resize; }
+.plan-handle--ne, .plan-handle--sw { cursor: nesw-resize; }
+.plan-handle--n, .plan-handle--s { cursor: ns-resize; }
+.plan-handle--e, .plan-handle--w { cursor: ew-resize; }
+
+.plan-handle--rotate {
+    fill: var(--color-nebula);
+    cursor: grab;
+}
+
+.plan-guide {
+    stroke: var(--color-nebula);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    pointer-events: none;
+}
+
+.plan-draft {
+    fill: color-mix(in srgb, var(--color-nebula) 18%, transparent);
+    stroke: var(--color-nebula);
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
+    pointer-events: none;
+}
+
+.plan-kbd {
+    border: 1px solid currentColor;
+    border-radius: 0.25rem;
+    padding: 0 0.25rem;
+    font-size: 0.625rem;
+    opacity: 0.6;
+}
+
+.plan-icon-button {
+    display: inline-flex;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-line);
+    border-radius: 0.75rem;
+    color: var(--color-ink-soft);
+}
+
+.plan-icon-button:hover:not(:disabled) {
+    border-color: var(--color-line-strong);
+    color: var(--color-ink);
+}
+
+.plan-icon-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+}
+
+.plan-swatch {
     display: flex;
     width: 2.75rem;
     height: 2.75rem;
+    cursor: pointer;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    border-radius: 9999px;
 }
 
-.room-editor__color > span:first-of-type {
+.plan-swatch > span:first-of-type {
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 9999px;
     background-color: var(--room);
 }
 
-.room-editor__color > input:checked + span {
+.plan-swatch > input:checked + span {
     outline: 2px solid var(--color-ink);
     outline-offset: 3px;
 }
 
-.room-editor__color > input:focus-visible + span {
+.plan-swatch > input:focus-visible + span {
     outline: 2px solid var(--color-nebula);
     outline-offset: 3px;
+}
+
+.plan-popover > summary::-webkit-details-marker {
+    display: none;
 }

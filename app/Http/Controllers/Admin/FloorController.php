@@ -4,34 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Lounge\DeleteFloor;
 use App\Actions\Lounge\MoveFloor;
-use App\Enums\RoomColor;
-use App\Enums\RoomKind;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\FloorRequest;
 use App\Http\Requests\Admin\MoveFloorRequest;
 use App\Models\Floor;
-use App\Services\LoungeLayout;
-use App\Services\Render\RenderStudio;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class FloorController extends Controller
 {
-    public function index(Request $request, string $locale, LoungeLayout $layout, RenderStudio $studio): View
-    {
-        $floors = $layout->floors(activeTablesOnly: false)->filter(fn (Floor $floor) => $floor->exists)->values();
-
-        return view('admin.floors.index', [
-            'floors' => $floors,
-            'lounge3d' => $layout->toArray($floors),
-            'activeFloor' => $floors->firstWhere('id', $request->integer('floor')) ?? $floors->first(),
-            'kinds' => RoomKind::cases(),
-            'colors' => RoomColor::cases(),
-            'studioEnabled' => $studio->enabled(),
-        ]);
-    }
-
     public function store(FloorRequest $request, string $locale): RedirectResponse
     {
         $floor = Floor::create([
@@ -40,7 +20,7 @@ class FloorController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.floors.index', ['locale' => $locale, 'floor' => $floor->id])
+            ->route('admin.floor-plan', ['locale' => $locale, 'floor' => $floor->id])
             ->with('status', __('admin-floors-created'));
     }
 
@@ -49,7 +29,7 @@ class FloorController extends Controller
         $floor->update(['name' => $request->names()]);
 
         return redirect()
-            ->route('admin.floors.index', ['locale' => $locale, 'floor' => $floor->id])
+            ->route('admin.floor-plan', ['locale' => $locale, 'floor' => $floor->id])
             ->with('status', __('admin-floors-updated'));
     }
 
@@ -57,7 +37,7 @@ class FloorController extends Controller
     {
         $moveFloor->handle($floor, $request->string('direction')->value());
 
-        return redirect()->route('admin.floors.index', ['locale' => $locale, 'floor' => $floor->id]);
+        return redirect()->route('admin.floor-plan', ['locale' => $locale, 'floor' => $floor->id]);
     }
 
     public function destroy(string $locale, Floor $floor, DeleteFloor $deleteFloor): RedirectResponse
@@ -65,7 +45,7 @@ class FloorController extends Controller
         $deleteFloor->handle($floor);
 
         return redirect()
-            ->route('admin.floors.index', ['locale' => $locale])
+            ->route('admin.floor-plan', ['locale' => $locale])
             ->with('status', __('admin-floors-deleted'));
     }
 }
