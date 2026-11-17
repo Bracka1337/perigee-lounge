@@ -95,8 +95,9 @@ Demo accounts, for local use only:
 |---|---|---|
 | Admin | `admin@perigee.test` | `password` |
 | Staff | `staff@perigee.test` | `password` |
+| Client | `client@perigee.test` | `password` |
 
-Register a new account to try the client side. Email is written to the log by default, so the verification link is in `storage/logs/laravel.log`.
+Or register a new account. Email is written to the log by default, so the verification link is in `storage/logs/laravel.log`.
 
 ## Running with Docker
 

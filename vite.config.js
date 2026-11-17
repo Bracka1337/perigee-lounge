@@ -11,7 +11,7 @@ export default defineConfig({
                 'resources/js/vendor/chart.js',
                 'resources/js/vendor/sortable.js',
                 'resources/js/vendor/zxing.js',
-                'resources/js/room-editor.js',
+                'resources/js/plan-editor.js',
                 'resources/js/lounge-toggle.js',
                 'resources/js/studio/index.js',
             ],

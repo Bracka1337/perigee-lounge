@@ -32,5 +32,17 @@ class AdminUserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        // A demo guest, so the client side can be tried without registering.
+        // email_verified_at is not fillable, so it is set with forceFill.
+        $client = User::updateOrCreate(
+            ['email' => 'client@perigee.test'],
+            [
+                'name' => 'Demo Guest',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_CLIENT,
+            ]
+        );
+        $client->forceFill(['email_verified_at' => $client->email_verified_at ?? now()])->save();
     }
 }

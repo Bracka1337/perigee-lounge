@@ -5817,6 +5817,420 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Attēli tiek atjaunoti. Tie parādīsies rezervāciju lapā pēc dažām minūtēm.',
                 'ru' => 'Изображения обновляются. Они появятся на странице бронирования через несколько минут.',
             ],
+
+            'admin-header-floor-plan' => [
+                'en' => 'Floor plan',
+                'lv' => 'Stāvu plāns',
+                'ru' => 'План этажей',
+            ],
+
+            'admin-header-opening-hours' => [
+                'en' => 'Opening hours',
+                'lv' => 'Darba laiks',
+                'ru' => 'Часы работы',
+            ],
+
+            'admin-opening-hours-subtitle' => [
+                'en' => 'Reservations are only accepted while the lounge is open.',
+                'lv' => 'Rezervācijas pieņem tikai darba laikā.',
+                'ru' => 'Бронирования принимаются только в часы работы.',
+            ],
+
+            'admin-opening-hours-opens' => [
+                'en' => 'opens',
+                'lv' => 'atveras',
+                'ru' => 'открывается',
+            ],
+
+            'admin-opening-hours-closes' => [
+                'en' => 'closes',
+                'lv' => 'aizveras',
+                'ru' => 'закрывается',
+            ],
+
+            'admin-plan-title' => [
+                'en' => 'Floor plan',
+                'lv' => 'Stāvu plāns',
+                'ru' => 'План этажей',
+            ],
+
+            'admin-plan-subtitle' => [
+                'en' => 'Draw the rooms of each floor and place the tables. Rooms snap to each other, so the floor has no gaps. Changes are kept only after Save.',
+                'lv' => 'Uzzīmējiet katra stāva telpas un novietojiet galdiņus. Telpas pielīp viena otrai, tāpēc starp tām nav spraugu. Izmaiņas saglabājas tikai pēc pogas Saglabāt.',
+                'ru' => 'Нарисуйте залы каждого этажа и расставьте столики. Залы примыкают друг к другу, поэтому между ними нет зазоров. Изменения сохраняются только после кнопки «Сохранить».',
+            ],
+
+            'admin-plan-floor-settings' => [
+                'en' => 'Floor settings',
+                'lv' => 'Stāva iestatījumi',
+                'ru' => 'Настройки этажа',
+            ],
+
+            'admin-plan-floor-delete-help' => [
+                'en' => 'Only an empty floor can be deleted.',
+                'lv' => 'Dzēst var tikai tukšu stāvu.',
+                'ru' => 'Удалить можно только пустой этаж.',
+            ],
+
+            'admin-plan-toolbar' => [
+                'en' => 'Plan tools',
+                'lv' => 'Plāna rīki',
+                'ru' => 'Инструменты плана',
+            ],
+
+            'admin-plan-tools' => [
+                'en' => 'Tool',
+                'lv' => 'Rīks',
+                'ru' => 'Инструмент',
+            ],
+
+            'admin-plan-tool-select' => [
+                'en' => 'Select',
+                'lv' => 'Atlasīt',
+                'ru' => 'Выбор',
+            ],
+
+            'admin-plan-tool-select-help' => [
+                'en' => 'Select, move and resize rooms and tables',
+                'lv' => 'Atlasīt, pārvietot un mainīt izmēru telpām un galdiņiem',
+                'ru' => 'Выбирать, перемещать и менять размер залов и столиков',
+            ],
+
+            'admin-plan-tool-room' => [
+                'en' => 'Draw room',
+                'lv' => 'Zīmēt telpu',
+                'ru' => 'Нарисовать зал',
+            ],
+
+            'admin-plan-tool-room-help' => [
+                'en' => 'Drag on the plan to draw a new room',
+                'lv' => 'Velciet pa plānu, lai uzzīmētu jaunu telpu',
+                'ru' => 'Протяните по плану, чтобы нарисовать новый зал',
+            ],
+
+            'admin-plan-tool-table' => [
+                'en' => 'Add table',
+                'lv' => 'Pievienot galdiņu',
+                'ru' => 'Добавить столик',
+            ],
+
+            'admin-plan-tool-table-help' => [
+                'en' => 'Click inside a room to place a table',
+                'lv' => 'Noklikšķiniet telpā, lai novietotu galdiņu',
+                'ru' => 'Нажмите внутри зала, чтобы поставить столик',
+            ],
+
+            'admin-plan-undo' => [
+                'en' => 'Undo',
+                'lv' => 'Atsaukt',
+                'ru' => 'Отменить',
+            ],
+
+            'admin-plan-redo' => [
+                'en' => 'Redo',
+                'lv' => 'Atcelt atsaukšanu',
+                'ru' => 'Повторить',
+            ],
+
+            'admin-plan-save' => [
+                'en' => 'Save',
+                'lv' => 'Saglabāt',
+                'ru' => 'Сохранить',
+            ],
+
+            'admin-plan-saved' => [
+                'en' => 'Floor plan saved.',
+                'lv' => 'Stāva plāns saglabāts.',
+                'ru' => 'План этажа сохранён.',
+            ],
+
+            'admin-plan-all-saved' => [
+                'en' => 'All changes saved',
+                'lv' => 'Visas izmaiņas saglabātas',
+                'ru' => 'Все изменения сохранены',
+            ],
+
+            'admin-plan-leave-warning' => [
+                'en' => 'You have unsaved changes on the plan.',
+                'lv' => 'Plānā ir nesaglabātas izmaiņas.',
+                'ru' => 'На плане есть несохранённые изменения.',
+            ],
+
+            'admin-plan-canvas-label' => [
+                'en' => 'Floor plan canvas',
+                'lv' => 'Stāva plāna laukums',
+                'ru' => 'Поле плана этажа',
+            ],
+
+            'admin-plan-hint-select' => [
+                'en' => 'Click a room or table to edit it. Drag empty space to move around, scroll to zoom.',
+                'lv' => 'Noklikšķiniet uz telpas vai galdiņa, lai to rediģētu. Velciet tukšu vietu, lai pārvietotos, ritiniet, lai tuvinātu.',
+                'ru' => 'Нажмите на зал или столик, чтобы изменить его. Перетаскивайте пустое место, чтобы двигаться, прокручивайте для масштаба.',
+            ],
+
+            'admin-plan-hint-room' => [
+                'en' => 'Drag to draw a room. It snaps to the grid and to the walls of other rooms. Esc cancels.',
+                'lv' => 'Velciet, lai uzzīmētu telpu. Tā pielīp režģim un citu telpu sienām. Esc atceļ.',
+                'ru' => 'Протяните, чтобы нарисовать зал. Он прилипает к сетке и к стенам других залов. Esc отменяет.',
+            ],
+
+            'admin-plan-hint-table' => [
+                'en' => 'Click inside a room to place a table there. Esc cancels.',
+                'lv' => 'Noklikšķiniet telpā, lai tur novietotu galdiņu. Esc atceļ.',
+                'ru' => 'Нажмите внутри зала, чтобы поставить туда столик. Esc отменяет.',
+            ],
+
+            'admin-plan-hint-3d' => [
+                'en' => '3D preview of your current plan, unsaved changes included. Switch back to 2D to edit.',
+                'lv' => 'Jūsu pašreizējā plāna 3D priekšskatījums, ieskaitot nesaglabātās izmaiņas. Lai rediģētu, pārslēdzieties uz 2D.',
+                'ru' => '3D-предпросмотр текущего плана, включая несохранённые изменения. Для правки вернитесь в 2D.',
+            ],
+
+            'admin-plan-help-title' => [
+                'en' => 'How it works',
+                'lv' => 'Kā tas darbojas',
+                'ru' => 'Как это работает',
+            ],
+
+            'admin-plan-help-draw' => [
+                'en' => 'Draw room (R): drag on the plan. New rooms snap to the walls of their neighbours.',
+                'lv' => 'Zīmēt telpu (R): velciet pa plānu. Jaunās telpas pielīp kaimiņu sienām.',
+                'ru' => 'Нарисовать зал (R): протяните по плану. Новые залы прилипают к стенам соседей.',
+            ],
+
+            'admin-plan-help-table' => [
+                'en' => 'Add table (T): click inside a room.',
+                'lv' => 'Pievienot galdiņu (T): noklikšķiniet telpā.',
+                'ru' => 'Добавить столик (T): нажмите внутри зала.',
+            ],
+
+            'admin-plan-help-move' => [
+                'en' => 'Move: drag a room or table. The tables in a room move with it.',
+                'lv' => 'Pārvietot: velciet telpu vai galdiņu. Telpas galdiņi pārvietojas līdzi.',
+                'ru' => 'Переместить: перетащите зал или столик. Столики зала двигаются вместе с ним.',
+            ],
+
+            'admin-plan-help-resize' => [
+                'en' => 'Resize: drag the white squares around the selection. The purple dot turns a table.',
+                'lv' => 'Mainīt izmēru: velciet baltos kvadrātus ap atlasi. Violetais punkts pagriež galdiņu.',
+                'ru' => 'Размер: тяните белые квадраты вокруг выделения. Фиолетовая точка поворачивает столик.',
+            ],
+
+            'admin-plan-help-pan' => [
+                'en' => 'Move around: drag empty space, or hold Space and drag.',
+                'lv' => 'Pārvietoties: velciet tukšu vietu vai turiet atstarpi un velciet.',
+                'ru' => 'Перемещение по плану: тяните пустое место или удерживайте пробел и тяните.',
+            ],
+
+            'admin-plan-help-zoom' => [
+                'en' => 'Zoom: mouse wheel, or the − Fit + buttons.',
+                'lv' => 'Tuvināt: peles ritenis vai pogas − Ietilpināt +.',
+                'ru' => 'Масштаб: колесо мыши или кнопки − Вписать +.',
+            ],
+
+            'admin-plan-help-keys' => [
+                'en' => 'Keys: arrows move (Shift: 1 m), Delete removes, Ctrl+Z undoes, Ctrl+S saves.',
+                'lv' => 'Taustiņi: bultiņas pārvieto (Shift: 1 m), Delete dzēš, Ctrl+Z atsauc, Ctrl+S saglabā.',
+                'ru' => 'Клавиши: стрелки двигают (Shift: 1 м), Delete удаляет, Ctrl+Z отменяет, Ctrl+S сохраняет.',
+            ],
+
+            'admin-plan-rooms' => [
+                'en' => 'Rooms',
+                'lv' => 'Telpas',
+                'ru' => 'Залы',
+            ],
+
+            'admin-plan-tables' => [
+                'en' => 'Tables',
+                'lv' => 'Galdiņi',
+                'ru' => 'Столики',
+            ],
+
+            'admin-plan-summary' => [
+                'en' => ':rooms rooms · :tables tables',
+                'lv' => ':rooms telpas · :tables galdiņi',
+                'ru' => 'Залов: :rooms · столиков: :tables',
+            ],
+
+            'admin-plan-close' => [
+                'en' => 'Close',
+                'lv' => 'Aizvērt',
+                'ru' => 'Закрыть',
+            ],
+
+            'admin-plan-width' => [
+                'en' => 'Width',
+                'lv' => 'Platums',
+                'ru' => 'Ширина',
+            ],
+
+            'admin-plan-depth' => [
+                'en' => 'Depth',
+                'lv' => 'Dziļums',
+                'ru' => 'Глубина',
+            ],
+
+            'admin-plan-room-bookable' => [
+                'en' => 'Can be booked as a whole',
+                'lv' => 'Var rezervēt visu telpu',
+                'ru' => 'Можно забронировать целиком',
+            ],
+
+            'admin-plan-room-bookable-help' => [
+                'en' => 'Guests can book the entire room for themselves instead of a single table.',
+                'lv' => 'Viesi var rezervēt visu telpu sev, nevis vienu galdiņu.',
+                'ru' => 'Гости могут забронировать весь зал для себя, а не один столик.',
+            ],
+
+            'admin-plan-selected-table' => [
+                'en' => 'Selected table',
+                'lv' => 'Izvēlētais galdiņš',
+                'ru' => 'Выбранный столик',
+            ],
+
+            'admin-plan-table-active' => [
+                'en' => 'Open for bookings',
+                'lv' => 'Pieejams rezervācijām',
+                'ru' => 'Доступен для бронирования',
+            ],
+
+            'admin-plan-table-in-room' => [
+                'en' => 'In room: :room',
+                'lv' => 'Telpā: :room',
+                'ru' => 'В зале: :room',
+            ],
+
+            'admin-plan-move-floor' => [
+                'en' => 'Move to a room on another floor',
+                'lv' => 'Pārvietot uz telpu citā stāvā',
+                'ru' => 'Перенести в зал на другом этаже',
+            ],
+
+            'admin-plan-move-choose' => [
+                'en' => 'Choose a room…',
+                'lv' => 'Izvēlieties telpu…',
+                'ru' => 'Выберите зал…',
+            ],
+
+            'admin-plan-move-button' => [
+                'en' => 'Move table',
+                'lv' => 'Pārvietot galdiņu',
+                'ru' => 'Перенести столик',
+            ],
+
+            'admin-plan-save-first' => [
+                'en' => 'Save your changes first.',
+                'lv' => 'Vispirms saglabājiet izmaiņas.',
+                'ru' => 'Сначала сохраните изменения.',
+            ],
+
+            'admin-plan-table-delete-help' => [
+                'en' => 'Deleting a table also deletes its reservations and orders.',
+                'lv' => 'Dzēšot galdiņu, tiek dzēstas arī tā rezervācijas un pasūtījumi.',
+                'ru' => 'При удалении столика удаляются и его бронирования и заказы.',
+            ],
+
+            'admin-plan-table-delete-confirm' => [
+                'en' => 'Delete table and its bookings',
+                'lv' => 'Dzēst galdiņu un tā rezervācijas',
+                'ru' => 'Удалить столик и его брони',
+            ],
+
+            'admin-plan-rooms-overlap' => [
+                'en' => ':first and :second overlap. Rooms may touch but not overlap.',
+                'lv' => ':first un :second pārklājas. Telpas drīkst saskarties, bet ne pārklāties.',
+                'ru' => '«:first» и «:second» накладываются. Залы могут соприкасаться, но не накладываться.',
+            ],
+
+            'admin-plan-table-outside' => [
+                'en' => 'Table :name is not inside a room.',
+                'lv' => 'Galdiņš :name neatrodas telpā.',
+                'ru' => 'Столик :name находится вне зала.',
+            ],
+
+            'admin-plan-table-outside-generic' => [
+                'en' => 'Every table has to stand inside a room.',
+                'lv' => 'Katram galdiņam jāatrodas telpā.',
+                'ru' => 'Каждый столик должен стоять внутри зала.',
+            ],
+
+            'admin-plan-table-name-taken' => [
+                'en' => 'A table called :name already exists on another floor.',
+                'lv' => 'Galdiņš ar nosaukumu :name jau ir citā stāvā.',
+                'ru' => 'Столик с именем :name уже есть на другом этаже.',
+            ],
+
+            'admin-plan-table-name-required' => [
+                'en' => 'Every table needs a name.',
+                'lv' => 'Katram galdiņam vajag nosaukumu.',
+                'ru' => 'Каждому столику нужно имя.',
+            ],
+
+            'admin-plan-table-name-twice' => [
+                'en' => 'Two tables have the same name.',
+                'lv' => 'Diviem galdiņiem ir vienāds nosaukums.',
+                'ru' => 'У двух столиков одинаковое имя.',
+            ],
+
+            'admin-plan-room-too-small' => [
+                'en' => 'A room has to be at least 1 m wide and deep.',
+                'lv' => 'Telpai jābūt vismaz 1 m platai un dziļai.',
+                'ru' => 'Зал должен быть не меньше 1 м в ширину и глубину.',
+            ],
+
+            'admin-plan-invalid' => [
+                'en' => 'The plan could not be read. Reload the page and try again.',
+                'lv' => 'Plānu neizdevās nolasīt. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'Не удалось прочитать план. Обновите страницу и попробуйте снова.',
+            ],
+
+            'floor-plan-zoom-label' => [
+                'en' => 'Zoom',
+                'lv' => 'Tālummaiņa',
+                'ru' => 'Масштаб',
+            ],
+
+            'floor-plan-zoom-in' => [
+                'en' => 'Zoom in',
+                'lv' => 'Tuvināt',
+                'ru' => 'Приблизить',
+            ],
+
+            'floor-plan-zoom-out' => [
+                'en' => 'Zoom out',
+                'lv' => 'Tālināt',
+                'ru' => 'Отдалить',
+            ],
+
+            'floor-plan-zoom-fit' => [
+                'en' => 'Fit',
+                'lv' => 'Ietilpināt',
+                'ru' => 'Вписать',
+            ],
+
+            'floor-plan-zoom-fit-help' => [
+                'en' => 'Show the whole floor',
+                'lv' => 'Rādīt visu stāvu',
+                'ru' => 'Показать весь этаж',
+            ],
+
+            'room-kind-corridor' => [
+                'en' => 'Corridor',
+                'lv' => 'Gaitenis',
+                'ru' => 'Коридор',
+            ],
+
+            'admin-plan-table-other-floor' => [
+                'en' => 'Table :name belongs to another floor. Reload the page and try again.',
+                'lv' => 'Galdiņš :name pieder citam stāvam. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'Столик :name относится к другому этажу. Обновите страницу и попробуйте снова.',
+            ],
+
+            'admin-plan-out-of-date' => [
+                'en' => 'The plan changed in the meantime. Reload the page and try again.',
+                'lv' => 'Plāns pa to laiku ir mainījies. Pārlādējiet lapu un mēģiniet vēlreiz.',
+                'ru' => 'План тем временем изменился. Обновите страницу и попробуйте снова.',
+            ],
         ];
     }
 }

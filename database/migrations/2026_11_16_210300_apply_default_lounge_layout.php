@@ -1,34 +1,19 @@
 <?php
 
-use App\Actions\Lounge\ApplyDefaultLayout;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     /**
-     * The tables of the layout before this migration. They are moved, never created again.
-     */
-    private const OLD_TABLES = [
-        'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7',
-        'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
-        'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8',
-        'P1', 'P2', 'VIP',
-    ];
-
-    /**
-     * Moves the tables of an existing lounge into the two-floor layout. Tables keep their
-     * ids and names, because reservations and orders point to them. A database with no
-     * tables is left alone: it gets the layout from the seeders. A table of the old layout
-     * that was removed since stays removed.
+     * This used to move the tables of an existing lounge into the first two-floor layout.
      */
     public function up(): void
     {
-        if (! DB::table('tables')->exists()) {
-            return;
-        }
-
-        app(ApplyDefaultLayout::class)->handle(self::OLD_TABLES);
+        // Superseded by 2026_11_17_100000_store_lounge_layout_in_metres, which converts the old
+        // percentage positions and then applies the layout file (now in metres). Applying the
+        // file here as well would write metres that the next migration converts a second time.
+        // Databases that already ran this migration keep the result; nothing else to do.
     }
 
     /**

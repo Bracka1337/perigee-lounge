@@ -62,9 +62,7 @@
 
             <div class="overflow-x-auto">
                 @foreach ($floors as $floor)
-                    <div data-floor-panel="{{ $floor->id }}" data-floor-plan="auto"
-                         @class(['relative w-full min-w-[560px] aspect-[16/14] rounded-2xl border border-line bg-ground/70 overflow-hidden select-none', 'hidden' => $floor->id !== $activeFloorId])>
-                        <x-floor-plan.rooms :floor="$floor" />
+                    <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId">
 
                         @foreach ($floor->tables as $table)
                     @php
@@ -90,22 +88,13 @@
                             data-name="{{ $table->name }}"
                             data-capacity="{{ $table->capacity }}"
                             data-disabled="{{ $disabled ? '1' : '0' }}"
-                            data-base-width="{{ $table->width }}"
-                            data-base-height="{{ $table->height }}"
-                            style="
-                                left: {{ $table->pos_x }}%;
-                                top: {{ $table->pos_y }}%;
-                                width: {{ $table->width }}px;
-                                height: {{ $table->height }}px;
-                                transform: translate(-50%, -50%) rotate({{ $table->rotation }}deg);
-                                opacity: {{ $isActive ? '1' : '0.3' }};
-                            ">
+                            style="{{ $frame->tableStyle($table) }} opacity: {{ $isActive ? '1' : '0.3' }};">
                         <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                             {{ $table->name }}
                         </div>
                     </button>
                 @endforeach
-                    </div>
+                    </x-floor-plan.stage>
                 @endforeach
             </div>
 
