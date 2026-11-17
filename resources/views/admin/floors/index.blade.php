@@ -160,6 +160,16 @@
                     </div>
                 </div>
 
+                {{-- 3D PREVIEW: large screens with WebGL only, loaded by room-editor.js --}}
+                <div data-room-preview-card class="hidden rounded-2xl border border-line bg-ground/70 p-4">
+                    <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <h2 class="text-xs text-ink-muted">{{ __('admin-rooms-preview-title') }}</h2>
+                        <p class="text-xs text-ink-muted sm:text-right">{{ __('admin-rooms-preview-help') }}</p>
+                    </div>
+                    <div data-room-preview data-floor-id="{{ $activeFloor->id }}"
+                         class="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-line bg-ground"></div>
+                </div>
+
                 {{-- SELECTED ROOM --}}
                 <div class="rounded-2xl border border-line bg-ground/70 p-4">
                     <h2 class="mb-3 text-xs text-ink-muted">{{ __('admin-rooms-selected-title') }}</h2>
@@ -250,6 +260,7 @@
             </div>
 
             <script type="application/json" id="roomEditorData">@json($editorData)</script>
+            <script type="application/json" id="loungeLayoutData">@json($lounge3d)</script>
         @endif
     </div>
 @endsection

@@ -23,6 +23,7 @@ class FloorController extends Controller
 
         return view('admin.floors.index', [
             'floors' => $floors,
+            'lounge3d' => $layout->toArray($floors),
             'activeFloor' => $floors->firstWhere('id', $request->integer('floor')) ?? $floors->first(),
             'kinds' => RoomKind::cases(),
             'colors' => RoomColor::cases(),

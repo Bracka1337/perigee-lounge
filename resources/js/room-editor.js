@@ -281,6 +281,65 @@ function initConfirmForms() {
     });
 }
 
+// Live 3D preview of the lounge with the rooms as they are being edited, unsaved changes
+// included. Large screens with WebGL only; three.js is downloaded after the page is ready.
+function initPreview() {
+    const card = document.querySelector('[data-room-preview-card]');
+    const container = document.querySelector('[data-room-preview]');
+    const layoutElement = document.getElementById('loungeLayoutData');
+    const editorElement = document.getElementById('roomEditorData');
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    if (!card || !container || !layoutElement || !editorElement || !desktop.matches) return;
+
+    try {
+        const canvas = document.createElement('canvas');
+        if (!(canvas.getContext('webgl2') ?? canvas.getContext('webgl'))) return;
+    } catch {
+        return;
+    }
+
+    const baseLayout = JSON.parse(layoutElement.textContent);
+    const colors = JSON.parse(editorElement.textContent).colors;
+    const floorId = container.dataset.floorId;
+    let viewer = null;
+    let latestRooms = null;
+    let timer = 0;
+
+    const layoutWith = (rooms) => ({
+        floors: baseLayout.floors.map((floor) => (String(floor.id) !== floorId || !rooms ? floor : {
+            ...floor,
+            rooms: rooms.map((room) => ({ ...room, name: room.name.en, color: colors[room.color] ?? '#8A8FB0' })),
+        })),
+    });
+
+    const onRoomsChange = (event) => {
+        latestRooms = event.detail.rooms;
+        clearTimeout(timer);
+        timer = setTimeout(() => viewer?.rebuild(layoutWith(latestRooms)), 200);
+    };
+    document.addEventListener('rooms:change', onRoomsChange);
+
+    card.classList.remove('hidden');
+
+    import('./lounge3d/viewer.js')
+        .then(({ createLoungeViewer }) => {
+            viewer = createLoungeViewer(container, layoutWith(latestRooms), { floorId, canSelect: () => false });
+        })
+        .catch((error) => {
+            console.error('The 3D preview could not start.', error);
+            card.classList.add('hidden');
+        });
+
+    window.addEventListener('pagehide', () => {
+        clearTimeout(timer);
+        document.removeEventListener('rooms:change', onRoomsChange);
+        viewer?.dispose();
+    }, { once: true });
+}
+
 const editorRoot = document.getElementById('roomEditor');
-if (editorRoot) initRoomEditor(editorRoot);
+if (editorRoot) {
+    initPreview();
+    initRoomEditor(editorRoot);
+}
 initConfirmForms();
