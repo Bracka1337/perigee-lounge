@@ -20,7 +20,7 @@ function loungeScene(scene, camera, data) {
 
     // Only the floor in the picture is drawn, so nothing from above blocks the view.
     lounge.floors.forEach((other) => { other.group.visible = other === floor; });
-    addLoungeLights(scene, floor.y);
+    addLoungeLights(scene).setSpots(floor.lights, floor.y);
 
     let target;
     let distance;

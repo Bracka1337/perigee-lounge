@@ -21,7 +21,7 @@ import {
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { addBar, addEntrance, addLamp, addPlant, addScreen, addStairs, addTableSet } from './furniture.js';
-import { addFixture } from './fixtures.js';
+import { LIGHT_COLORS, addFixture } from './fixtures.js';
 import { Batch, COLORS, STOREY, frameCentre, mix, seededRandom } from './kit.js';
 
 const WALL_HEIGHT = 0.9;
@@ -37,25 +37,95 @@ export const STATUS_COLORS = {
 
 // Lights shared by the viewer and the render studio: cool fill from above, warm amber
 // and violet pools at floor level.
-export function addLoungeLights(scene, y = 0) {
-    const lights = [
-        new HemisphereLight('#8d93d6', '#120e1a', 0.55),
-        new AmbientLight('#ffffff', 0.1),
-    ];
+// How each light mood looks: the room's own soft light, and how its floor and neon glow.
+export const MOODS = {
+    warm: { light: '#ffb26b', strength: 40, floor: 0.88, neon: 0 },
+    neon: { light: null, strength: 55, floor: 0.76, neon: 0 },
+    cinema: { light: '#6f74ff', strength: 12, floor: 0.94, neon: 0.6 },
+    bright: { light: '#fff1d6', strength: 75, floor: 0.82, neon: 0.2 },
+};
 
+export const MAX_LIGHTS = 12;
+
+/**
+ * The lights of the lounge: a cool fill from above, a sun, and a pool of point lights that
+ * are pointed at the brightest spots of the visible floor. Only MAX_LIGHTS of them are real,
+ * so the scene stays smooth; every other light fixture still glows.
+ */
+export function addLoungeLights(scene) {
+    const hemisphere = new HemisphereLight('#8d93d6', '#120e1a', 0.55);
+    const ambient = new AmbientLight('#ffffff', 0.1);
     const sun = new DirectionalLight('#ffe6c4', 0.85);
     sun.position.set(-12, 30, 18);
-    lights.push(sun);
 
-    for (const [color, x, z] of [[COLORS.amber, 10, -9], [COLORS.violet, -4, 5], [COLORS.amber, -12, -8], [COLORS.violet, 11, 8]]) {
-        const lamp = new PointLight(color, 95, 26, 1.5);
-        lamp.position.set(x, y + 4.2, z);
-        lamp.userData.followsFloor = true;
-        lights.push(lamp);
+    const pool = Array.from({ length: MAX_LIGHTS }, () => {
+        const light = new PointLight('#ffffff', 0, 10, 1.6);
+        light.visible = false;
+        return light;
+    });
+    scene.add(hemisphere, ambient, sun, ...pool);
+
+    let spots = [];
+    let floorY = 0;
+    let daylight = false;
+
+    function apply() {
+        pool.forEach((light, index) => {
+            const spot = spots[index];
+            light.visible = Boolean(spot);
+            if (!spot) return;
+            light.color.set(spot.color);
+            // In daylight the lamps matter much less.
+            light.intensity = spot.intensity * (daylight ? 0.3 : 1);
+            light.distance = spot.distance;
+            light.position.set(spot.x, floorY + spot.y, spot.z);
+        });
+        hemisphere.intensity = daylight ? 1.6 : 0.55;
+        hemisphere.color.set(daylight ? '#dfe8ff' : '#8d93d6');
+        ambient.intensity = daylight ? 0.35 : 0.1;
+        sun.intensity = daylight ? 2.2 : 0.85;
+        sun.color.set(daylight ? '#fff6e8' : '#ffe6c4');
     }
 
-    scene.add(...lights);
-    return lights;
+    return {
+        // The brightest spots of a floor: room moods first, then the strongest fixtures.
+        setSpots(next, y) {
+            spots = [...next].sort((a, b) => b.priority - a.priority).slice(0, MAX_LIGHTS);
+            floorY = y;
+            apply();
+        },
+        setDaylight(on) {
+            daylight = on;
+            apply();
+        },
+    };
+}
+
+const LIGHT_HEIGHT = { pendant_light: 2.2, floor_lamp: 1.6, neon_strip: 1.9, led_strip: 0.4 };
+
+// Where the floor's light comes from, in floor coordinates: one soft light per room from its
+// mood, and one per light fixture.
+function lightSpots(floor, centre) {
+    const spots = [];
+    for (const room of floor.rooms) {
+        if (!['seating', 'bar'].includes(room.kind)) continue;
+        const mood = MOODS[room.mood] ?? MOODS.warm;
+        spots.push({
+            x: room.x + room.width / 2 - centre.x, y: 2.8, z: room.y + room.height / 2 - centre.z,
+            color: mood.light ?? room.color, intensity: mood.strength, distance: Math.max(room.width, room.height) * 1.1 + 2,
+            priority: 100 + Math.min(room.width * room.height, 99) / 100,
+        });
+    }
+    for (const fixture of floor.fixtures ?? []) {
+        if (!(fixture.type in LIGHT_HEIGHT)) continue;
+        const strength = fixture.settings?.strength ?? 5;
+        spots.push({
+            x: fixture.x - centre.x, y: LIGHT_HEIGHT[fixture.type], z: fixture.y - centre.z,
+            color: LIGHT_COLORS[fixture.settings?.color] ?? LIGHT_COLORS.amber, intensity: strength * 9, distance: 4 + strength,
+            priority: strength,
+        });
+    }
+    return spots;
 }
 
 function roomBox(room, centre) {
@@ -169,7 +239,8 @@ function addDoor(batch, door, centre) {
 function addRoom(batch, room, rooms, centre, isTopFloor, doors = null, furnished = false) {
     const box = roomBox(room, centre);
     const random = seededRandom(`room-${room.name}-${room.x}-${room.y}`);
-    const colors = { wall: mix(room.color, COLORS.wall, 0.78), neon: `glow:${room.color}` };
+    const mood = MOODS[room.mood] ?? MOODS.warm;
+    const colors = { wall: mix(room.color, COLORS.wall, 0.78), neon: `glow:${mix(room.color, '#11121c', mood.neon)}` };
 
     batch.at(0, 0, 0);
     batch.box(COLORS.slab, box.width, 0.3, box.depth, box.cx, -0.3, box.cz);
@@ -180,7 +251,7 @@ function addRoom(batch, room, rooms, centre, isTopFloor, doors = null, furnished
         return;
     }
 
-    batch.box(mix(room.color, COLORS.slab, 0.88), box.width, 0.04, box.depth, box.cx, 0, box.cz);
+    batch.box(mix(room.color, COLORS.slab, mood.floor), box.width, 0.04, box.depth, box.cx, 0, box.cz);
 
     // Walls open where the floor's doors are. A floor drawn before doors existed gets one
     // doorway towards its corridor, so no room is ever closed off.
@@ -338,7 +409,7 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.add(...batch.build(), labelGroup);
         root.add(group);
 
-        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room, centre) })) };
+        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, lights: lightSpots(floor, centre), rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room, centre) })) };
     });
 
     // Paints a table's outline. `selected` wins over its own status.
