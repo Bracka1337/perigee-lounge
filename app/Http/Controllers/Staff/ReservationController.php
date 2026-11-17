@@ -41,6 +41,7 @@ class ReservationController extends Controller
             'floors' => $floors,
             'frame' => $layout->frame($floors),
             'roomBooking' => $holds->roomsOn($floors, $selectedDate->toDateString()),
+            'lounge3d' => $layout->toArray($floors),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservationsForDay' => Reservation::whereDate('start_at', $selectedDate->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())

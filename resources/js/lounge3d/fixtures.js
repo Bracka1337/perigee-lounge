@@ -38,8 +38,9 @@ const lights = {
 
     neon_strip(batch, fixture) {
         const colour = lightColour(fixture);
-        batch.box('#141524', fixture.width + 0.06, 0.12, 0.04, 0, 1.84, -fixture.depth / 2);
-        batch.box(`glow:${colour}`, fixture.width, 0.05, 0.03, 0, 1.87, -fixture.depth / 2 + 0.03);
+        // A thin backing on the wall and a glowing tube in front of it, visible from above too.
+        batch.box('#141524', fixture.width + 0.06, 0.1, 0.02, 0, 1.84, -fixture.depth / 2);
+        batch.box(`glow:${colour}`, fixture.width, 0.07, 0.07, 0, 1.86, -fixture.depth / 2 + 0.05);
     },
 
     led_strip(batch, fixture) {

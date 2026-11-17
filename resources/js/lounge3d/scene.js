@@ -354,6 +354,19 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.position.y = y;
 
         const batch = new Batch();
+        // Invisible floor areas, so a click or hover can find the room under the pointer.
+        const roomPicks = [];
+        for (const room of floor.rooms) {
+            if (room.kind === 'corridor') continue;
+            const box = roomBox(room, centre);
+            const area = new Mesh(new PlaneGeometry(box.width, box.depth), pickMaterial);
+            area.rotation.x = -Math.PI / 2;
+            area.position.set(box.cx, 0.07, box.cz);
+            area.userData.roomId = room.id;
+            group.add(area);
+            roomPicks.push(area);
+        }
+
         const doors = floor.doors ?? [];
         const fixtures = floor.fixtures ?? [];
         floor.rooms.forEach((room) => addRoom(batch, room, floor.rooms, centre, isTopFloor, doors, fixtures.length > 0));
@@ -409,7 +422,7 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.add(...batch.build(), labelGroup);
         root.add(group);
 
-        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, lights: lightSpots(floor, centre), rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room, centre) })) };
+        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, roomPicks, lights: lightSpots(floor, centre), rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room, centre) })) };
     });
 
     // Paints a table's outline. `selected` wins over its own status.
