@@ -62,7 +62,7 @@ test('seeding gives every room a door and furnishes both floors', function () {
     $this->seed(TableSeeder::class);
 
     expect(Door::count())->toBe(21)
-        ->and(Fixture::count())->toBe(30)
+        ->and(Fixture::count())->toBe(53)
         ->and(Fixture::where('type', 'bar_counter')->get()->pluck('points')->map(fn ($points) => count($points))->all())->toBe([3, 2])
         ->and(Fixture::where('type', 'game_station')->count())->toBe(2);
 
