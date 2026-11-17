@@ -12,9 +12,14 @@ export default defineConfig({
                 'resources/js/vendor/sortable.js',
                 'resources/js/vendor/zxing.js',
                 'resources/js/room-editor.js',
+                'resources/js/lounge-toggle.js',
             ],
             refresh: true,
         }),
         tailwindcss(),
     ],
+    build: {
+        // The 3D lounge view bundles three.js (about 580 kB) and is only downloaded when it is opened.
+        chunkSizeWarningLimit: 700,
+    },
 });

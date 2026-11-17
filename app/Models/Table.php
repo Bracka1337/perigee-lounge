@@ -27,6 +27,8 @@ class Table extends Model
     ];
 
     protected $casts = [
+        'pos_x' => 'float',
+        'pos_y' => 'float',
         'is_active' => 'boolean',
         'is_occupied' => 'boolean',
     ];

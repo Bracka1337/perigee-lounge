@@ -58,9 +58,29 @@
                 </form>
             </div>
 
-            <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+            <div class="flex flex-wrap items-start justify-between gap-x-3">
+                <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
 
-            <div class="overflow-x-auto">
+                {{-- 2D is the default. The 3D view is offered on large screens with WebGL (see lounge-toggle.js). --}}
+                <div data-view-toggle class="mb-3 hidden rounded-full border border-line p-0.5" role="group" aria-label="{{ __('lounge-view-toggle-label') }}">
+                    @foreach (['2d' => __('lounge-view-2d'), '3d' => __('lounge-view-3d')] as $view => $label)
+                        <button type="button" data-view="{{ $view }}" aria-pressed="{{ $view === '2d' ? 'true' : 'false' }}"
+                                class="min-h-11 min-w-12 rounded-full px-3 text-xs text-ink-muted transition hover:text-ink aria-pressed:bg-nebula aria-pressed:font-semibold aria-pressed:text-on-nebula">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <div data-plan-3d class="hidden">
+                <div data-lounge-viewer data-active-floor="{{ $activeFloorId }}"
+                     class="relative aspect-[16/14] w-full overflow-hidden rounded-2xl border border-line bg-ground">
+                    <p data-lounge-loading class="absolute inset-0 flex items-center justify-center text-xs text-ink-muted">{{ __('lounge-3d-loading') }}</p>
+                </div>
+                <p class="mt-2 text-xs text-ink-muted">{{ __('lounge-3d-hint') }}</p>
+            </div>
+
+            <div class="overflow-x-auto" data-plan-2d>
                 @foreach ($floors as $floor)
                     <div data-floor-panel="{{ $floor->id }}" data-floor-plan="auto"
                          @class(['relative w-full min-w-[560px] aspect-[16/14] rounded-2xl border border-line bg-ground/70 overflow-hidden select-none', 'hidden' => $floor->id !== $activeFloorId])>
@@ -94,6 +114,7 @@
                             data-name="{{ $table->name }}"
                             data-capacity="{{ $table->capacity }}"
                             data-disabled="{{ $disabled ? '1' : '0' }}"
+                            data-status="{{ $status }}"
                             data-rotation="{{ $table->rotation }}"
                             data-base-width="{{ $table->width }}"
                             data-base-height="{{ $table->height }}"
@@ -301,6 +322,8 @@
 @endsection
 
 @push('scripts')
+    <script type="application/json" id="loungeLayoutData">@json($lounge3d)</script>
+    @vite('resources/js/lounge-toggle.js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const buttons = document.querySelectorAll('.js-client-table');
