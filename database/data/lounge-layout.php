@@ -9,7 +9,9 @@
  * table with its seats.
  * Doors are [kind, orientation, centre x, centre y, width]: "h" sits on a wall along x, "v" along y.
  * Fixtures are [type, centre x, centre y, rotation, width, depth, points]. Rotation 0 means the front
- * faces down the plan; a bar counter takes its shape from its corner points.
+ * faces down the plan; a bar counter takes its shape from its corner points. Lights add their
+ * colour and strength (1-10).
+ * Rooms without a mood are "warm".
  *
  * Stairs and restrooms sit in the same place on both floors.
  */
@@ -49,12 +51,12 @@ return [
             ],
             [
                 'name' => $name('Bar', 'Bārs', 'Бар'),
-                'kind' => 'bar', 'color' => 'amber',
+                'kind' => 'bar', 'color' => 'amber', 'mood' => 'bright',
                 'x' => 21, 'y' => 0, 'width' => 9, 'height' => 6.5,
             ],
             [
                 'name' => $name('Game room', 'Spēļu istaba', 'Игровая'),
-                'kind' => 'seating', 'color' => 'rose',
+                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon',
                 'x' => 21, 'y' => 6.5, 'width' => 9, 'height' => 7,
                 'tables' => [
                     ['P1', 4, 23.53, 10.27, 200, 300],
@@ -146,6 +148,17 @@ return [
             ['plant', 5.4, 25.4, 0, 0.7, 0.7, null],
             ['coat_rack', 8, 25.6, 180, 1.2, 0.5, null],
             ['plant', 14.4, 25.4, 0, 0.7, 0.7, null],
+            ['pendant_light', 24.5, 17.4, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 6]],
+            ['pendant_light', 26.5, 17.4, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 6]],
+            ['pendant_light', 9.56, 5.51, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 5]],
+            ['pendant_light', 9.56, 8.4, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 5]],
+            ['floor_lamp', 18.4, 9.9, 0, 0.5, 0.5, null, ['color' => 'violet', 'strength' => 4]],
+            ['floor_lamp', 6.5, 12.6, 0, 0.5, 0.5, null, ['color' => 'violet', 'strength' => 5]],
+            ['floor_lamp', 15.4, 20.6, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 5]],
+            ['neon_strip', 25.5, 13.35, 180, 4, 0.1, null, ['color' => 'violet', 'strength' => 7]],
+            ['led_strip', 25.3, 2, 0, 6, 0.1, null, ['color' => 'amber', 'strength' => 6]],
+            ['floor_lamp', 0.4, 12.5, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['floor_lamp', 5.6, 9.4, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
         ],
     ],
     [
@@ -164,7 +177,7 @@ return [
             ],
             [
                 'name' => $name('Cinema room', 'Kino zāle', 'Кинозал'),
-                'kind' => 'seating', 'color' => 'violet',
+                'kind' => 'seating', 'color' => 'violet', 'mood' => 'cinema',
                 'x' => 6, 'y' => 0, 'width' => 13, 'height' => 10,
                 'tables' => [
                     ['C1', 4, 9.4, 4.21, 400, 200],
@@ -174,7 +187,7 @@ return [
             ],
             [
                 'name' => $name('Karaoke room', 'Karaoke istaba', 'Караоке'),
-                'kind' => 'seating', 'color' => 'rose',
+                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon',
                 'x' => 6, 'y' => 11.5, 'width' => 13, 'height' => 9.5,
                 'tables' => [
                     ['K1', 8, 10.33, 16.55, 600, 300],
@@ -183,7 +196,7 @@ return [
             ],
             [
                 'name' => $name('Upstairs bar', 'Augšstāva bārs', 'Бар на втором этаже'),
-                'kind' => 'bar', 'color' => 'amber',
+                'kind' => 'bar', 'color' => 'amber', 'mood' => 'bright',
                 'x' => 21, 'y' => 0, 'width' => 9, 'height' => 6.5,
                 'tables' => [
                     ['U1', 2, 23.53, 4.06, 200, 200],
@@ -279,6 +292,18 @@ return [
             ['plant', 5.4, 0.6, 0, 0.7, 0.7, null],
             ['plant', 0.6, 25.4, 0, 0.7, 0.7, null],
             ['plant', 6.6, 25.4, 0, 0.7, 0.7, null],
+            ['led_strip', 12.5, 9.8, 180, 8, 0.1, null, ['color' => 'violet', 'strength' => 3]],
+            ['neon_strip', 18.85, 16, 90, 4, 0.1, null, ['color' => 'rose', 'strength' => 8]],
+            ['neon_strip', 12.5, 20.85, 180, 5, 0.1, null, ['color' => 'violet', 'strength' => 7]],
+            ['led_strip', 25.5, 1.65, 0, 6, 0.1, null, ['color' => 'amber', 'strength' => 6]],
+            ['pendant_light', 23.53, 4.06, 0, 0.5, 0.5, null, ['color' => 'white', 'strength' => 5]],
+            ['pendant_light', 27.47, 4.06, 0, 0.5, 0.5, null, ['color' => 'white', 'strength' => 5]],
+            ['pendant_light', 23.25, 9.88, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['pendant_light', 27.75, 9.88, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['pendant_light', 23.25, 17.88, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['pendant_light', 27.75, 17.88, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['floor_lamp', 0.5, 13, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
+            ['floor_lamp', 5.5, 13, 0, 0.5, 0.5, null, ['color' => 'amber', 'strength' => 4]],
         ],
     ],
 ];
