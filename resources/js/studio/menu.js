@@ -3,7 +3,7 @@
 // What is drawn comes from the item's category and from keywords in its English name and
 // description. A random generator seeded with the item name varies the details, so every
 // item looks a little different, and the same item always renders the same way.
-import { CatmullRomCurve3, Euler, Group, TorusGeometry, TubeGeometry, Vector3 } from 'three';
+import { CatmullRomCurve3, CylinderGeometry, Euler, Group, Quaternion, TorusGeometry, TubeGeometry, Vector3 } from 'three';
 import { Batch, COLORS, mix, seededRandom } from '../lounge3d/kit.js';
 
 const TINTS = [
@@ -67,12 +67,24 @@ function hookah(batch, x, z, tint, random, scale = 1) {
     batch.cylinder(`glow:${COLORS.ember}`, 0.045 * s, 0.05 * s, 0.03 * s, x - 0.03 * s, 1.475 * s, z, 5);
     batch.cylinder(`glow:${mix(COLORS.ember, '#ffd27a', 0.5)}`, 0.03 * s, 0.035 * s, 0.03 * s, x + 0.045 * s, 1.475 * s, z + 0.02 * s, 5);
 
-    // Hose: leaves the stem, sags, and comes to rest on the table with a gold mouthpiece.
-    const side = random() > 0.5 ? 1 : -1;
-    const points = [[0.03, 0.6, 0], [0.3, 0.66, 0.06], [0.58, 0.34, 0.2], [0.72, 0.05, 0.38], [0.98, 0.03, 0.52]]
+    // Hose: leaves the stem, sags, and comes to rest on the table top. A hookah that stands
+    // off centre curls its hose towards the middle, so the hose never hangs over the edge.
+    const side = Math.abs(x) > 0.2 ? -Math.sign(x) : (random() > 0.5 ? 1 : -1);
+    const rest = 0.02 * s + 0.002;
+    const points = [[0.03, 0.6, 0], [0.24, 0.66, 0.06], [0.42, 0.36, 0.18], [0.5, rest / s, 0.32], [0.62, rest / s, 0.42]]
         .map(([dx, y, dz]) => new Vector3(x + side * dx * s, y * s, z + dz * s));
-    batch.add(new TubeGeometry(new CatmullRomCurve3(points), 16, 0.02 * s, 5), mix(tint, '#20202c', 0.6), 0, 0, 0);
-    batch.cylinder(COLORS.gold, 0.016 * s, 0.026 * s, 0.18 * s, x + side * 1.04 * s, 0.01, z + 0.55 * s, 5, new Euler(Math.PI / 2, 0, -side * 1.05));
+    const curve = new CatmullRomCurve3(points);
+    batch.add(new TubeGeometry(curve, 20, 0.02 * s, 5), mix(tint, '#20202c', 0.6), 0, 0, 0);
+
+    // The mouthpiece sits on the end of the hose and points the same way.
+    const end = curve.getPointAt(1);
+    const along = curve.getTangentAt(1);
+    along.y = 0;
+    along.normalize();
+    const length = 0.15 * s;
+    const mouthpiece = new CylinderGeometry(0.016 * s, 0.025 * s, length, 6).translate(0, -length / 2, 0);
+    const turn = new Quaternion().setFromUnitVectors(new Vector3(0, -1, 0), along);
+    batch.add(mouthpiece, COLORS.gold, end.x, rest, end.z, new Euler().setFromQuaternion(turn));
 }
 
 function ice(batch, x, y, z, random, count, spread) {
