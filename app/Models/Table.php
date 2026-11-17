@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * pos_x and pos_y are the centre of the table in metres. width and height are the footprint
+ * of the table with its seats, in centimetres. rotation is in degrees.
+ */
 class Table extends Model
 {
     use LogsActivity;

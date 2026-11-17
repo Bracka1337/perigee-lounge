@@ -12,7 +12,7 @@ import {
     WebGLRenderer,
 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { COLORS, PLAN_DEPTH, PLAN_WIDTH, STOREY } from './kit.js';
+import { COLORS, STOREY } from './kit.js';
 import { addLoungeLights, buildLounge } from './scene.js';
 
 export function supportsWebGL() {
@@ -45,7 +45,7 @@ export function createLoungeViewer(container, layout, options = {}) {
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = false;
     controls.minDistance = 9;
-    controls.maxDistance = 75;
+    controls.maxDistance = Math.max(75, Math.max(layout.frame.width, layout.frame.depth) * 3);
     controls.maxPolarAngle = Math.PI * 0.44;
     controls.zoomSpeed = 0.9;
 
@@ -53,7 +53,7 @@ export function createLoungeViewer(container, layout, options = {}) {
 
     // Dark glass under the open floor: the floors below stay visible, but dimmed.
     const dimmer = new Mesh(
-        new PlaneGeometry(PLAN_WIDTH * 4, PLAN_DEPTH * 4),
+        new PlaneGeometry(layout.frame.width * 4 + 40, layout.frame.depth * 4 + 40),
         new MeshBasicMaterial({ color: COLORS.ground, transparent: true, opacity: 0.72, depthWrite: false }),
     );
     dimmer.rotation.x = -Math.PI / 2;
@@ -115,11 +115,12 @@ export function createLoungeViewer(container, layout, options = {}) {
 
     function frameCamera() {
         const aspect = container.clientWidth / Math.max(1, container.clientHeight);
-        // Far enough to see the whole plan, a little further on narrow containers.
-        const distance = 41 * Math.max(1, 1.5 / aspect);
+        // Far enough to see the whole building, a little further on narrow containers.
+        const size = Math.max(layout.frame.width, layout.frame.depth * 1.15);
+        const distance = size * 1.4 * Math.max(1, 1.5 / aspect) + 4;
         const direction = new Vector3(0, 0.82, 0.57).normalize();
 
-        controls.target.set(0, activeFloor.y, 0.6);
+        controls.target.set(0, activeFloor.y, layout.frame.depth * 0.02);
         camera.position.copy(controls.target).addScaledVector(direction, distance);
     }
 
