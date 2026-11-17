@@ -21,7 +21,7 @@ import {
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { addBar, addEntrance, addLamp, addPlant, addScreen, addStairs, addTableSet } from './furniture.js';
-import { Batch, COLORS, PLAN_DEPTH, PLAN_WIDTH, PX, STOREY, mix, planX, planZ, seededRandom } from './kit.js';
+import { Batch, COLORS, STOREY, frameCentre, mix, seededRandom } from './kit.js';
 
 const WALL_HEIGHT = 0.9;
 const WALL_THICKNESS = 0.12;
@@ -57,20 +57,47 @@ export function addLoungeLights(scene, y = 0) {
     return lights;
 }
 
-function roomBox(room) {
-    const x0 = planX(room.x);
-    const z0 = planZ(room.y);
-    const width = (room.width / 100) * PLAN_WIDTH;
-    const depth = (room.height / 100) * PLAN_DEPTH;
+function roomBox(room, centre) {
+    const x0 = room.x - centre.x;
+    const z0 = room.y - centre.z;
+    const width = room.width;
+    const depth = room.height;
 
     return { x0, z0, x1: x0 + width, z1: z0 + depth, cx: x0 + width / 2, cz: z0 + depth / 2, width, depth };
 }
 
-// The wall that faces the middle of the plan gets the doorway.
-function doorSide(room) {
-    const dx = 50 - (room.x + room.width / 2);
-    const dy = 50 - (room.y + room.height / 2);
+// How long a stretch of one side of a room touches another room (0 when they do not touch).
+function sharedEdge(room, other, side) {
+    const near = (a, b) => Math.abs(a - b) < 0.05;
+    const overlap = (a0, a1, b0, b1) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
+    const [rx1, ry1, ox1, oy1] = [room.x + room.width, room.y + room.height, other.x + other.width, other.y + other.height];
 
+    if (side === 'top' && near(room.y, oy1)) return overlap(room.x, rx1, other.x, ox1);
+    if (side === 'bottom' && near(ry1, other.y)) return overlap(room.x, rx1, other.x, ox1);
+    if (side === 'left' && near(room.x, ox1)) return overlap(room.y, ry1, other.y, oy1);
+    if (side === 'right' && near(rx1, other.x)) return overlap(room.y, ry1, other.y, oy1);
+    return 0;
+}
+
+// The doorway goes in the wall that borders a corridor the most. A room without a corridor
+// next to it opens towards the middle of the building.
+function doorSide(room, rooms, centre) {
+    let best = null;
+    let bestLength = 0;
+    for (const side of ['top', 'bottom', 'left', 'right']) {
+        for (const other of rooms) {
+            if (other === room || other.kind !== 'corridor') continue;
+            const length = sharedEdge(room, other, side);
+            if (length > bestLength) {
+                best = side;
+                bestLength = length;
+            }
+        }
+    }
+    if (best) return best;
+
+    const dx = centre.x - (room.x + room.width / 2);
+    const dy = centre.z - (room.y + room.height / 2);
     if (Math.abs(dx) / room.width > Math.abs(dy) / room.height) return dx > 0 ? 'right' : 'left';
     return dy > 0 ? 'bottom' : 'top';
 }
@@ -84,8 +111,9 @@ function addWall(batch, colors, side, box, hasDoor) {
     for (const [from, to] of pieces) {
         const size = to - from;
         const middle = (from + to) / 2;
-        const x = horizontal ? box.cx + middle : (side === 'left' ? box.x0 : box.x1);
-        const z = horizontal ? (side === 'top' ? box.z0 : box.z1) : box.cz + middle;
+        const inset = WALL_THICKNESS / 2;
+        const x = horizontal ? box.cx + middle : (side === 'left' ? box.x0 + inset : box.x1 - inset);
+        const z = horizontal ? (side === 'top' ? box.z0 + inset : box.z1 - inset) : box.cz + middle;
         const [width, depth] = horizontal ? [size, WALL_THICKNESS] : [WALL_THICKNESS, size];
 
         batch.box(colors.wall, width, WALL_HEIGHT, depth, x, 0, z);
@@ -93,15 +121,23 @@ function addWall(batch, colors, side, box, hasDoor) {
     }
 }
 
-function addRoom(batch, room, isTopFloor) {
-    const box = roomBox(room);
+function addRoom(batch, room, rooms, centre, isTopFloor) {
+    const box = roomBox(room, centre);
     const random = seededRandom(`room-${room.name}-${room.x}-${room.y}`);
     const colors = { wall: mix(room.color, COLORS.wall, 0.78), neon: `glow:${room.color}` };
 
     batch.at(0, 0, 0);
+    batch.box(COLORS.slab, box.width, 0.3, box.depth, box.cx, -0.3, box.cz);
+
+    if (room.kind === 'corridor') {
+        // Walkways are open floor: no walls, a darker floor and a faint guide line.
+        batch.box(COLORS.walkway, box.width, 0.03, box.depth, box.cx, 0, box.cz);
+        return;
+    }
+
     batch.box(mix(room.color, COLORS.slab, 0.88), box.width, 0.04, box.depth, box.cx, 0, box.cz);
 
-    const door = doorSide(room);
+    const door = doorSide(room, rooms, centre);
     for (const side of ['top', 'bottom', 'left', 'right']) {
         // The entrance is open to the street, where its door frame stands.
         if (room.kind === 'entrance' && side === 'bottom') continue;
@@ -179,6 +215,8 @@ export function buildLounge(layout, { labels = true } = {}) {
     }
     const pickMaterial = new MeshBasicMaterial({ visible: false });
 
+    const centre = frameCentre(layout.frame);
+
     const floors = layout.floors.map((floor, index) => {
         const group = new Group();
         const labelGroup = new Group();
@@ -190,20 +228,16 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.position.y = y;
 
         const batch = new Batch();
-        batch.at(0, 0, 0);
-        batch.box(COLORS.slab, PLAN_WIDTH + 0.8, 0.3, PLAN_DEPTH + 0.8, 0, -0.3, 0);
-        batch.box(COLORS.walkway, PLAN_WIDTH + 0.2, 0.02, PLAN_DEPTH + 0.2, 0, 0, 0);
-
-        floor.rooms.forEach((room) => addRoom(batch, room, isTopFloor));
+        floor.rooms.forEach((room) => addRoom(batch, room, floor.rooms, centre, isTopFloor));
 
         for (const table of floor.tables) {
             const room = roomsById.get(table.roomId);
-            const width = table.width * PX;
-            const depth = table.height * PX;
+            const width = table.width / 100;
+            const depth = table.height / 100;
             const upright = depth > width;
             const rotation = (-table.rotation * Math.PI) / 180;
-            const x = planX(table.x);
-            const z = planZ(table.y);
+            const x = table.x - centre.x;
+            const z = table.y - centre.z;
 
             batch.at(x, 0.04, z, rotation + (upright ? Math.PI / 2 : 0));
             addTableSet(batch, {
@@ -245,7 +279,7 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.add(...batch.build(), labelGroup);
         root.add(group);
 
-        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room) })) };
+        return { id: floor.id, name: floor.name, index, y, group, labelGroup, picks, rooms: floor.rooms.map((room) => ({ ...room, box: roomBox(room, centre) })) };
     });
 
     // Paints a table's outline. `selected` wins over its own status.

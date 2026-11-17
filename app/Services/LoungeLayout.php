@@ -62,15 +62,29 @@ class LoungeLayout
     }
 
     /**
+     * The rectangle around the building on every floor, so all floors are drawn to one scale.
+     *
+     * @param  Collection<int, Floor>  $floors
+     */
+    public function frame(Collection $floors): PlanFrame
+    {
+        return PlanFrame::around(
+            $floors->flatMap(fn (Floor $floor) => $floor->rooms),
+            $floors->flatMap(fn (Floor $floor) => $floor->tables),
+        );
+    }
+
+    /**
      * The layout as plain data for the 3D view, which builds its scene from the same
      * floors, rooms and tables as the 2D plan. Names are in the current language.
      *
      * @param  Collection<int, Floor>  $floors
-     * @return array{floors: array<int, array<string, mixed>>}
+     * @return array{frame: array{x: float, y: float, width: float, depth: float}, floors: array<int, array<string, mixed>>}
      */
     public function toArray(Collection $floors): array
     {
         return [
+            'frame' => $this->frame($floors)->toArray(),
             'floors' => $floors->values()->map(fn (Floor $floor) => [
                 'id' => $floor->id,
                 'name' => (string) $floor->t('name'),
@@ -78,6 +92,7 @@ class LoungeLayout
                     'id' => $room->id,
                     'name' => (string) $room->t('name'),
                     'kind' => $room->kind->value,
+                    'bookableWhole' => $room->is_bookable_whole,
                     'color' => $room->color->hex(),
                     'x' => $room->x,
                     'y' => $room->y,

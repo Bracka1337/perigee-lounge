@@ -3,7 +3,8 @@
 namespace App\Enums;
 
 /**
- * What a room is used for. Only seating rooms appear in the booking legend.
+ * What a room is used for. Corridors are the walkways between rooms: they have no walls of
+ * their own, so the floor has no gaps. Only rooms with tables appear in the booking legend.
  */
 enum RoomKind: string
 {
@@ -12,6 +13,7 @@ enum RoomKind: string
     case Entrance = 'entrance';
     case Stairs = 'stairs';
     case Service = 'service';
+    case Corridor = 'corridor';
 
     public function labelKey(): string
     {

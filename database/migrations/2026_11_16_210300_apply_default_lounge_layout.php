@@ -24,6 +24,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // The layout file is now in metres. This migration only matters for databases from
+        // before floors existed. The metres migration that follows puts everything right.
         if (! DB::table('tables')->exists()) {
             return;
         }

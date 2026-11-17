@@ -12,10 +12,8 @@ import {
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
-// The 2D plan is 1200 x 1050 reference pixels. One pixel is 2.5 cm, so the plan is 30 m x 26.25 m.
-export const PLAN_WIDTH = 30;
-export const PLAN_DEPTH = 26.25;
-export const PX = 0.025;
+// Everything is in metres. Table footprints come in centimetres. The scene is centred on the
+// middle of the building (the layout's frame), so every floor stacks on the same spot.
 export const STOREY = 3.4;
 
 export const COLORS = {
@@ -38,9 +36,10 @@ export const COLORS = {
     selected: '#b9a5ff',
 };
 
-// Percent of the plan -> metres, with the plan centred on the origin.
-export const planX = (percent) => (percent / 100 - 0.5) * PLAN_WIDTH;
-export const planZ = (percent) => (percent / 100 - 0.5) * PLAN_DEPTH;
+// The middle of the building, used as the scene origin.
+export function frameCentre(frame) {
+    return { x: frame.x + frame.width / 2, z: frame.y + frame.depth / 2 };
+}
 
 export function mix(a, b, amount) {
     return `#${new Color(a).lerp(new Color(b), amount).getHexString()}`;
