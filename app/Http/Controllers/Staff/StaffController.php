@@ -16,7 +16,7 @@ class StaffController extends Controller
 
         $tomorrowReservations = Reservation::whereDate('start_at', $tomorrow->toDateString())
             ->whereIn('status', ReservationStatus::holdingTable())
-            ->with(['table', 'user'])
+            ->with(['table', 'room', 'user'])
             ->orderBy('start_at')
             ->get();
 

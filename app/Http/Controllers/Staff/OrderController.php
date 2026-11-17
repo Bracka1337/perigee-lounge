@@ -26,6 +26,7 @@ use App\Models\Reservation;
 use App\Models\Table;
 use App\Notifications\OrderCompleted;
 use App\Services\LoungeLayout;
+use App\Services\TableHolds;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -71,7 +72,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function create(Request $request, string $locale, LoungeLayout $layout): View
+    public function create(Request $request, string $locale, LoungeLayout $layout, TableHolds $holds): View
     {
         $floors = $layout->floors();
 
@@ -81,10 +82,7 @@ class OrderController extends Controller
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'tables' => $floors->flatMap(fn (Floor $floor) => $floor->tables)->sortBy('id')->values(),
             'menuCategories' => MenuCategory::with('items')->ordered()->get(),
-            'reservedTableIds' => Reservation::whereDate('start_at', Carbon::now()->toDateString())
-                ->whereIn('status', ReservationStatus::holdingTable())
-                ->pluck('table_id')
-                ->toArray(),
+            'reservedTableIds' => $holds->byTable($holds->on(Carbon::now()->toDateString()))->keys()->all(),
             'openOrderTableIds' => Order::active()->pluck('table_id')->toArray(),
         ]);
     }
