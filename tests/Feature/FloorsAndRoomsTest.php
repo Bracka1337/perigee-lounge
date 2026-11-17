@@ -85,8 +85,8 @@ test('an old database ends up in metres with every table kept and inside a room'
     runLayoutMigrations();
 
     expect(Floor::count())->toBe(2)
-        ->and(Room::count())->toBe(25)
-        ->and(Room::where('kind', 'corridor')->count())->toBe(5)
+        ->and(Room::count())->toBe(26)
+        ->and(Room::where('kind', 'corridor')->count())->toBe(6)
         ->and(Table::count())->toBe(40)
         ->and(Table::where('name', 'P2')->exists())->toBeFalse()
         ->and(Table::whereIn('name', array_keys($idsBefore))->pluck('id', 'name')->all())->toBe($idsBefore);
@@ -113,7 +113,7 @@ test('the data migrations leave a database without tables empty', function () {
 test('seeding gives two floors without gaps or overlaps and every table inside its room', function () {
     $this->seed(TableSeeder::class);
 
-    expect(Floor::count())->toBe(2)->and(Room::count())->toBe(25)->and(Table::count())->toBe(40);
+    expect(Floor::count())->toBe(2)->and(Room::count())->toBe(26)->and(Table::count())->toBe(40);
 
     foreach (Floor::with('rooms')->get() as $floor) {
         $rooms = $floor->rooms->values();

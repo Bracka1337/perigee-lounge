@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\DoorKind;
+use App\Enums\FixtureType;
 use App\Enums\RoomColor;
 use App\Enums\RoomKind;
 use App\Models\Floor;
@@ -34,6 +36,13 @@ class FloorPlanRequest extends FormRequest
             'rooms' => is_array($plan) && is_array($plan['rooms'] ?? null) ? $plan['rooms'] : null,
             'tables' => is_array($plan) && is_array($plan['tables'] ?? null) ? $plan['tables'] : null,
         ]);
+
+        // Doors and fixtures are optional: a plan without them leaves them as they are.
+        foreach (['doors', 'fixtures'] as $key) {
+            if (is_array($plan) && array_key_exists($key, $plan)) {
+                $this->merge([$key => $plan[$key]]);
+            }
+        }
     }
 
     /**
@@ -72,6 +81,28 @@ class FloorPlanRequest extends FormRequest
             'tables.*.height' => ['required', 'integer', 'min:40', 'max:2000'],
             'tables.*.rotation' => ['required', 'integer', 'min:0', 'max:359'],
             'tables.*.is_active' => ['required', 'boolean'],
+
+            'doors' => ['sometimes', 'array', 'max:120'],
+            'doors.*' => ['array:id,kind,orientation,x,y,width'],
+            'doors.*.id' => ['nullable', 'integer', 'distinct', Rule::exists('doors', 'id')->where('floor_id', $floorId)],
+            'doors.*.kind' => ['required', Rule::enum(DoorKind::class)],
+            'doors.*.orientation' => ['required', 'in:h,v'],
+            'doors.*.x' => $coordinate,
+            'doors.*.y' => $coordinate,
+            'doors.*.width' => ['required', 'numeric', 'min:0.6', 'max:3'],
+
+            'fixtures' => ['sometimes', 'array', 'max:200'],
+            'fixtures.*' => ['array:id,type,x,y,rotation,width,depth,points'],
+            'fixtures.*.id' => ['nullable', 'integer', 'distinct', Rule::exists('fixtures', 'id')->where('floor_id', $floorId)],
+            'fixtures.*.type' => ['required', Rule::enum(FixtureType::class)],
+            'fixtures.*.x' => $coordinate,
+            'fixtures.*.y' => $coordinate,
+            'fixtures.*.rotation' => ['required', 'integer', 'min:0', 'max:359'],
+            'fixtures.*.width' => ['required', 'numeric', 'min:0.1', 'max:20'],
+            'fixtures.*.depth' => ['required', 'numeric', 'min:0.1', 'max:20'],
+            'fixtures.*.points' => ['nullable', 'array', 'min:2', 'max:8'],
+            'fixtures.*.points.*' => ['array:0,1', 'size:2'],
+            'fixtures.*.points.*.*' => ['required', 'numeric', 'min:-'.self::MAX_COORDINATE, 'max:'.self::MAX_COORDINATE],
         ];
     }
 
@@ -96,6 +127,25 @@ class FloorPlanRequest extends FormRequest
                             $validator->errors()->add("rooms.{$j}", (string) __('admin-plan-rooms-overlap', [
                                 'first' => $a['name']['en'], 'second' => $b['name']['en'],
                             ]));
+                        }
+                    }
+                }
+
+                // A door has to sit on the wall of a room, and a fixture (every corner of a bar
+                // counter) inside one.
+                foreach ($this->doors() ?? [] as $i => $door) {
+                    $onWall = array_filter($rooms, fn (array $room) => $this->onWall($room, $door));
+                    if ($onWall === []) {
+                        $validator->errors()->add("doors.{$i}", (string) __('admin-plan-door-off-wall'));
+                    }
+                }
+
+                foreach ($this->fixtures() ?? [] as $i => $fixture) {
+                    $points = $fixture['points'] ?? null;
+                    foreach ($points === null || $points === [] ? [[$fixture['x'], $fixture['y']]] : $points as $point) {
+                        if (array_filter($rooms, fn (array $room) => $this->contains($room, (float) $point[0], (float) $point[1])) === []) {
+                            $validator->errors()->add("fixtures.{$i}", (string) __('admin-plan-fixture-outside'));
+                            break;
                         }
                     }
                 }
@@ -154,6 +204,10 @@ class FloorPlanRequest extends FormRequest
             'tables.*.name.required' => (string) __('admin-plan-table-name-required'),
             'tables.*.name.regex' => (string) __('admin-plan-table-name-required'),
             'tables.*.name.distinct' => (string) __('admin-plan-table-name-twice'),
+            'doors.*.width.min' => (string) __('admin-plan-door-width'),
+            'doors.*.width.max' => (string) __('admin-plan-door-width'),
+            'fixtures.*.points.min' => (string) __('admin-plan-bar-points'),
+            'fixtures.*.points.max' => (string) __('admin-plan-bar-points'),
         ];
     }
 
@@ -166,6 +220,61 @@ class FloorPlanRequest extends FormRequest
         $rooms = $this->input('rooms', []);
 
         return $rooms;
+    }
+
+    /**
+     * @return array<int, array{id?: int|string|null, name: string, capacity: int|string, x: int|float|string, y: int|float|string, width: int|string, height: int|string, rotation: int|string, is_active: bool|int|string}>
+     */
+    /**
+     * @return array<int, array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}>|null
+     */
+    public function doors(): ?array
+    {
+        if (! $this->has('doors')) {
+            return null;
+        }
+
+        /** @var array<int, array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}> $doors */
+        $doors = $this->input('doors', []);
+
+        return $doors;
+    }
+
+    /**
+     * @return array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>|null
+     */
+    public function fixtures(): ?array
+    {
+        if (! $this->has('fixtures')) {
+            return null;
+        }
+
+        /** @var array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}> $fixtures */
+        $fixtures = $this->input('fixtures', []);
+
+        return $fixtures;
+    }
+
+    /**
+     * Whether a door lies on one of the room's walls, within 15 cm, and fits along it.
+     *
+     * @param  array{x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}  $room
+     * @param  array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}  $door
+     */
+    private function onWall(array $room, array $door): bool
+    {
+        $tolerance = 0.15;
+        [$x, $y, $half] = [(float) $door['x'], (float) $door['y'], (float) $door['width'] / 2];
+        [$left, $top] = [(float) $room['x'], (float) $room['y']];
+        [$right, $bottom] = [$left + (float) $room['width'], $top + (float) $room['height']];
+
+        if ($door['orientation'] === 'h') {
+            return (abs($y - $top) <= $tolerance || abs($y - $bottom) <= $tolerance)
+                && $x - $half >= $left - $tolerance && $x + $half <= $right + $tolerance;
+        }
+
+        return (abs($x - $left) <= $tolerance || abs($x - $right) <= $tolerance)
+            && $y - $half >= $top - $tolerance && $y + $half <= $bottom + $tolerance;
     }
 
     /**

@@ -83,17 +83,17 @@ test('render-lounge stores a picture for every room and table', function () {
     $table = Table::firstOrFail();
 
     $this->artisan('perigee:render-lounge', ['--url' => 'http://lounge.test:8001'])
-        ->expectsOutputToContain('Rendered 65 lounge pictures.')
+        ->expectsOutputToContain('Rendered 66 lounge pictures.')
         ->assertSuccessful();
 
     $disk = Storage::disk('public');
-    expect($disk->files('renders/rooms'))->toHaveCount(25)
+    expect($disk->files('renders/rooms'))->toHaveCount(26)
         ->and($disk->files('renders/tables'))->toHaveCount(40)
         ->and($disk->exists("renders/rooms/{$room->id}.webp"))->toBeTrue()
         ->and($disk->exists("renders/tables/{$table->id}.webp"))->toBeTrue()
         ->and(getimagesizefromstring((string) $disk->get("renders/tables/{$table->id}.webp"))['mime'] ?? null)->toBe('image/webp');
 
-    expect($renderer->shots)->toHaveCount(65)
+    expect($renderer->shots)->toHaveCount(66)
         ->and($renderer->shots[0]['url'])->toStartWith('http://lounge.test:8001/render-studio?')->toContain('scene=room', 'signature=')
         ->and([$renderer->shots[0]['width'], $renderer->shots[0]['height']])->toBe([1200, 800])
         ->and(File::exists(dirname($renderer->shots[0]['path'])))->toBeFalse();
@@ -317,7 +317,7 @@ test('the default set fills records without a picture and replaces nothing', fun
     app()->instance(DefaultRenders::class, $defaults);
 
     // Render everything and export it as the default set, as a developer would.
-    $this->artisan('perigee:render-lounge', ['--export' => true])->expectsOutputToContain('Exported 65 pictures')->assertSuccessful();
+    $this->artisan('perigee:render-lounge', ['--export' => true])->expectsOutputToContain('Exported 66 pictures')->assertSuccessful();
     $this->artisan('perigee:render-menu', ['--export' => true])->expectsOutputToContain('Exported 2 photos')->assertSuccessful();
 
     expect(File::exists($folder.'/tables/vip.webp'))->toBeTrue()
@@ -333,10 +333,10 @@ test('the default set fills records without a picture and replaces nothing', fun
     $kept = app(LoungeRenders::class)->tablePath(Table::where('name', 'T1')->value('id'));
     Storage::disk('public')->put($kept, 'already here');
 
-    expect($defaults->install())->toBe(65);
+    expect($defaults->install())->toBe(66);
 
     expect(Storage::disk('public')->get($kept))->toBe('already here')
-        ->and(Storage::disk('public')->files('renders/rooms'))->toHaveCount(25)
+        ->and(Storage::disk('public')->files('renders/rooms'))->toHaveCount(26)
         ->and(Storage::disk('public')->files('renders/tables'))->toHaveCount(40)
         ->and($item->refresh()->photo_generated)->toBeTrue()
         ->and($item->image_path)->toStartWith('menu/')

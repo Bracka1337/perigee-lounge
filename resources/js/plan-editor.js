@@ -54,26 +54,34 @@ function initEditor(root) {
         }
     }
 
-    const initial = fromDraft() ?? { rooms: data.rooms, tables: data.tables };
+    const initial = fromDraft() ?? { rooms: data.rooms, tables: data.tables, doors: data.doors, fixtures: data.fixtures };
+    const copyPoints = (points) => (Array.isArray(points) && points.length ? points.map((point) => [Number(point[0]), Number(point[1])]) : null);
     let state = {
         rooms: initial.rooms.map((room) => withKey({ is_bookable_whole: false, ...room, name: { en: '', lv: '', ru: '', ...room.name } })),
         tables: initial.tables.map((table) => withKey({ ...table })),
+        doors: (initial.doors ?? []).map((door) => withKey({ ...door })),
+        fixtures: (initial.fixtures ?? []).map((fixture) => withKey({ ...fixture, points: copyPoints(fixture.points) })),
     };
 
     const serialise = (current = state) => ({
         rooms: current.rooms.map(({ id, name, kind, color, is_bookable_whole, x, y, width, height }) => ({ id: id ?? null, name, kind, color, is_bookable_whole, x, y, width, height })),
         tables: current.tables.map(({ id, name, capacity, x, y, width, height, rotation, is_active }) => ({ id: id ?? null, name, capacity, x, y, width, height, rotation, is_active })),
+        doors: current.doors.map(({ id, kind, orientation, x, y, width }) => ({ id: id ?? null, kind, orientation, x, y, width })),
+        fixtures: current.fixtures.map(({ id, type, x, y, rotation, width, depth, points }) => ({ id: id ?? null, type, x, y, rotation, width, depth, points: copyPoints(points) })),
     });
 
-    const savedJson = JSON.stringify(serialise({ rooms: data.rooms.map((room) => ({ is_bookable_whole: false, ...room })), tables: data.tables }));
+    const savedJson = JSON.stringify(serialise({
+        rooms: data.rooms.map((room) => ({ is_bookable_whole: false, ...room })), tables: data.tables, doors: data.doors, fixtures: data.fixtures,
+    }));
     const isDirty = () => JSON.stringify(serialise()) !== savedJson;
 
-    let selected = null; // { type: 'room' | 'table', key }
+    let selected = null; // { type: 'room' | 'table' | 'door' | 'fixture', key }
+    let itemType = null; // the fixture type the Item tool places
     let tool = 'select';
     let undoStack = [];
     let redoStack = [];
 
-    const snapshot = () => JSON.stringify({ rooms: state.rooms, tables: state.tables });
+    const snapshot = () => JSON.stringify(state);
     let lastSnapshot = snapshot();
 
     // Records a finished change, so it can be undone.
@@ -94,9 +102,50 @@ function initEditor(root) {
         changed();
     }
 
-    const find = (selection) => selection && (selection.type === 'room' ? state.rooms : state.tables).find((item) => item.key === selection.key);
+    const collections = { room: 'rooms', table: 'tables', door: 'doors', fixture: 'fixtures' };
+    const find = (selection) => selection && state[collections[selection.type]].find((item) => item.key === selection.key);
     const roomAt = (x, y) => state.rooms.find((room) => x >= room.x && x <= room.x + room.width && y >= room.y && y <= room.y + room.height);
     const tablesIn = (room) => state.tables.filter((table) => roomAt(table.x, table.y) === room);
+    const fixturePoints = (fixture) => fixture.points ?? [[fixture.x, fixture.y]];
+    const fixturesIn = (room) => state.fixtures.filter((fixture) => roomAt(fixturePoints(fixture)[0][0], fixturePoints(fixture)[0][1]) === room);
+
+    // The middle of a bar counter, so it can be moved and labelled as one thing.
+    function centreOf(points) {
+        const xs = points.map((point) => point[0]);
+        const ys = points.map((point) => point[1]);
+        return [round2((Math.min(...xs) + Math.max(...xs)) / 2), round2((Math.min(...ys) + Math.max(...ys)) / 2)];
+    }
+
+    // Whether a door lies on a wall of the room (15 cm tolerance) and fits along it.
+    function onWall(room, door) {
+        const t = 0.15;
+        const half = door.width / 2;
+        if (door.orientation === 'h') {
+            return (Math.abs(door.y - room.y) <= t || Math.abs(door.y - (room.y + room.height)) <= t)
+                && door.x - half >= room.x - t && door.x + half <= room.x + room.width + t;
+        }
+        return (Math.abs(door.x - room.x) <= t || Math.abs(door.x - (room.x + room.width)) <= t)
+            && door.y - half >= room.y - t && door.y + half <= room.y + room.height + t;
+    }
+    const doorsOf = (room) => state.doors.filter((door) => onWall(room, door));
+
+    // The wall nearest to a point, for placing a door: { orientation, line, from, to, distance }.
+    function nearestWall(point) {
+        let best = null;
+        for (const room of state.rooms) {
+            const walls = [
+                { orientation: 'h', line: room.y, from: room.x, to: room.x + room.width, distance: Math.abs(point.y - room.y), along: point.x },
+                { orientation: 'h', line: room.y + room.height, from: room.x, to: room.x + room.width, distance: Math.abs(point.y - room.y - room.height), along: point.x },
+                { orientation: 'v', line: room.x, from: room.y, to: room.y + room.height, distance: Math.abs(point.x - room.x), along: point.y },
+                { orientation: 'v', line: room.x + room.width, from: room.y, to: room.y + room.height, distance: Math.abs(point.x - room.x - room.width), along: point.y },
+            ];
+            for (const wall of walls) {
+                if (wall.along < wall.from - 0.3 || wall.along > wall.to + 0.3) continue;
+                if (!best || wall.distance < best.distance) best = wall;
+            }
+        }
+        return best;
+    }
 
     // --- Camera -----------------------------------------------------------------------------
     const camera = { cx: data.frame.x + data.frame.width / 2, cy: data.frame.y + data.frame.depth / 2, zoom: 20 };
@@ -154,6 +203,18 @@ function initEditor(root) {
                 }
             });
         });
+        state.doors.forEach((door) => {
+            if (!state.rooms.some((room) => onWall(room, door))) {
+                bad.add(door.key);
+                list.push(text.doorOffWall);
+            }
+        });
+        state.fixtures.forEach((fixture) => {
+            if (fixturePoints(fixture).some(([x, y]) => !roomAt(x, y))) {
+                bad.add(fixture.key);
+                list.push(text.fixtureOutside);
+            }
+        });
         state.tables.forEach((table) => {
             if (!roomAt(table.x, table.y)) {
                 bad.add(table.key);
@@ -166,7 +227,7 @@ function initEditor(root) {
     // --- Drawing ----------------------------------------------------------------------------
     element('rect', { class: 'plan-grid-bg', x: -1000, y: -1000, width: 2000, height: 2000 }, svg);
     const layers = {};
-    for (const name of ['grid', 'below', 'rooms', 'tables', 'overlay']) layers[name] = element('g', { 'data-layer': name }, svg);
+    for (const name of ['grid', 'below', 'rooms', 'furnish', 'labels', 'tables', 'overlay']) layers[name] = element('g', { 'data-layer': name }, svg);
 
     function drawGrid(box) {
         layers.grid.replaceChildren();
@@ -200,6 +261,7 @@ function initEditor(root) {
         }
 
         layers.rooms.replaceChildren();
+        layers.labels.replaceChildren();
         // Large rooms first, so small rooms stay on top and reachable.
         for (const room of [...state.rooms].sort((a, b) => b.width * b.height - a.width * a.height)) {
             const color = data.colors[room.color]?.hex ?? '#8A8FB0';
@@ -210,13 +272,45 @@ function initEditor(root) {
             // A label is shown only where it fits, so it never runs into the next room.
             const name = (room.name.en || '…').toUpperCase() + (room.is_bookable_whole ? '  ◆' : '');
             if (room.width * camera.zoom > name.length * 7.5 + 12 && room.height * camera.zoom > 22) {
-                const label = element('text', { x: room.x + 6 * px, y: room.y + 16 * px, 'font-size': 11 * px }, group);
+                // Labels sit in their own layer above doors and items, so nothing covers them.
+                const label = element('text', { x: room.x + 6 * px, y: room.y + 16 * px, 'font-size': 11 * px, class: 'plan-room-label' }, layers.labels);
+                label.style.setProperty('--room', color);
                 label.textContent = name;
             }
             if (isSelected && room.width * camera.zoom > 70 && room.height * camera.zoom > 40) {
                 const size = element('text', { x: room.x + room.width - 6 * px, y: room.y + room.height - 6 * px, 'font-size': 10 * px, 'text-anchor': 'end', class: 'plan-size' }, group);
                 size.textContent = `${round2(room.width)} × ${round2(room.height)} m`;
             }
+        }
+
+        layers.furnish.replaceChildren();
+        for (const fixture of state.fixtures) {
+            const meta = data.fixtureTypes[fixture.type] ?? { group: 'decor', label: fixture.type };
+            const isSelected = selected?.type === 'fixture' && selected.key === fixture.key;
+            const classes = `plan-item plan-fixture--${meta.group}${isSelected ? ' is-selected' : ''}${bad.has(fixture.key) ? ' is-invalid' : ''}`;
+            if (fixture.points) {
+                const group = element('g', { 'data-fixture': fixture.key, class: classes }, layers.furnish);
+                element('polyline', { points: fixture.points.map((point) => point.join(',')).join(' '), class: 'plan-bar-line', 'stroke-width': Math.max(fixture.depth, 0.3) }, group);
+                element('polyline', { points: fixture.points.map((point) => point.join(',')).join(' '), class: 'plan-bar-hit', 'stroke-width': Math.max(fixture.depth, 0.3) + 12 * px }, group);
+                continue;
+            }
+            const group = element('g', { 'data-fixture': fixture.key, transform: `translate(${fixture.x} ${fixture.y}) rotate(${fixture.rotation})`, class: classes }, layers.furnish);
+            element('rect', { x: -fixture.width / 2, y: -fixture.depth / 2, width: fixture.width, height: fixture.depth, rx: 0.04 }, group);
+            // The front edge, so it is clear which way a screen or a booth faces.
+            element('line', { x1: -fixture.width * 0.4, y1: fixture.depth / 2, x2: fixture.width * 0.4, y2: fixture.depth / 2, class: 'plan-item-front' }, group);
+            if (fixture.width * camera.zoom > 46) {
+                const label = element('text', { x: 0, y: 0, 'font-size': 9 * px, 'text-anchor': 'middle', 'dominant-baseline': 'central', transform: `rotate(${-fixture.rotation})` }, group);
+                label.textContent = meta.label;
+            }
+        }
+        for (const door of state.doors) {
+            const isSelected = selected?.type === 'door' && selected.key === door.key;
+            const half = door.width / 2;
+            const [x1, y1, x2, y2] = door.orientation === 'h' ? [door.x - half, door.y, door.x + half, door.y] : [door.x, door.y - half, door.x, door.y + half];
+            const group = element('g', { 'data-door': door.key, class: `plan-door-item${isSelected ? ' is-selected' : ''}${bad.has(door.key) ? ' is-invalid' : ''}` }, layers.furnish);
+            element('line', { x1, y1, x2, y2, class: 'plan-door-gap' }, group);
+            element('line', { x1, y1, x2, y2, class: `plan-door plan-door--${door.kind}` }, group);
+            element('line', { x1, y1, x2, y2, class: 'plan-door-hit', 'stroke-width': 14 * px }, group);
         }
 
         layers.tables.replaceChildren();
@@ -255,6 +349,21 @@ function initEditor(root) {
 
         const item = find(selected);
         if (!item) return;
+
+        if (selected.type === 'door') return;
+
+        if (selected.type === 'fixture') {
+            if (item.points) {
+                item.points.forEach(([x, y], index) => {
+                    element('circle', { cx: x, cy: y, r: size / 1.4, class: 'plan-handle', 'data-handle': `point-${index}` }, layers.overlay);
+                });
+                return;
+            }
+            const group = element('g', { transform: `translate(${item.x} ${item.y}) rotate(${item.rotation})` }, layers.overlay);
+            element('line', { x1: 0, y1: -item.depth / 2, x2: 0, y2: -item.depth / 2 - 18 * px, class: 'plan-guide' }, group);
+            element('circle', { cx: 0, cy: -item.depth / 2 - 18 * px, r: size / 1.6, class: 'plan-handle plan-handle--rotate', 'data-handle': 'rotate' }, group);
+            return;
+        }
 
         if (selected.type === 'room') {
             const handles = { nw: [0, 0], n: [0.5, 0], ne: [1, 0], e: [1, 0.5], se: [1, 1], s: [0.5, 1], sw: [0, 1], w: [0, 0.5] };
@@ -309,6 +418,8 @@ function initEditor(root) {
         const handle = event.target.closest('[data-handle]')?.dataset.handle;
         const tableKey = event.target.closest('[data-table]')?.dataset.table;
         const roomKey = event.target.closest('[data-room]')?.dataset.room;
+        const doorKey = event.target.closest('[data-door]')?.dataset.door;
+        const fixtureKey = event.target.closest('[data-fixture]')?.dataset.fixture;
 
         if (event.button === 1 || spaceHeld) {
             drag = { type: 'pan', start: { x: event.clientX, y: event.clientY }, camera: { ...camera } };
@@ -322,14 +433,34 @@ function initEditor(root) {
             return;
         }
 
-        if (tool === 'table') {
+        if (tool === 'table' || tool === 'door' || tool === 'item') {
             drag = { type: 'place', point };
+            return;
+        }
+
+        if (handle?.startsWith('point-')) {
+            const item = find(selected);
+            drag = { type: 'bar-point', item, index: Number(handle.slice(6)) };
             return;
         }
 
         if (handle) {
             const item = find(selected);
             drag = { type: handle === 'rotate' ? 'rotate' : handle === 'table-size' ? 'table-size' : 'resize', handle, item, origin: { ...item }, point };
+            return;
+        }
+
+        if (doorKey) {
+            select({ type: 'door', key: doorKey });
+            const item = find(selected);
+            drag = { type: 'move-door', item, origin: { ...item }, point };
+            return;
+        }
+
+        if (fixtureKey) {
+            select({ type: 'fixture', key: fixtureKey });
+            const item = find(selected);
+            drag = { type: 'move-fixture', item, origin: { ...item, points: copyPoints(item.points) }, point };
             return;
         }
 
@@ -343,9 +474,10 @@ function initEditor(root) {
         if (roomKey) {
             select({ type: 'room', key: roomKey });
             const item = find(selected);
-            // The tables inside a room move with it.
+            // The tables, fixtures and doors of a room move with it.
             drag = { type: 'move-room', item, origin: { ...item }, point, moved: false,
-                tables: tablesIn(item).map((table) => ({ table, x: table.x, y: table.y })) };
+                tables: [...tablesIn(item), ...doorsOf(item)].map((thing) => ({ table: thing, x: thing.x, y: thing.y })),
+                fixtures: fixturesIn(item).map((fixture) => ({ fixture, x: fixture.x, y: fixture.y, points: copyPoints(fixture.points) })) };
             return;
         }
 
@@ -391,6 +523,11 @@ function initEditor(root) {
                 entry.table.x = round2(entry.x + x - origin.x);
                 entry.table.y = round2(entry.y + y - origin.y);
             }
+            for (const entry of drag.fixtures) {
+                entry.fixture.x = round2(entry.x + x - origin.x);
+                entry.fixture.y = round2(entry.y + y - origin.y);
+                if (entry.points) entry.fixture.points = entry.points.map(([px2, py2]) => [round2(px2 + x - origin.x), round2(py2 + y - origin.y)]);
+            }
             drag.moved = true;
         }
 
@@ -419,6 +556,39 @@ function initEditor(root) {
             drag.item.x = snapTo(drag.origin.x + point.x - drag.point.x, TABLE_GRID);
             drag.item.y = snapTo(drag.origin.y + point.y - drag.point.y, TABLE_GRID);
             drag.moved = true;
+        }
+
+        if (drag.type === 'move-door') {
+            // A door slides along its wall, or jumps to another wall when dragged onto one.
+            const wall = nearestWall(point);
+            const item = drag.item;
+            if (wall && wall.distance < 0.6) {
+                const along = clamp(snapTo(wall.along, TABLE_GRID), wall.from + item.width / 2, wall.to - item.width / 2);
+                item.orientation = wall.orientation;
+                if (wall.orientation === 'h') Object.assign(item, { x: along, y: round2(wall.line) });
+                else Object.assign(item, { x: round2(wall.line), y: along });
+            }
+        }
+
+        if (drag.type === 'move-fixture') {
+            const dx = snapTo(point.x - drag.point.x, TABLE_GRID);
+            const dy = snapTo(point.y - drag.point.y, TABLE_GRID);
+            drag.item.x = round2(drag.origin.x + dx);
+            drag.item.y = round2(drag.origin.y + dy);
+            if (drag.origin.points) drag.item.points = drag.origin.points.map(([px2, py2]) => [round2(px2 + dx), round2(py2 + dy)]);
+        }
+
+        if (drag.type === 'bar-point') {
+            // Corners snap to the grid, and to straight lines with the neighbouring corners.
+            let x = snapTo(point.x, TABLE_GRID * 2);
+            let y = snapTo(point.y, TABLE_GRID * 2);
+            for (const neighbour of [drag.item.points[drag.index - 1], drag.item.points[drag.index + 1]]) {
+                if (!neighbour) continue;
+                if (Math.abs(x - neighbour[0]) * camera.zoom < SNAP_PX) x = neighbour[0];
+                if (Math.abs(y - neighbour[1]) * camera.zoom < SNAP_PX) y = neighbour[1];
+            }
+            drag.item.points[drag.index] = [x, y];
+            [drag.item.x, drag.item.y] = centreOf(drag.item.points);
         }
 
         if (drag.type === 'rotate') {
@@ -454,7 +624,10 @@ function initEditor(root) {
             if (room.width >= MIN_ROOM && room.height >= MIN_ROOM) addRoom(room);
             setTool('select');
         } else if (finished.type === 'place') {
-            addTable(toWorld(event));
+            const point = toWorld(event);
+            if (tool === 'table') addTable(point);
+            if (tool === 'door') addDoor(point);
+            if (tool === 'item' && itemType) addFixture(point, itemType);
             setTool('select');
         } else if (finished.type !== 'pan') {
             commit();
@@ -492,10 +665,37 @@ function initEditor(root) {
         fillInspector();
     }
 
+    function addDoor(point) {
+        const wall = nearestWall(point);
+        if (!wall || wall.distance > 1) return;
+        const width = Math.min(data.doorKinds.single.width, wall.to - wall.from - 0.2);
+        const along = clamp(snapTo(wall.along, TABLE_GRID), wall.from + width / 2, wall.to - width / 2);
+        const door = withKey({ id: null, kind: 'single', orientation: wall.orientation, width,
+            x: wall.orientation === 'h' ? along : round2(wall.line), y: wall.orientation === 'h' ? round2(wall.line) : along });
+        state.doors.push(door);
+        selected = { type: 'door', key: door.key };
+        commit();
+    }
+
+    function addFixture(point, type) {
+        const meta = data.fixtureTypes[type];
+        const x = snapTo(point.x, TABLE_GRID);
+        const y = snapTo(point.y, TABLE_GRID);
+        // A new bar counter starts as an L, which can then be reshaped by its corners.
+        const points = type === 'bar_counter' ? [[round2(x - 2), round2(y - 1)], [round2(x + 1.5), round2(y - 1)], [round2(x + 1.5), round2(y + 1)]] : null;
+        const fixture = withKey({ id: null, type, x, y, rotation: 0, width: meta.size[0], depth: meta.size[1], points });
+        if (points) [fixture.x, fixture.y] = centreOf(points);
+        state.fixtures.push(fixture);
+        selected = { type: 'fixture', key: fixture.key };
+        commit();
+    }
+
     function removeSelected() {
         const item = find(selected);
         if (!item) return;
-        if (selected.type === 'room') {
+        if (selected.type === 'door' || selected.type === 'fixture') {
+            state[collections[selected.type]] = state[collections[selected.type]].filter((thing) => thing !== item);
+        } else if (selected.type === 'room') {
             if (tablesIn(item).length) return;
             state.rooms = state.rooms.filter((room) => room !== item);
         } else {
@@ -559,6 +759,46 @@ function initEditor(root) {
         render();
     }
 
+    // The Item tool: a palette of every fixture type, grouped as on the plan.
+    const palette = root.querySelector('[data-item-palette]');
+    const itemButton = root.querySelector('[data-tool="item"]');
+    for (const [group, groupLabel] of Object.entries(data.fixtureGroups)) {
+        const section = document.createElement('div');
+        const heading = document.createElement('p');
+        heading.className = 'mb-1 text-xs text-ink-muted';
+        heading.textContent = groupLabel;
+        const list = document.createElement('div');
+        list.className = 'flex flex-wrap gap-1';
+        for (const [type, meta] of Object.entries(data.fixtureTypes)) {
+            if (meta.group !== group) continue;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.dataset.itemType = type;
+            button.className = 'min-h-10 rounded-full border border-line px-3 text-xs text-ink-soft hover:border-nebula hover:text-ink';
+            button.textContent = meta.label;
+            list.append(button);
+        }
+        section.append(heading, list);
+        palette.append(section);
+    }
+
+    function closePalette() {
+        palette.classList.add('hidden');
+        itemButton.setAttribute('aria-expanded', 'false');
+    }
+
+    palette.addEventListener('click', (event) => {
+        const type = event.target.closest('[data-item-type]')?.dataset.itemType;
+        if (!type) return;
+        itemType = type;
+        closePalette();
+        setTool('item');
+        root.querySelector('[data-item-label]').textContent = data.fixtureTypes[type].label;
+    });
+
+    const doorKind = root.querySelector('[data-door-field="kind"]');
+    for (const [value, meta] of Object.entries(data.doorKinds)) doorKind.append(new Option(meta.label, value));
+
     function fillInspector() {
         const item = find(selected);
         for (const [name, panel] of Object.entries(panels)) panel.classList.toggle('hidden', name !== (item ? selected.type : 'none'));
@@ -578,15 +818,29 @@ function initEditor(root) {
             return;
         }
 
-        const fields = root.querySelectorAll(selected.type === 'room' ? '[data-room-field]' : '[data-table-field]');
+        const fields = root.querySelectorAll(`[data-${selected.type}-field]`);
         for (const field of fields) {
             // Never overwrite text the admin is typing; checkboxes always show the current value.
             if (field === document.activeElement && field.type !== 'checkbox') continue;
-            const path = (field.dataset.roomField ?? field.dataset.tableField).split('.');
+            const path = (field.dataset.roomField ?? field.dataset.tableField ?? field.dataset.doorField ?? field.dataset.fixtureField).split('.');
             const value = path.reduce((current, key) => current?.[key], item);
             if (field.type === 'checkbox') field.checked = Boolean(value);
             else field.value = value ?? '';
         }
+
+        if (selected.type === 'fixture') {
+            const isBar = Boolean(item.points);
+            root.querySelector('[data-fixture-title]').textContent = data.fixtureTypes[item.type]?.label ?? item.type;
+            root.querySelector('[data-fixture-size]').classList.toggle('hidden', isBar);
+            root.querySelector('[data-bar-section]').classList.toggle('hidden', !isBar);
+            if (isBar) {
+                root.querySelector('[data-bar-corners]').textContent = text.corners.replace('__COUNT__', item.points.length);
+                root.querySelector('[data-action="bar-add"]').disabled = item.points.length >= 8;
+                root.querySelector('[data-action="bar-remove"]').disabled = item.points.length <= 2;
+            }
+            return;
+        }
+        if (selected.type === 'door') return;
 
         if (selected.type === 'room') {
             swatches.querySelectorAll('input').forEach((input) => { input.checked = input.value === item.color; });
@@ -639,11 +893,11 @@ function initEditor(root) {
     }
 
     // Inspector edits: live while typing, recorded for undo when the field is left.
-    root.querySelectorAll('[data-room-field], [data-table-field]').forEach((field) => {
+    root.querySelectorAll('[data-room-field], [data-table-field], [data-door-field], [data-fixture-field]').forEach((field) => {
         const apply = () => {
             const item = find(selected);
             if (!item) return;
-            const path = (field.dataset.roomField ?? field.dataset.tableField).split('.');
+            const path = (field.dataset.roomField ?? field.dataset.tableField ?? field.dataset.doorField ?? field.dataset.fixtureField).split('.');
             let value = field.type === 'checkbox' ? field.checked : field.value;
             if (field.type === 'number') {
                 value = Number(value);
@@ -670,9 +924,40 @@ function initEditor(root) {
         render();
     });
 
-    root.querySelectorAll('[data-tool]').forEach((button) => button.addEventListener('click', () => setTool(button.dataset.tool)));
+    root.querySelectorAll('[data-tool]').forEach((button) => button.addEventListener('click', () => {
+        if (button.dataset.tool === 'item') {
+            const open = palette.classList.toggle('hidden') === false;
+            itemButton.setAttribute('aria-expanded', String(open));
+            return;
+        }
+        closePalette();
+        setTool(button.dataset.tool);
+    }));
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('[data-item-palette], [data-tool="item"]')) closePalette();
+    });
     root.querySelectorAll('[data-action="deselect"]').forEach((button) => button.addEventListener('click', () => select(null)));
     root.querySelector('[data-action="delete-room"]').addEventListener('click', removeSelected);
+    root.querySelectorAll('[data-action="delete-selected"]').forEach((button) => button.addEventListener('click', removeSelected));
+
+    // A bar counter grows by one straight piece, turning a right angle at its last corner.
+    root.querySelector('[data-action="bar-add"]').addEventListener('click', () => {
+        const item = find(selected);
+        if (!item?.points || item.points.length >= 8) return;
+        const [a, b] = item.points.slice(-2);
+        const [dx, dy] = [b[0] - a[0], b[1] - a[1]];
+        const length = Math.hypot(dx, dy) || 1;
+        item.points.push([round2(b[0] - (dy / length) * 1.5), round2(b[1] + (dx / length) * 1.5)]);
+        [item.x, item.y] = centreOf(item.points);
+        commit();
+    });
+    root.querySelector('[data-action="bar-remove"]').addEventListener('click', () => {
+        const item = find(selected);
+        if (!item?.points || item.points.length <= 2) return;
+        item.points.pop();
+        [item.x, item.y] = centreOf(item.points);
+        commit();
+    });
     root.querySelector('[data-action="delete-table"]').addEventListener('click', (event) => {
         event.currentTarget.classList.add('hidden');
         const yes = root.querySelector('[data-delete-table-yes]');
@@ -766,14 +1051,20 @@ function initEditor(root) {
             select(null);
         } else if (event.key === 'Delete' || event.key === 'Backspace') {
             removeSelected();
-        } else if (['v', 'r', 't'].includes(event.key.toLowerCase()) && !mod) {
-            setTool({ v: 'select', r: 'room', t: 'table' }[event.key.toLowerCase()]);
+        } else if (['v', 'r', 't', 'd'].includes(event.key.toLowerCase()) && !mod) {
+            setTool({ v: 'select', r: 'room', t: 'table', d: 'door' }[event.key.toLowerCase()]);
+        } else if (event.key.toLowerCase() === 'i' && !mod) {
+            itemButton.click();
         } else if (event.key.startsWith('Arrow') && selected) {
             const item = find(selected);
             const step = event.shiftKey ? 1 : (selected.type === 'room' ? GRID : TABLE_GRID);
             const [dx, dy] = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[event.key];
-            const moving = selected.type === 'room' ? [item, ...tablesIn(item)] : [item];
-            moving.forEach((thing) => { thing.x = round2(thing.x + dx); thing.y = round2(thing.y + dy); });
+            const moving = selected.type === 'room' ? [item, ...tablesIn(item), ...doorsOf(item), ...fixturesIn(item)] : [item];
+            moving.forEach((thing) => {
+                thing.x = round2(thing.x + dx);
+                thing.y = round2(thing.y + dy);
+                if (thing.points) thing.points = thing.points.map(([px2, py2]) => [round2(px2 + dx), round2(py2 + dy)]);
+            });
             commit();
             event.preventDefault();
         }
@@ -804,7 +1095,9 @@ function initEditor(root) {
                 x: table.x, y: table.y, width: table.width, height: table.height, rotation: table.rotation, active: table.is_active, status: 'free',
             };
         });
-        const floors = base.floors.map((floor) => (floor.id === data.floor.id ? { ...floor, rooms, tables } : floor));
+        const doors = state.doors.map(({ kind, orientation, x, y, width }) => ({ kind, orientation, x, y, width }));
+        const fixtures = state.fixtures.map(({ type, x, y, rotation, width, depth, points }) => ({ type, x, y, rotation, width, depth, points }));
+        const floors = base.floors.map((floor) => (floor.id === data.floor.id ? { ...floor, rooms, tables, doors, fixtures } : floor));
         const all = floors.flatMap((floor) => floor.rooms);
         const minX = Math.min(...all.map((room) => room.x), base.frame.x);
         const minY = Math.min(...all.map((room) => room.y), base.frame.y);

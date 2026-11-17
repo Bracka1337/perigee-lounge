@@ -21,6 +21,7 @@ import {
 } from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { addBar, addEntrance, addLamp, addPlant, addScreen, addStairs, addTableSet } from './furniture.js';
+import { addFixture } from './fixtures.js';
 import { Batch, COLORS, STOREY, frameCentre, mix, seededRandom } from './kit.js';
 
 const WALL_HEIGHT = 0.9;
@@ -102,13 +103,23 @@ function doorSide(room, rooms, centre) {
     return dy > 0 ? 'bottom' : 'top';
 }
 
-function addWall(batch, colors, side, box, hasDoor) {
+// Splits a wall around its openings. Openings are [from, to] along the wall, measured from its middle.
+function wallPieces(length, openings) {
+    const pieces = [];
+    let start = -length / 2;
+    for (const [from, to] of [...openings].sort((a, b) => a[0] - b[0])) {
+        if (from - start > 0.05) pieces.push([start, Math.max(start, from)]);
+        start = Math.max(start, to);
+    }
+    if (length / 2 - start > 0.05) pieces.push([start, length / 2]);
+    return pieces;
+}
+
+function addWall(batch, colors, side, box, openings) {
     const horizontal = side === 'top' || side === 'bottom';
     const length = horizontal ? box.width : box.depth;
-    const gap = hasDoor ? Math.min(1.8, length * 0.5) : 0;
-    const pieces = hasDoor ? [[-length / 2, -gap / 2], [gap / 2, length / 2]] : [[-length / 2, length / 2]];
 
-    for (const [from, to] of pieces) {
+    for (const [from, to] of wallPieces(length, openings)) {
         const size = to - from;
         const middle = (from + to) / 2;
         const inset = WALL_THICKNESS / 2;
@@ -121,7 +132,41 @@ function addWall(batch, colors, side, box, hasDoor) {
     }
 }
 
-function addRoom(batch, room, rooms, centre, isTopFloor) {
+// The openings that the floor's doors cut into one side of a room.
+function openingsFor(side, room, doors) {
+    const horizontal = side === 'top' || side === 'bottom';
+    const line = { top: room.y, bottom: room.y + room.height, left: room.x, right: room.x + room.width }[side];
+    const middle = horizontal ? room.x + room.width / 2 : room.y + room.height / 2;
+
+    return doors
+        .filter((door) => door.orientation === (horizontal ? 'h' : 'v') && Math.abs((horizontal ? door.y : door.x) - line) < 0.15)
+        .map((door) => {
+            const along = (horizontal ? door.x : door.y) - middle;
+            return [along - door.width / 2, along + door.width / 2];
+        });
+}
+
+function addDoor(batch, door, centre) {
+    if (door.kind === 'opening') return;
+
+    const horizontal = door.orientation === 'h';
+    const x = door.x - centre.x;
+    const z = door.y - centre.z;
+    const half = door.width / 2;
+    const ends = horizontal ? [[x - half, z], [x + half, z]] : [[x, z - half], [x, z + half]];
+
+    batch.at(0, 0, 0);
+    for (const [px, pz] of ends) batch.box(COLORS.metal, 0.09, 1.05, 0.09, px, 0, pz);
+    // A lit threshold shows where the way through is, from any angle.
+    const [w, d] = horizontal ? [door.width, 0.12] : [0.12, door.width];
+    batch.box(`glow:${COLORS.violet}`, w, 0.03, d, x, 0.03, z);
+    if (door.kind === 'sliding') {
+        const [gw, gd] = horizontal ? [door.width * 0.5, 0.04] : [0.04, door.width * 0.5];
+        batch.box('glass:#bfe6f2', gw, 0.95, gd, horizontal ? x - door.width * 0.25 : x, 0.05, horizontal ? z : z - door.width * 0.25);
+    }
+}
+
+function addRoom(batch, room, rooms, centre, isTopFloor, doors = null, furnished = false) {
     const box = roomBox(room, centre);
     const random = seededRandom(`room-${room.name}-${room.x}-${room.y}`);
     const colors = { wall: mix(room.color, COLORS.wall, 0.78), neon: `glow:${room.color}` };
@@ -137,16 +182,26 @@ function addRoom(batch, room, rooms, centre, isTopFloor) {
 
     batch.box(mix(room.color, COLORS.slab, 0.88), box.width, 0.04, box.depth, box.cx, 0, box.cz);
 
-    const door = doorSide(room, rooms, centre);
+    // Walls open where the floor's doors are. A floor drawn before doors existed gets one
+    // doorway towards its corridor, so no room is ever closed off.
+    const guessed = doors && doors.length ? null : doorSide(room, rooms, centre);
     for (const side of ['top', 'bottom', 'left', 'right']) {
-        // The entrance is open to the street, where its door frame stands.
-        if (room.kind === 'entrance' && side === 'bottom') continue;
-        addWall(batch, colors, side, box, side === door);
+        if (guessed !== null) {
+            if (room.kind === 'entrance' && side === 'bottom') continue;
+            const length = side === 'top' || side === 'bottom' ? room.width : room.height;
+            const gap = Math.min(1.8, length * 0.5);
+            addWall(batch, colors, side, box, side === guessed ? [[-gap / 2, gap / 2]] : []);
+        } else {
+            addWall(batch, colors, side, box, openingsFor(side, room, doors));
+        }
     }
 
-    if (room.kind === 'bar') addBar(batch, box, random);
     if (room.kind === 'stairs') addStairs(batch, box, isTopFloor);
     if (room.kind === 'entrance') addEntrance(batch, box);
+
+    // Floors with fixtures show exactly what was placed. Older floors get the automatic props.
+    if (furnished) return;
+    if (room.kind === 'bar') addBar(batch, box, random);
 
     // Rooms built around a screen get one on their back wall, whatever language they are named in.
     if (/cinema|kino|кино|karaoke|караоке|game|spēļu|игров/i.test(room.name)) addScreen(batch, box, room.color);
@@ -228,7 +283,11 @@ export function buildLounge(layout, { labels = true } = {}) {
         group.position.y = y;
 
         const batch = new Batch();
-        floor.rooms.forEach((room) => addRoom(batch, room, floor.rooms, centre, isTopFloor));
+        const doors = floor.doors ?? [];
+        const fixtures = floor.fixtures ?? [];
+        floor.rooms.forEach((room) => addRoom(batch, room, floor.rooms, centre, isTopFloor, doors, fixtures.length > 0));
+        doors.forEach((door) => addDoor(batch, door, centre));
+        fixtures.forEach((fixture) => addFixture(batch, fixture, centre, seededRandom(`fixture-${fixture.type}-${fixture.x}-${fixture.y}`)));
 
         for (const table of floor.tables) {
             const room = roomsById.get(table.roomId);
