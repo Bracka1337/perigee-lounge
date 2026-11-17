@@ -14,6 +14,7 @@ use App\Models\Floor;
 use App\Models\Order;
 use App\Models\Reservation;
 use App\Services\LoungeLayout;
+use App\Services\TableHolds;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends Controller
 {
-    public function index(Request $request, string $locale, LoungeLayout $layout): View
+    public function index(Request $request, string $locale, LoungeLayout $layout, TableHolds $holds): View
     {
         $selectedDate = $this->dateFilter($request);
         $floors = $layout->floors();
@@ -39,12 +40,13 @@ class ReservationController extends Controller
             'date' => $selectedDate,
             'floors' => $floors,
             'frame' => $layout->frame($floors),
+            'roomBooking' => $holds->roomsOn($floors, $selectedDate->toDateString()),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'reservationsForDay' => Reservation::whereDate('start_at', $selectedDate->toDateString())
                 ->whereIn('status', ReservationStatus::holdingTable())
                 ->get()
                 ->groupBy('table_id'),
-            'reservations' => Reservation::with('table')
+            'reservations' => Reservation::with(['table', 'room.tables'])
                 ->whereDate('start_at', $selectedDate->toDateString())
                 ->orderBy('start_at')
                 ->get(),
