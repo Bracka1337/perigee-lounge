@@ -68,6 +68,14 @@ final class PlanFrame
     }
 
     /**
+     * The SVG viewBox of the plan, in metres.
+     */
+    public function viewBox(): string
+    {
+        return implode(' ', array_map($this->number(...), [$this->x, $this->y, $this->width, $this->depth]));
+    }
+
+    /**
      * Inline CSS that places a room on the plan.
      */
     public function roomStyle(Room $room): string
