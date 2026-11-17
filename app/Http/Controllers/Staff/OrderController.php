@@ -79,6 +79,7 @@ class OrderController extends Controller
         return view('staff.orders.create', [
             'floors' => $floors,
             'frame' => $layout->frame($floors),
+            'lounge3d' => $layout->toArray($floors),
             'activeFloorId' => $layout->activeFloorId($floors, $request->query('floor'), $request->old('table_id')),
             'tables' => $floors->flatMap(fn (Floor $floor) => $floor->tables)->sortBy('id')->values(),
             'menuCategories' => MenuCategory::with('items')->ordered()->get(),

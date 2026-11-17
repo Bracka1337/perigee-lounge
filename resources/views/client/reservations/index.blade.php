@@ -62,24 +62,10 @@
             <div class="flex flex-wrap items-start justify-between gap-x-3">
                 <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
 
-                {{-- 2D is the default. The 3D view is offered on large screens with WebGL (see lounge-toggle.js). --}}
-                <div data-view-toggle class="mb-3 hidden rounded-full border border-line p-0.5" role="group" aria-label="{{ __('lounge-view-toggle-label') }}">
-                    @foreach (['2d' => __('lounge-view-2d'), '3d' => __('lounge-view-3d')] as $view => $label)
-                        <button type="button" data-view="{{ $view }}" aria-pressed="{{ $view === '2d' ? 'true' : 'false' }}"
-                                class="min-h-11 min-w-12 rounded-full px-3 text-xs text-ink-muted transition hover:text-ink aria-pressed:bg-nebula aria-pressed:font-semibold aria-pressed:text-on-nebula">
-                            {{ $label }}
-                        </button>
-                    @endforeach
-                </div>
+                <x-floor-plan.view-switch table-selector=".js-client-table" input="client_table_id" />
             </div>
 
-            <div data-plan-3d class="hidden">
-                <div data-lounge-viewer data-active-floor="{{ $activeFloorId }}" data-label-day="{{ __('lounge-3d-day') }}" data-label-evening="{{ __('lounge-3d-evening') }}"
-                     class="relative aspect-[16/14] w-full overflow-hidden rounded-2xl border border-line bg-ground">
-                    <p data-lounge-loading class="absolute inset-0 flex items-center justify-center text-xs text-ink-muted">{{ __('lounge-3d-loading') }}</p>
-                </div>
-                <p class="mt-2 text-xs text-ink-muted">{{ __('lounge-3d-hint') }}</p>
-            </div>
+            <x-floor-plan.viewer :active="$activeFloorId" :layout="$lounge3d" />
 
             <div class="overflow-x-auto" data-plan-2d>
                 @foreach ($floors as $floor)
@@ -173,6 +159,10 @@
                             <dd class="text-ink-soft" data-panel-row="{{ $field }}" data-panel-value="{{ $field }}"></dd>
                         @endforeach
                     </dl>
+                    <button type="button" data-panel-book
+                            class="mt-1 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-nebula px-4 text-xs font-semibold text-on-nebula transition hover:bg-ink">
+                        {{ __('client-reservations-panel-book') }}
+                    </button>
                 </div>
             </div>
 
@@ -340,7 +330,6 @@
 @endsection
 
 @push('scripts')
-    <script type="application/json" id="loungeLayoutData">@json($lounge3d)</script>
     @vite('resources/js/lounge-toggle.js')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -404,6 +393,13 @@
             }
 
             // Whole-room booking: the name of a bookable room selects the room instead of a table.
+            // "Book" in the panel takes the guest straight to the date and time.
+            panel?.querySelector('[data-panel-book]')?.addEventListener('click', () => {
+                const form = document.getElementById('clientReservationForm');
+                form?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+                form?.querySelector('input[type="date"], input:not([type="hidden"])')?.focus({ preventScroll: true });
+            });
+
             const roomIdInput = document.getElementById('client_room_id');
             const guestsInput = document.querySelector('[name="guests_count"]');
             const roomTitle = @json(__('room-booking-panel-title', ['name' => '__NAME__']));

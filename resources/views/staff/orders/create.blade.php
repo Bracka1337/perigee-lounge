@@ -58,9 +58,14 @@
                 </div>
             </div>
 
-            <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+            <div class="flex flex-wrap items-start justify-between gap-x-3">
+                <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+                <x-floor-plan.view-switch table-selector=".js-staff-table" input="staff_table_id" />
+            </div>
 
-            <div class="overflow-x-auto">
+            <x-floor-plan.viewer :active="$activeFloorId" :layout="$lounge3d" />
+
+            <div class="overflow-x-auto" data-plan-2d>
                 @foreach ($floors as $floor)
                     <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId">
 
@@ -88,6 +93,8 @@
                             data-name="{{ $table->name }}"
                             data-capacity="{{ $table->capacity }}"
                             data-disabled="{{ $disabled ? '1' : '0' }}"
+                            data-status="{{ ! $isActive ? 'inactive' : ($hasOpenOrder ? 'active' : ($hasReservation ? 'pending' : 'free')) }}"
+                            data-status-label="{{ __($hasOpenOrder ? 'staff-reservations-legend-active' : ($hasReservation ? 'staff-reservations-legend-pending' : 'staff-reservations-legend-free')) }}"
                             style="{{ $frame->tableStyle($table) }} opacity: {{ $isActive ? '1' : '0.3' }};">
                         <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                             {{ $table->name }}
@@ -171,6 +178,7 @@
 @endsection
 
 @push('scripts')
+@vite('resources/js/lounge-toggle.js')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.js-staff-table');

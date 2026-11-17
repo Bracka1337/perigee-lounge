@@ -27,7 +27,9 @@ export function supportsWebGL() {
 /**
  * @param {HTMLElement} container  the viewer fills it and follows its size
  * @param {object} layout          see scene.js
- * @param {object} options         { floorId, selectedId, onSelect(tableId), canSelect(tableId) }
+ * @param {object} options         { floorId, selectedId, onSelect(tableId), canSelect(tableId),
+ *                                   onSelectRoom(roomId), canSelectRoom(roomId), describeTable(tableId),
+ *                                   describeRoom(roomId), onFloorChange(floorId), labels }
  */
 export function createLoungeViewer(container, layout, options = {}) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -72,6 +74,38 @@ export function createLoungeViewer(container, layout, options = {}) {
     });
     container.append(dayButton);
 
+    const text = { wholeFloor: 'Whole floor', ...(options.labels ?? {}) };
+
+    // Floor switcher and "whole floor" inside the view, so nobody has to scroll to change floors.
+    const bar = document.createElement('div');
+    bar.className = 'lounge-viewer-bar';
+    const floorButtons = layout.floors.length > 1 ? layout.floors.map((floor) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'lounge-viewer-button';
+        button.dataset.floor = String(floor.id);
+        button.textContent = floor.name;
+        button.addEventListener('click', () => {
+            api.setFloor(floor.id);
+            options.onFloorChange?.(floor.id);
+        });
+        bar.append(button);
+        return button;
+    }) : [];
+    const overviewButton = document.createElement('button');
+    overviewButton.type = 'button';
+    overviewButton.className = 'lounge-viewer-button';
+    overviewButton.textContent = text.wholeFloor;
+    overviewButton.addEventListener('click', () => overview());
+    bar.append(overviewButton);
+    container.append(bar);
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'lounge-tooltip';
+    tooltip.hidden = true;
+    tooltip.setAttribute('role', 'status');
+    container.append(tooltip);
+
     // Dark glass under the open floor: the floors below stay visible, but dimmed.
     const dimmer = new Mesh(
         new PlaneGeometry(layout.frame.width * 4 + 40, layout.frame.depth * 4 + 40),
@@ -97,10 +131,8 @@ export function createLoungeViewer(container, layout, options = {}) {
         if (tween) {
             const progress = Math.min(1, (performance.now() - tween.start) / tween.duration);
             const eased = 1 - (1 - progress) ** 3;
-            const y = tween.from + (tween.to - tween.from) * eased;
-            const shift = y - controls.target.y;
-            controls.target.y = y;
-            camera.position.y += shift;
+            controls.target.lerpVectors(tween.fromTarget, tween.toTarget, eased);
+            camera.position.lerpVectors(tween.fromPosition, tween.toPosition, eased);
             if (progress >= 1) tween = null;
             else requestRender();
         }
@@ -124,14 +156,43 @@ export function createLoungeViewer(container, layout, options = {}) {
         dimmer.position.y = activeFloor.y - 0.32;
         lights.setSpots(activeFloor.lights, activeFloor.y);
 
-        const to = activeFloor.y;
-        if (animate && !reducedMotion) {
-            tween = { from: controls.target.y, to, start: performance.now(), duration: 520 };
+        const target = controls.target.clone().setY(activeFloor.y);
+        flyTo(target, camera.position.clone().add(target.clone().sub(controls.target)), animate);
+        floorButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.floor === String(activeFloor.id))));
+    }
+
+    // Moves the camera to look at a point, keeping the current viewing angle.
+    function flyTo(target, position, animate = true) {
+        if (!animate || reducedMotion) {
+            tween = null;
+            controls.target.copy(target);
+            camera.position.copy(position);
         } else {
-            camera.position.y += to - controls.target.y;
-            controls.target.y = to;
+            tween = { fromTarget: controls.target.clone(), toTarget: target, fromPosition: camera.position.clone(), toPosition: position, start: performance.now(), duration: 600 };
         }
         requestRender();
+    }
+
+    // Looks at a spot of the open floor from closer by, from the same side as now.
+    function focusOn(x, z, size) {
+        const target = new Vector3(x, activeFloor.y, z);
+        const direction = camera.position.clone().sub(controls.target).normalize();
+        const distance = clampDistance(Math.max(size * 1.6, 10));
+        flyTo(target, target.clone().addScaledVector(direction, distance));
+    }
+
+    function clampDistance(distance) {
+        return Math.min(controls.maxDistance, Math.max(controls.minDistance, distance));
+    }
+
+    // Back to the whole floor, as when the view opened.
+    function overview() {
+        const aspect = container.clientWidth / Math.max(1, container.clientHeight);
+        const size = Math.max(layout.frame.width, layout.frame.depth * 1.15);
+        const distance = size * 1.4 * Math.max(1, 1.5 / aspect) + 4;
+        const direction = new Vector3(0, 0.82, 0.57).normalize();
+        const target = new Vector3(0, activeFloor.y, layout.frame.depth * 0.02);
+        flyTo(target, target.clone().addScaledVector(direction, distance));
     }
 
     function frameCamera() {
@@ -176,6 +237,24 @@ export function createLoungeViewer(container, layout, options = {}) {
         return hit ? hit.object.userData.tableId : null;
     }
 
+    function roomAt() {
+        // Uses the ray of the last tableAt() call.
+        const hit = raycaster.intersectObjects(activeFloor.roomPicks, false)[0];
+        return hit ? hit.object.userData.roomId : null;
+    }
+
+    function showTooltip(event, message) {
+        if (!message) {
+            tooltip.hidden = true;
+            return;
+        }
+        const bounds = container.getBoundingClientRect();
+        tooltip.textContent = message;
+        tooltip.hidden = false;
+        tooltip.style.left = `${Math.min(event.clientX - bounds.left + 14, bounds.width - tooltip.offsetWidth - 8)}px`;
+        tooltip.style.top = `${Math.max(8, event.clientY - bounds.top - tooltip.offsetHeight - 10)}px`;
+    }
+
     const onPointerDown = (event) => { pressedAt = { x: event.clientX, y: event.clientY }; };
 
     const onPointerUp = (event) => {
@@ -183,21 +262,45 @@ export function createLoungeViewer(container, layout, options = {}) {
         if (!pressedAt || Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) > 6) return;
 
         const id = tableAt(event);
-        if (id !== null && canSelect(id)) options.onSelect?.(id);
+        if (id !== null) {
+            const table = lounge.tables.get(id);
+            if (table) focusOn(table.position.x, table.position.z, Math.max(table.size.width, table.size.depth) * 2.4);
+            if (canSelect(id)) options.onSelect?.(id);
+            return;
+        }
+
+        // A click on a room flies to it, and picks it when the whole room can be booked.
+        const roomId = roomAt();
+        const room = activeFloor.rooms.find((candidate) => candidate.id === roomId);
+        if (room) {
+            focusOn(room.box.cx, room.box.cz, Math.max(room.box.width, room.box.depth));
+            if (options.canSelectRoom?.(roomId)) options.onSelectRoom?.(roomId);
+        }
     };
 
     const onPointerMove = (event) => {
         if (event.buttons !== 0) return;
 
         const id = tableAt(event);
+        const roomId = id === null ? roomAt() : null;
+        showTooltip(event, id !== null ? (options.describeTable?.(id) ?? lounge.tables.get(id)?.name)
+            : roomId !== null ? (options.describeRoom?.(roomId) ?? activeFloor.rooms.find((room) => room.id === roomId)?.name) : null);
+
         const next = id !== null && canSelect(id) ? id : null;
+        const pointer = next !== null || (roomId !== null && options.canSelectRoom?.(roomId));
+        renderer.domElement.style.cursor = pointer ? 'pointer' : 'grab';
         if (next === hoveredId) return;
 
         hoveredId = next;
-        renderer.domElement.style.cursor = next === null ? 'grab' : 'pointer';
         repaint();
     };
 
+    const onPointerLeave = () => { tooltip.hidden = true; };
+    const onKeyDown = (event) => { if (event.key === 'Escape') overview(); };
+    renderer.domElement.addEventListener('pointerleave', onPointerLeave);
+    container.addEventListener('keydown', onKeyDown);
+    renderer.domElement.tabIndex = 0;
+    renderer.domElement.setAttribute('aria-label', text.canvas ?? 'Lounge 3D view');
     renderer.domElement.addEventListener('pointerdown', onPointerDown);
     renderer.domElement.addEventListener('pointerup', onPointerUp);
     renderer.domElement.addEventListener('pointermove', onPointerMove);
@@ -212,7 +315,7 @@ export function createLoungeViewer(container, layout, options = {}) {
     applyFloor(false);
     repaint();
 
-    return {
+    const api = {
         setFloor(id) {
             const floor = lounge.floors.find((candidate) => String(candidate.id) === String(id));
             if (!floor || floor === activeFloor) return;
@@ -253,8 +356,14 @@ export function createLoungeViewer(container, layout, options = {}) {
             dimmer.geometry.dispose();
             dimmer.material.dispose();
             renderer.dispose();
+            renderer.domElement.removeEventListener('pointerleave', onPointerLeave);
+            container.removeEventListener('keydown', onKeyDown);
             renderer.domElement.remove();
             dayButton.remove();
+            bar.remove();
+            tooltip.remove();
         },
     };
+
+    return api;
 }

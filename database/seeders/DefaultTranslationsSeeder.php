@@ -5741,9 +5741,9 @@ class DefaultTranslationsSeeder extends Seeder
             ],
 
             'lounge-3d-hint' => [
-                'en' => 'Drag to look around, scroll to zoom, and click a free table to select it.',
-                'lv' => 'Velciet, lai apskatītos, ritiniet, lai tuvinātu, un noklikšķiniet uz brīva galdiņa, lai to izvēlētos.',
-                'ru' => 'Перетаскивайте, чтобы осмотреться, прокручивайте для приближения и нажмите на свободный столик, чтобы выбрать его.',
+                'en' => 'Drag to look around and scroll to zoom. Hover a table or room to see if it is free, click it to fly there and pick it. Rooms marked ◆ can be booked whole.',
+                'lv' => 'Velciet, lai apskatītos, ritiniet, lai tuvinātu. Novietojiet kursoru uz galdiņa vai telpas, lai redzētu, vai tā ir brīva, noklikšķiniet, lai turp pārvietotos un to izvēlētos. Telpas ar ◆ var rezervēt pilnībā.',
+                'ru' => 'Тяните, чтобы осмотреться, прокручивайте для масштаба. Наведите на столик или зал, чтобы увидеть, свободен ли он, нажмите, чтобы перелететь туда и выбрать его. Залы с ◆ можно забронировать целиком.',
             ],
 
             'admin-rooms-preview-title' => [
@@ -6668,6 +6668,48 @@ class DefaultTranslationsSeeder extends Seeder
                 'en' => 'This room has bookings for the whole room and cannot be deleted.',
                 'lv' => 'Šai telpai ir visas telpas rezervācijas, to nevar dzēst.',
                 'ru' => 'У этого зала есть брони на весь зал, его нельзя удалить.',
+            ],
+
+            'lounge-view-2d-help' => [
+                'en' => 'Floor plan from above',
+                'lv' => 'Stāva plāns no augšas',
+                'ru' => 'План этажа сверху',
+            ],
+
+            'lounge-view-3d-help' => [
+                'en' => 'Walk around the lounge in 3D',
+                'lv' => 'Apskatiet lounge 3D',
+                'ru' => 'Осмотрите лаунж в 3D',
+            ],
+
+            'lounge-3d-whole-floor' => [
+                'en' => 'Whole floor',
+                'lv' => 'Viss stāvs',
+                'ru' => 'Весь этаж',
+            ],
+
+            'lounge-3d-canvas' => [
+                'en' => '3D view of the lounge. Drag to turn, scroll to zoom, Esc shows the whole floor.',
+                'lv' => 'Lounge 3D skats. Velciet, lai pagrieztu, ritiniet, lai tuvinātu, Esc rāda visu stāvu.',
+                'ru' => '3D-вид лаунжа. Тяните, чтобы повернуть, прокручивайте для масштаба, Esc показывает весь этаж.',
+            ],
+
+            'lounge-3d-seats' => [
+                'en' => ':count seats',
+                'lv' => ':count vietas',
+                'ru' => 'мест: :count',
+            ],
+
+            'lounge-3d-room-book' => [
+                'en' => 'click to book the whole room',
+                'lv' => 'noklikšķiniet, lai rezervētu visu telpu',
+                'ru' => 'нажмите, чтобы забронировать весь зал',
+            ],
+
+            'client-reservations-panel-book' => [
+                'en' => 'Book this — choose the time',
+                'lv' => 'Rezervēt — izvēlieties laiku',
+                'ru' => 'Забронировать — выберите время',
             ],
         ];
     }
