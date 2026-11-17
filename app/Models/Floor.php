@@ -30,6 +30,22 @@ class Floor extends Model
     }
 
     /**
+     * @return HasMany<Door, $this>
+     */
+    public function doors(): HasMany
+    {
+        return $this->hasMany(Door::class)->orderBy('id');
+    }
+
+    /**
+     * @return HasMany<Fixture, $this>
+     */
+    public function fixtures(): HasMany
+    {
+        return $this->hasMany(Fixture::class)->orderBy('id');
+    }
+
+    /**
      * @return HasManyThrough<Table, Room, $this>
      */
     public function tables(): HasManyThrough
