@@ -81,9 +81,14 @@
             </h2>
         </div>
 
-        <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+        <div class="flex flex-wrap items-start justify-between gap-x-3">
+            <x-floor-plan.tabs :floors="$floors" :active="$activeFloorId" />
+            <x-floor-plan.view-switch table-selector=".js-staff-table" input="staff_table_id" />
+        </div>
 
-        <div class="overflow-x-auto">
+        <x-floor-plan.viewer :active="$activeFloorId" :layout="$lounge3d" />
+
+        <div class="overflow-x-auto" data-plan-2d>
             @foreach ($floors as $floor)
                 <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId" :room-booking="$roomBooking">
 
@@ -122,6 +127,8 @@
                         data-name="{{ $table->name }}"
                         data-capacity="{{ $table->capacity }}"
                         data-disabled="{{ $disabled ? '1' : '0' }}"
+                        data-status="{{ ($table->is_active ?? true) ? $status : 'inactive' }}"
+                        data-status-label="{{ __(match ($status) { 'active' => 'staff-reservations-legend-active', 'pending' => 'staff-reservations-legend-pending', default => 'staff-reservations-legend-free' }) }}"
                         style="{{ $frame->tableStyle($table) }} opacity: {{ ($table->is_active ?? true) ? '1' : '0.3' }};">
                     <div class="text-ink font-semibold text-xs md:text-xs leading-tight max-w-full px-1 truncate text-center">
                         {{ $table->name }}
@@ -388,6 +395,7 @@
 @endsection
 
 @push('scripts')
+@vite('resources/js/lounge-toggle.js')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const dateForm  = document.getElementById('staffReservationsDateForm');
