@@ -5,6 +5,7 @@ namespace App\Actions\Render;
 use App\Models\MenuItem;
 use App\Services\MenuPhotoStore;
 use App\Services\Render\RenderStudio;
+use Illuminate\Support\Facades\DB;
 
 class RenderMenuPhotos
 {
@@ -36,15 +37,32 @@ class RenderMenuPhotos
         $rendered = 0;
 
         $this->studio->shoot($rootUrl, $scenes, function (array $scene, string $png) use ($wanted, $force, &$rendered): void {
-            // Staff may have uploaded a photo while the studio was working. Theirs wins.
-            $item = $wanted->get($scene['id'])?->fresh();
-            if ($item === null || ! $this->mayRender($item, $force)) {
+            if (! $wanted->has($scene['id'])) {
                 return;
             }
 
-            $old = [$item->image_path, $item->thumb_path];
+            $new = $this->photos->storeFromPath($png, 'webp');
 
-            $item->update([...$this->photos->storeFromPath($png, 'webp'), 'photo_generated' => true]);
+            // Staff may have uploaded a photo while the studio was working. The row is checked
+            // again under a lock, and theirs wins.
+            $old = DB::transaction(function () use ($scene, $force, $new): ?array {
+                $item = MenuItem::query()->lockForUpdate()->find($scene['id']);
+                if ($item === null || ! $this->mayRender($item, $force)) {
+                    return null;
+                }
+
+                $old = [$item->image_path, $item->thumb_path];
+                $item->update([...$new, 'photo_generated' => true]);
+
+                return $old;
+            });
+
+            if ($old === null) {
+                $this->photos->delete($new['image_path'], $new['thumb_path']);
+
+                return;
+            }
+
             $this->photos->delete(...$old);
             $rendered++;
         });

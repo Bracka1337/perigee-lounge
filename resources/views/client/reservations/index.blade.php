@@ -369,7 +369,7 @@
                 if (!panel) return;
 
                 const values = { room: btn.dataset.room, floor: btn.dataset.floor, capacity: btn.dataset.capacity, status: btn.dataset.statusLabel };
-                panel.querySelector('[data-panel-name]').textContent = panelTitle.replace('__NAME__', btn.dataset.name);
+                panel.querySelector('[data-panel-name]').textContent = panelTitle.replace('__NAME__', () => btn.dataset.name);
                 Object.entries(values).forEach(([field, value]) => {
                     panel.querySelectorAll(`[data-panel-row="${field}"]`).forEach((row) => row.classList.toggle('hidden', !value));
                     panel.querySelector(`[data-panel-value="${field}"]`).textContent = value ?? '';
@@ -380,7 +380,7 @@
                 figure.classList.toggle('hidden', !btn.dataset.render);
                 if (btn.dataset.render) {
                     image.src = btn.dataset.render;
-                    image.alt = panelTitle.replace('__NAME__', btn.dataset.name);
+                    image.alt = panelTitle.replace('__NAME__', () => btn.dataset.name);
                 }
 
                 panel.classList.remove('hidden');
