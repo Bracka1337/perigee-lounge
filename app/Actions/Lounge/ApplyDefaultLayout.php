@@ -144,6 +144,7 @@ class ApplyDefaultLayout
             'kind' => $data['kind'],
             'color' => $data['color'],
             'mood' => $data['mood'] ?? 'warm',
+            'is_bookable_whole' => (bool) ($data['bookable'] ?? false),
             'x' => $data['x'],
             'y' => $data['y'],
             'width' => $data['width'],

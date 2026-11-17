@@ -56,7 +56,7 @@ return [
             ],
             [
                 'name' => $name('Game room', 'Spēļu istaba', 'Игровая'),
-                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon',
+                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon', 'bookable' => true,
                 'x' => 21, 'y' => 6.5, 'width' => 9, 'height' => 7,
                 'tables' => [
                     ['P1', 4, 23.53, 10.27, 200, 300],
@@ -80,7 +80,7 @@ return [
             ],
             [
                 'name' => $name('VIP', 'VIP', 'VIP'),
-                'kind' => 'seating', 'color' => 'coral',
+                'kind' => 'seating', 'color' => 'coral', 'bookable' => true,
                 'x' => 21, 'y' => 13.5, 'width' => 9, 'height' => 7.5,
                 'tables' => [
                     ['VIP', 20, 25.5, 17.38, 525, 650],
@@ -177,7 +177,7 @@ return [
             ],
             [
                 'name' => $name('Cinema room', 'Kino zāle', 'Кинозал'),
-                'kind' => 'seating', 'color' => 'violet', 'mood' => 'cinema',
+                'kind' => 'seating', 'color' => 'violet', 'mood' => 'cinema', 'bookable' => true,
                 'x' => 6, 'y' => 0, 'width' => 13, 'height' => 10,
                 'tables' => [
                     ['C1', 4, 9.4, 4.21, 400, 200],
@@ -187,7 +187,7 @@ return [
             ],
             [
                 'name' => $name('Karaoke room', 'Karaoke istaba', 'Караоке'),
-                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon',
+                'kind' => 'seating', 'color' => 'rose', 'mood' => 'neon', 'bookable' => true,
                 'x' => 6, 'y' => 11.5, 'width' => 13, 'height' => 9.5,
                 'tables' => [
                     ['K1', 8, 10.33, 16.55, 600, 300],
