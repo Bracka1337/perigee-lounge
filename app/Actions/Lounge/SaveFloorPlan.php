@@ -3,6 +3,8 @@
 namespace App\Actions\Lounge;
 
 use App\Exceptions\BusinessRuleException;
+use App\Models\Door;
+use App\Models\Fixture;
 use App\Models\Floor;
 use App\Models\Room;
 use App\Models\Table;
@@ -24,10 +26,12 @@ class SaveFloorPlan
     /**
      * @param  array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}>  $rooms
      * @param  array<int, array{id?: int|string|null, name: string, capacity: int|string, x: int|float|string, y: int|float|string, width: int|string, height: int|string, rotation: int|string, is_active: bool|int|string}>  $tables
+     * @param  array<int, array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}>|null  $doors
+     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>|null  $fixtures
      */
-    public function handle(Floor $floor, array $rooms, array $tables): void
+    public function handle(Floor $floor, array $rooms, array $tables, ?array $doors = null, ?array $fixtures = null): void
     {
-        $deleted = DB::transaction(function () use ($floor, $rooms, $tables): array {
+        $deleted = DB::transaction(function () use ($floor, $rooms, $tables, $doors, $fixtures): array {
             $existing = $floor->rooms()->get()->keyBy('id');
             $saved = [];
 
@@ -94,12 +98,72 @@ class SaveFloorPlan
 
             $removed->each(fn (Room $room) => $room->delete());
 
+            // Doors and fixtures are left alone when the plan does not include them.
+            if ($doors !== null) {
+                $this->syncDoors($floor, $doors);
+            }
+            if ($fixtures !== null) {
+                $this->syncFixtures($floor, $fixtures);
+            }
+
             return $removed->all();
         });
 
         foreach ($deleted as $room) {
             $this->renders->forget($room);
         }
+    }
+
+    /**
+     * @param  array<int, array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}>  $doors
+     */
+    private function syncDoors(Floor $floor, array $doors): void
+    {
+        $existing = $floor->doors()->get()->keyBy('id');
+        $kept = [];
+
+        foreach ($doors as $data) {
+            $door = isset($data['id']) ? $existing->get((int) $data['id']) : null;
+            $door ??= new Door(['floor_id' => $floor->id]);
+            $door->fill([
+                'kind' => $data['kind'],
+                'orientation' => $data['orientation'],
+                'x' => round((float) $data['x'], 2),
+                'y' => round((float) $data['y'], 2),
+                'width' => round((float) $data['width'], 2),
+            ])->save();
+            $kept[] = $door->id;
+        }
+
+        $floor->doors()->whereNotIn('id', $kept)->get()->each(fn (Door $door) => $door->delete());
+    }
+
+    /**
+     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>  $fixtures
+     */
+    private function syncFixtures(Floor $floor, array $fixtures): void
+    {
+        $existing = $floor->fixtures()->get()->keyBy('id');
+        $kept = [];
+
+        foreach ($fixtures as $data) {
+            $fixture = isset($data['id']) ? $existing->get((int) $data['id']) : null;
+            $fixture ??= new Fixture(['floor_id' => $floor->id]);
+            $points = $data['points'] ?? null;
+            $fixture->fill([
+                'type' => $data['type'],
+                'x' => round((float) $data['x'], 2),
+                'y' => round((float) $data['y'], 2),
+                'rotation' => (int) $data['rotation'],
+                'width' => round((float) $data['width'], 2),
+                'depth' => round((float) $data['depth'], 2),
+                'points' => $points === null || $points === [] ? null
+                    : array_map(fn (array $point) => [round((float) $point[0], 2), round((float) $point[1], 2)], $points),
+            ])->save();
+            $kept[] = $fixture->id;
+        }
+
+        $floor->fixtures()->whereNotIn('id', $kept)->get()->each(fn (Fixture $fixture) => $fixture->delete());
     }
 
     private function orEnglish(?string $value, string $english): string

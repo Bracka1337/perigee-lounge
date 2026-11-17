@@ -117,6 +117,17 @@
                             <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true"><rect x="5" y="6" width="10" height="8" rx="2" fill="currentColor"/></svg>
                             {{ __('admin-plan-tool-table') }} <kbd class="plan-kbd">T</kbd>
                         </button>
+                        <button type="button" data-tool="door" aria-pressed="false" class="{{ $tool }}" title="{{ __('admin-plan-tool-door-help') }}">
+                            <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true"><path d="M3 17h14M5 17V4h8v13" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11" cy="11" r="1.2" fill="currentColor"/></svg>
+                            {{ __('admin-plan-tool-door') }} <kbd class="plan-kbd">D</kbd>
+                        </button>
+                        <div class="relative">
+                            <button type="button" data-tool="item" aria-pressed="false" aria-expanded="false" aria-controls="itemPalette" class="{{ $tool }}" title="{{ __('admin-plan-tool-item-help') }}">
+                                <svg viewBox="0 0 20 20" class="h-4 w-4" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1" fill="currentColor"/><rect x="11" y="3" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="6" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="6" height="6" rx="1" fill="currentColor"/></svg>
+                                <span data-item-label>{{ __('admin-plan-tool-item') }}</span> <kbd class="plan-kbd">I</kbd>
+                            </button>
+                            <div id="itemPalette" data-item-palette class="absolute left-0 top-full z-30 mt-2 hidden w-80 space-y-3 rounded-2xl border border-line-strong bg-surface p-3 shadow-2xl"></div>
+                        </div>
                     </div>
 
                     <div class="flex gap-1">
@@ -168,7 +179,7 @@
                     <div class="rounded-xl border border-line p-3">
                         <h3 class="mb-2 text-xs font-semibold text-ink">{{ __('admin-plan-help-title') }}</h3>
                         <ul class="space-y-1.5 text-xs text-ink-muted">
-                            @foreach (['draw', 'table', 'move', 'resize', 'pan', 'zoom', 'keys'] as $tip)
+                            @foreach (['draw', 'table', 'door', 'item', 'move', 'resize', 'pan', 'zoom', 'keys'] as $tip)
                                 <li>{{ __('admin-plan-help-'.$tip) }}</li>
                             @endforeach
                         </ul>
@@ -231,6 +242,55 @@
                         <button type="button" data-action="delete-room" class="{{ $ghost }}">{{ __('admin-rooms-delete-button') }}</button>
                         <p data-room-delete-help class="hidden text-xs text-ink-muted">{{ __('admin-rooms-delete-help') }}</p>
                     </div>
+                </div>
+
+                {{-- Door --}}
+                <div data-panel="door" class="hidden space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-sm font-semibold text-ink">{{ __('admin-plan-selected-door') }}</h2>
+                        <button type="button" data-action="deselect" class="plan-icon-button text-xs" aria-label="{{ __('admin-plan-close') }}">&times;</button>
+                    </div>
+                    <div>
+                        <label for="door_kind" class="{{ $label }}">{{ __('admin-rooms-field-kind') }}</label>
+                        <select id="door_kind" data-door-field="kind" class="{{ $input }}"></select>
+                    </div>
+                    <div>
+                        <label for="door_width" class="{{ $label }}">{{ __('admin-plan-width') }} (m)</label>
+                        <input id="door_width" type="number" min="0.6" max="3" step="0.1" data-door-field="width" class="{{ $input }}">
+                    </div>
+                    <p class="text-xs text-ink-muted">{{ __('admin-plan-door-help') }}</p>
+                    <button type="button" data-action="delete-selected" class="{{ $ghost }}">{{ __('admin-plan-delete-door') }}</button>
+                </div>
+
+                {{-- Item --}}
+                <div data-panel="fixture" class="hidden space-y-4">
+                    <div class="flex items-center justify-between gap-2">
+                        <h2 class="text-sm font-semibold text-ink" data-fixture-title></h2>
+                        <button type="button" data-action="deselect" class="plan-icon-button text-xs" aria-label="{{ __('admin-plan-close') }}">&times;</button>
+                    </div>
+                    <div data-fixture-size class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label for="fixture_width" class="{{ $label }}">{{ __('admin-plan-width') }} (m)</label>
+                            <input id="fixture_width" type="number" min="0.1" max="20" step="0.1" data-fixture-field="width" class="{{ $input }}">
+                        </div>
+                        <div>
+                            <label for="fixture_depth" class="{{ $label }}">{{ __('admin-plan-depth') }} (m)</label>
+                            <input id="fixture_depth" type="number" min="0.1" max="20" step="0.1" data-fixture-field="depth" class="{{ $input }}">
+                        </div>
+                        <div class="col-span-2">
+                            <label for="fixture_rotation" class="{{ $label }}">{{ __('admin-tables-field-rotation') }}</label>
+                            <input id="fixture_rotation" type="number" min="0" max="359" step="15" data-fixture-field="rotation" class="{{ $input }}">
+                        </div>
+                    </div>
+                    <div data-bar-section class="hidden space-y-2 rounded-xl border border-line p-3">
+                        <p class="text-xs text-ink-soft">{{ __('admin-plan-bar-help') }}</p>
+                        <p data-bar-corners class="text-xs text-ink-muted"></p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" data-action="bar-add" class="{{ $ghost }}">{{ __('admin-plan-bar-add') }}</button>
+                            <button type="button" data-action="bar-remove" class="{{ $ghost }}">{{ __('admin-plan-bar-remove') }}</button>
+                        </div>
+                    </div>
+                    <button type="button" data-action="delete-selected" class="{{ $ghost }}">{{ __('admin-plan-delete-item') }}</button>
                 </div>
 
                 {{-- Table --}}
@@ -307,9 +367,15 @@
                 'select' => __('admin-plan-hint-select'),
                 'room' => __('admin-plan-hint-room'),
                 'table' => __('admin-plan-hint-table'),
+                'door' => __('admin-plan-hint-door'),
+                'item' => __('admin-plan-hint-item'),
                 'view3d' => __('admin-plan-hint-3d'),
             ],
             'chooseRoom' => __('admin-plan-move-choose'),
+            'doorOffWall' => __('admin-plan-door-off-wall'),
+            'fixtureOutside' => __('admin-plan-fixture-outside'),
+            'corners' => __('admin-plan-bar-corners', ['count' => '__COUNT__']),
+            'itemTool' => __('admin-plan-tool-item'),
             ];
         @endphp
         <script type="application/json" id="planEditorText">@json($editorText)</script>
