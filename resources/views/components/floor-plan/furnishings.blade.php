@@ -2,7 +2,7 @@
 @props(['floor', 'frame'])
 
 <svg class="pointer-events-none absolute inset-0 h-full w-full" viewBox="{{ $frame->viewBox() }}" preserveAspectRatio="none" aria-hidden="true">
-    @foreach ($floor->fixtures as $fixture)
+    @foreach ($floor->fixtures->reject(fn ($fixture) => $fixture->type->isLight()) as $fixture)
         @if ($fixture->type === \App\Enums\FixtureType::BarCounter && $fixture->points)
             <polyline class="plan-bar" points="{{ collect($fixture->points)->map(fn ($point) => $point[0].','.$point[1])->implode(' ') }}" />
         @else

@@ -73,7 +73,7 @@
             </div>
 
             <div data-plan-3d class="hidden">
-                <div data-lounge-viewer data-active-floor="{{ $activeFloorId }}"
+                <div data-lounge-viewer data-active-floor="{{ $activeFloorId }}" data-label-day="{{ __('lounge-3d-day') }}" data-label-evening="{{ __('lounge-3d-evening') }}"
                      class="relative aspect-[16/14] w-full overflow-hidden rounded-2xl border border-line bg-ground">
                     <p data-lounge-loading class="absolute inset-0 flex items-center justify-center text-xs text-ink-muted">{{ __('lounge-3d-loading') }}</p>
                 </div>

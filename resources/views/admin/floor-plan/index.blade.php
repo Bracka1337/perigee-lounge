@@ -222,6 +222,11 @@
                         <legend class="{{ $label }}">{{ __('admin-rooms-field-color') }}</legend>
                         <div data-color-swatches class="flex flex-wrap gap-1"></div>
                     </fieldset>
+                    <div>
+                        <label for="room_mood" class="{{ $label }}">{{ __('admin-plan-room-mood') }}</label>
+                        <select id="room_mood" data-room-field="mood" class="{{ $input }}"></select>
+                        <p class="mt-1 text-xs text-ink-muted">{{ __('admin-plan-room-mood-help') }}</p>
+                    </div>
                     <label class="flex min-h-11 items-start gap-3 rounded-xl border border-line p-3 text-xs text-ink-soft">
                         <input type="checkbox" data-room-field="is_bookable_whole" class="mt-0.5 h-5 w-5 rounded border-line-strong bg-ground/60">
                         <span>
@@ -281,6 +286,17 @@
                             <label for="fixture_rotation" class="{{ $label }}">{{ __('admin-tables-field-rotation') }}</label>
                             <input id="fixture_rotation" type="number" min="0" max="359" step="15" data-fixture-field="rotation" class="{{ $input }}">
                         </div>
+                    </div>
+                    <div data-light-section class="hidden space-y-3 rounded-xl border border-line p-3">
+                        <fieldset>
+                            <legend class="{{ $label }}">{{ __('admin-plan-light-color') }}</legend>
+                            <div data-light-swatches class="flex flex-wrap gap-1"></div>
+                        </fieldset>
+                        <div>
+                            <label for="light_strength" class="{{ $label }}">{{ __('admin-plan-light-strength') }}</label>
+                            <input id="light_strength" type="range" min="1" max="10" step="1" data-light-strength class="w-full accent-[var(--color-nebula)]">
+                        </div>
+                        <p class="text-xs text-ink-muted">{{ __('admin-plan-light-help') }}</p>
                     </div>
                     <div data-bar-section class="hidden space-y-2 rounded-xl border border-line p-3">
                         <p class="text-xs text-ink-soft">{{ __('admin-plan-bar-help') }}</p>
@@ -376,6 +392,7 @@
             'fixtureOutside' => __('admin-plan-fixture-outside'),
             'corners' => __('admin-plan-bar-corners', ['count' => '__COUNT__']),
             'itemTool' => __('admin-plan-tool-item'),
+            'daylight' => ['day' => __('lounge-3d-day'), 'evening' => __('lounge-3d-evening')],
             ];
         @endphp
         <script type="application/json" id="planEditorText">@json($editorText)</script>

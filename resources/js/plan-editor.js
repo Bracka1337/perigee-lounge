@@ -57,21 +57,21 @@ function initEditor(root) {
     const initial = fromDraft() ?? { rooms: data.rooms, tables: data.tables, doors: data.doors, fixtures: data.fixtures };
     const copyPoints = (points) => (Array.isArray(points) && points.length ? points.map((point) => [Number(point[0]), Number(point[1])]) : null);
     let state = {
-        rooms: initial.rooms.map((room) => withKey({ is_bookable_whole: false, ...room, name: { en: '', lv: '', ru: '', ...room.name } })),
+        rooms: initial.rooms.map((room) => withKey({ is_bookable_whole: false, mood: 'warm', ...room, name: { en: '', lv: '', ru: '', ...room.name } })),
         tables: initial.tables.map((table) => withKey({ ...table })),
         doors: (initial.doors ?? []).map((door) => withKey({ ...door })),
-        fixtures: (initial.fixtures ?? []).map((fixture) => withKey({ ...fixture, points: copyPoints(fixture.points) })),
+        fixtures: (initial.fixtures ?? []).map((fixture) => withKey({ ...fixture, settings: fixture.settings ? { ...fixture.settings } : null, points: copyPoints(fixture.points) })),
     };
 
     const serialise = (current = state) => ({
-        rooms: current.rooms.map(({ id, name, kind, color, is_bookable_whole, x, y, width, height }) => ({ id: id ?? null, name, kind, color, is_bookable_whole, x, y, width, height })),
+        rooms: current.rooms.map(({ id, name, kind, color, mood, is_bookable_whole, x, y, width, height }) => ({ id: id ?? null, name, kind, color, mood: mood ?? 'warm', is_bookable_whole, x, y, width, height })),
         tables: current.tables.map(({ id, name, capacity, x, y, width, height, rotation, is_active }) => ({ id: id ?? null, name, capacity, x, y, width, height, rotation, is_active })),
         doors: current.doors.map(({ id, kind, orientation, x, y, width }) => ({ id: id ?? null, kind, orientation, x, y, width })),
-        fixtures: current.fixtures.map(({ id, type, x, y, rotation, width, depth, points }) => ({ id: id ?? null, type, x, y, rotation, width, depth, points: copyPoints(points) })),
+        fixtures: current.fixtures.map(({ id, type, x, y, rotation, width, depth, points, settings }) => ({ id: id ?? null, type, x, y, rotation, width, depth, points: copyPoints(points), settings: settings ?? null })),
     });
 
     const savedJson = JSON.stringify(serialise({
-        rooms: data.rooms.map((room) => ({ is_bookable_whole: false, ...room })), tables: data.tables, doors: data.doors, fixtures: data.fixtures,
+        rooms: data.rooms.map((room) => ({ is_bookable_whole: false, mood: 'warm', ...room })), tables: data.tables, doors: data.doors, fixtures: data.fixtures,
     }));
     const isDirty = () => JSON.stringify(serialise()) !== savedJson;
 
@@ -295,6 +295,15 @@ function initEditor(root) {
                 continue;
             }
             const group = element('g', { 'data-fixture': fixture.key, transform: `translate(${fixture.x} ${fixture.y}) rotate(${fixture.rotation})`, class: classes }, layers.furnish);
+            if (meta.group === 'lights') {
+                const colour = data.lightColors[fixture.settings?.color]?.hex ?? '#F5B860';
+                const glow = fixture.type === 'neon_strip' || fixture.type === 'led_strip'
+                    ? element('rect', { x: -fixture.width / 2, y: -0.06, width: fixture.width, height: 0.12, rx: 0.06 }, group)
+                    : element('circle', { r: 0.28 }, group);
+                glow.style.setProperty('--light', colour);
+                glow.classList.add('plan-light');
+                continue;
+            }
             element('rect', { x: -fixture.width / 2, y: -fixture.depth / 2, width: fixture.width, height: fixture.depth, rx: 0.04 }, group);
             // The front edge, so it is clear which way a screen or a booth faces.
             element('line', { x1: -fixture.width * 0.4, y1: fixture.depth / 2, x2: fixture.width * 0.4, y2: fixture.depth / 2, class: 'plan-item-front' }, group);
@@ -683,7 +692,8 @@ function initEditor(root) {
         const y = snapTo(point.y, TABLE_GRID);
         // A new bar counter starts as an L, which can then be reshaped by its corners.
         const points = type === 'bar_counter' ? [[round2(x - 2), round2(y - 1)], [round2(x + 1.5), round2(y - 1)], [round2(x + 1.5), round2(y + 1)]] : null;
-        const fixture = withKey({ id: null, type, x, y, rotation: 0, width: meta.size[0], depth: meta.size[1], points });
+        const fixture = withKey({ id: null, type, x, y, rotation: 0, width: meta.size[0], depth: meta.size[1], points,
+            settings: meta.group === 'lights' ? { color: 'amber', strength: 5 } : null });
         if (points) [fixture.x, fixture.y] = centreOf(points);
         state.fixtures.push(fixture);
         selected = { type: 'fixture', key: fixture.key };
@@ -796,6 +806,35 @@ function initEditor(root) {
         root.querySelector('[data-item-label]').textContent = data.fixtureTypes[type].label;
     });
 
+    const moodSelect = root.querySelector('[data-room-field="mood"]');
+    for (const [value, label] of Object.entries(data.moods)) moodSelect.append(new Option(label, value));
+
+    const lightSwatches = root.querySelector('[data-light-swatches]');
+    for (const [value, colour] of Object.entries(data.lightColors)) {
+        const label = document.createElement('label');
+        label.className = 'plan-swatch';
+        label.title = colour.label;
+        label.innerHTML = '<input type="radio" name="light_color" class="sr-only"><span></span><span class="sr-only"></span>';
+        label.querySelector('input').value = value;
+        label.querySelector('span').style.setProperty('--room', colour.hex);
+        label.querySelector('.sr-only:last-child').textContent = colour.label;
+        lightSwatches.append(label);
+    }
+    lightSwatches.addEventListener('change', (event) => {
+        const item = find(selected);
+        if (!item || !event.target.checked) return;
+        item.settings = { strength: 5, ...item.settings, color: event.target.value };
+        commit();
+    });
+    const strengthInput = root.querySelector('[data-light-strength]');
+    strengthInput.addEventListener('input', () => {
+        const item = find(selected);
+        if (!item) return;
+        item.settings = { color: 'amber', ...item.settings, strength: Number(strengthInput.value) };
+        render();
+    });
+    strengthInput.addEventListener('change', () => commit());
+
     const doorKind = root.querySelector('[data-door-field="kind"]');
     for (const [value, meta] of Object.entries(data.doorKinds)) doorKind.append(new Option(meta.label, value));
 
@@ -833,6 +872,13 @@ function initEditor(root) {
             root.querySelector('[data-fixture-title]').textContent = data.fixtureTypes[item.type]?.label ?? item.type;
             root.querySelector('[data-fixture-size]').classList.toggle('hidden', isBar);
             root.querySelector('[data-bar-section]').classList.toggle('hidden', !isBar);
+            const isLight = data.fixtureTypes[item.type]?.group === 'lights';
+            root.querySelector('[data-light-section]').classList.toggle('hidden', !isLight);
+            if (isLight) {
+                lightSwatches.querySelectorAll('input').forEach((input) => { input.checked = input.value === (item.settings?.color ?? 'amber'); });
+                const strength = root.querySelector('[data-light-strength]');
+                if (strength !== document.activeElement) strength.value = item.settings?.strength ?? 5;
+            }
             if (isBar) {
                 root.querySelector('[data-bar-corners]').textContent = text.corners.replace('__COUNT__', item.points.length);
                 root.querySelector('[data-action="bar-add"]').disabled = item.points.length >= 8;
@@ -1085,7 +1131,7 @@ function initEditor(root) {
 
     function layout3d() {
         const rooms = state.rooms.map((room, index) => ({
-            id: room.id ?? -(index + 1), name: room.name.en, kind: room.kind, color: data.colors[room.color]?.hex ?? '#8A8FB0',
+            id: room.id ?? -(index + 1), name: room.name.en, kind: room.kind, color: data.colors[room.color]?.hex ?? '#8A8FB0', mood: room.mood ?? 'warm',
             bookableWhole: room.is_bookable_whole, x: room.x, y: room.y, width: room.width, height: room.height,
         }));
         const tables = state.tables.map((table, index) => {
@@ -1096,7 +1142,7 @@ function initEditor(root) {
             };
         });
         const doors = state.doors.map(({ kind, orientation, x, y, width }) => ({ kind, orientation, x, y, width }));
-        const fixtures = state.fixtures.map(({ type, x, y, rotation, width, depth, points }) => ({ type, x, y, rotation, width, depth, points }));
+        const fixtures = state.fixtures.map(({ type, x, y, rotation, width, depth, points, settings }) => ({ type, x, y, rotation, width, depth, points, settings }));
         const floors = base.floors.map((floor) => (floor.id === data.floor.id ? { ...floor, rooms, tables, doors, fixtures } : floor));
         const all = floors.flatMap((floor) => floor.rooms);
         const minX = Math.min(...all.map((room) => room.x), base.frame.x);
@@ -1128,7 +1174,7 @@ function initEditor(root) {
         try {
             const { createLoungeViewer } = await import('./lounge3d/viewer.js');
             viewer?.dispose();
-            viewer = createLoungeViewer(view3d, layout3d(), { floorId: data.floor.id, canSelect: () => false });
+            viewer = createLoungeViewer(view3d, layout3d(), { floorId: data.floor.id, canSelect: () => false, labels: text.daylight });
         } catch (error) {
             console.error('The 3D view could not start.', error);
             setView('2d');

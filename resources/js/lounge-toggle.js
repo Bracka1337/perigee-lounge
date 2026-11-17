@@ -71,6 +71,7 @@ function init() {
                 floorId: activeFloorId(),
                 selectedId: tableInput?.value ? Number(tableInput.value) : null,
                 canSelect: (id) => buttonFor(id)?.dataset.disabled === '0',
+                labels: { day: container.dataset.labelDay, evening: container.dataset.labelEvening },
                 onSelect: (id) => {
                     buttonFor(id)?.click();
                     viewer?.setSelected(id);
