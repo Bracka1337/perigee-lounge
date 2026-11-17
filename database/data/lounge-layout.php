@@ -1,12 +1,15 @@
 <?php
 
 /**
- * The default layout of the lounge: two floors, their rooms and their tables, in metres.
+ * The default layout of the lounge: two floors with their rooms, tables, doors and fixtures, in metres.
  *
  * Rooms are rectangles [x, y, width, height] measured from the top-left corner of the building.
  * Rooms touch but never overlap, so the floor has no gaps: walkways are rooms of kind "corridor".
- * Tables are [name, capacity, centre x m, centre y m, width cm, depth cm]. The width and depth
- * are the footprint of the table with its seats.
+ * Tables are [name, capacity, centre x m, centre y m, width cm, depth cm], the footprint of the
+ * table with its seats.
+ * Doors are [kind, orientation, centre x, centre y, width]: "h" sits on a wall along x, "v" along y.
+ * Fixtures are [type, centre x, centre y, rotation, width, depth, points]. Rotation 0 means the front
+ * faces down the plan; a bar counter takes its shape from its corner points.
  *
  * Stairs and restrooms sit in the same place on both floors.
  */
@@ -112,6 +115,38 @@ return [
                 'x' => 19, 'y' => 0, 'width' => 2, 'height' => 26,
             ],
         ],
+        'doors' => [
+            ['double', 'v', 6, 11.25, 1.2],
+            ['double', 'h', 12.5, 10.5, 1.6],
+            ['opening', 'v', 21, 3.25, 1.8],
+            ['double', 'v', 21, 10, 1.6],
+            ['double', 'h', 12.5, 12, 1.6],
+            ['double', 'v', 21, 17.25, 1.6],
+            ['single', 'v', 10, 23.5, 0.9],
+            ['opening', 'h', 12.5, 21, 1.8],
+            ['double', 'h', 12.5, 26, 1.6],
+            ['opening', 'v', 19, 23.5, 1.8],
+            ['single', 'v', 21, 23.5, 0.9],
+        ],
+        'fixtures' => [
+            ['bar_counter', 25.3, 2.6, 0, 0.6, 0.6, [[22.2, 1.6], [28.4, 1.6], [28.4, 4.6]]],
+            ['hookah_station', 24.5, 0.45, 0, 1.6, 0.7, null],
+            ['game_station', 23.53, 6.85, 0, 1.8, 0.6, null],
+            ['game_station', 27.47, 6.85, 0, 1.8, 0.6, null],
+            ['feature_wall', 29.85, 17.25, 90, 3, 0.2, null],
+            ['plant', 21.6, 20.4, 0, 0.7, 0.7, null],
+            ['plant', 29.3, 20.4, 0, 0.7, 0.7, null],
+            ['wall_tv', 12.9, 0.15, 0, 1.6, 0.15, null],
+            ['plant', 6.6, 9.9, 0, 0.7, 0.7, null],
+            ['plant', 18.4, 0.6, 0, 0.7, 0.7, null],
+            ['speaker', 18.6, 12.4, 0, 0.5, 0.5, null],
+            ['speaker', 6.4, 20.6, 0, 0.5, 0.5, null],
+            ['plant', 5.4, 0.6, 0, 0.7, 0.7, null],
+            ['plant', 0.6, 25.4, 0, 0.7, 0.7, null],
+            ['plant', 5.4, 25.4, 0, 0.7, 0.7, null],
+            ['coat_rack', 8, 25.6, 180, 1.2, 0.5, null],
+            ['plant', 14.4, 25.4, 0, 0.7, 0.7, null],
+        ],
     ],
     [
         'name' => $name('Second floor', 'Otrais stāvs', 'Второй этаж'),
@@ -158,33 +193,33 @@ return [
             [
                 'name' => $name('Cabin 1', 'Kabīne 1', 'Кабина 1'),
                 'kind' => 'seating', 'color' => 'teal',
-                'x' => 21, 'y' => 6.5, 'width' => 4.5, 'height' => 7.25,
+                'x' => 21, 'y' => 6.5, 'width' => 4.5, 'height' => 6.75,
                 'tables' => [
-                    ['S1', 4, 23.25, 10.38, 325, 375],
+                    ['S1', 4, 23.25, 9.88, 325, 375],
                 ],
             ],
             [
                 'name' => $name('Cabin 2', 'Kabīne 2', 'Кабина 2'),
                 'kind' => 'seating', 'color' => 'teal',
-                'x' => 25.5, 'y' => 6.5, 'width' => 4.5, 'height' => 7.25,
+                'x' => 25.5, 'y' => 6.5, 'width' => 4.5, 'height' => 6.75,
                 'tables' => [
-                    ['S2', 4, 27.75, 10.38, 325, 375],
+                    ['S2', 4, 27.75, 9.88, 325, 375],
                 ],
             ],
             [
                 'name' => $name('Cabin 3', 'Kabīne 3', 'Кабина 3'),
                 'kind' => 'seating', 'color' => 'teal',
-                'x' => 21, 'y' => 13.75, 'width' => 4.5, 'height' => 7.25,
+                'x' => 21, 'y' => 14.75, 'width' => 4.5, 'height' => 6.25,
                 'tables' => [
-                    ['S3', 6, 23.25, 17.63, 325, 375],
+                    ['S3', 6, 23.25, 17.88, 325, 375],
                 ],
             ],
             [
                 'name' => $name('Cabin 4', 'Kabīne 4', 'Кабина 4'),
                 'kind' => 'seating', 'color' => 'teal',
-                'x' => 25.5, 'y' => 13.75, 'width' => 4.5, 'height' => 7.25,
+                'x' => 25.5, 'y' => 14.75, 'width' => 4.5, 'height' => 6.25,
                 'tables' => [
-                    ['S4', 6, 27.75, 17.63, 325, 375],
+                    ['S4', 6, 27.75, 17.88, 325, 375],
                 ],
             ],
             [
@@ -212,6 +247,38 @@ return [
                 'kind' => 'corridor', 'color' => 'slate',
                 'x' => 6, 'y' => 21, 'width' => 9, 'height' => 5,
             ],
+            [
+                'name' => $name('Cabin corridor', 'Kabīņu gaitenis', 'Коридор кабин'),
+                'kind' => 'corridor', 'color' => 'slate',
+                'x' => 21, 'y' => 13.25, 'width' => 9, 'height' => 1.5,
+            ],
+        ],
+        'doors' => [
+            ['double', 'v', 6, 23.5, 1.6],
+            ['double', 'h', 12.5, 10, 1.6],
+            ['double', 'h', 12.5, 11.5, 1.6],
+            ['opening', 'v', 21, 3.25, 1.8],
+            ['single', 'v', 21, 9.88, 0.9],
+            ['single', 'h', 27.75, 13.25, 0.9],
+            ['single', 'v', 21, 17.88, 0.9],
+            ['single', 'h', 27.75, 14.75, 0.9],
+            ['opening', 'v', 19, 23.5, 1.8],
+            ['single', 'v', 21, 23.5, 0.9],
+        ],
+        'fixtures' => [
+            ['projector_screen', 12.5, 0.2, 0, 6, 0.2, null],
+            ['speaker', 6.5, 0.5, 0, 0.5, 0.5, null],
+            ['speaker', 18.5, 0.5, 0, 0.5, 0.5, null],
+            ['karaoke', 6.45, 16.5, 270, 2.4, 0.8, null],
+            ['speaker', 18.5, 12, 0, 0.5, 0.5, null],
+            ['bar_counter', 25.5, 1.3, 0, 0.6, 0.6, [[22.2, 1.3], [28.8, 1.3]]],
+            ['wall_tv', 23.25, 6.6, 0, 1.2, 0.12, null],
+            ['wall_tv', 27.75, 6.6, 0, 1.2, 0.12, null],
+            ['wall_tv', 23.25, 20.9, 180, 1.2, 0.12, null],
+            ['wall_tv', 27.75, 20.9, 180, 1.2, 0.12, null],
+            ['plant', 5.4, 0.6, 0, 0.7, 0.7, null],
+            ['plant', 0.6, 25.4, 0, 0.7, 0.7, null],
+            ['plant', 6.6, 25.4, 0, 0.7, 0.7, null],
         ],
     ],
 ];

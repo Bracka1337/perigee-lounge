@@ -25,8 +25,7 @@ class ApplyDefaultLayout
      */
     public function handle(array $updateOnly = []): void
     {
-        /** @var list<array{name: array<string, string>, rooms: list<array<string, mixed>>}> $layout */
-        $layout = require database_path('data/lounge-layout.php');
+        $layout = $this->layout();
 
         DB::transaction(fn () => Model::withoutEvents(function () use ($layout, $updateOnly): void {
             foreach ($layout as $floorOrder => $floorData) {
@@ -36,8 +35,58 @@ class ApplyDefaultLayout
                 foreach ($floorData['rooms'] as $roomOrder => $roomData) {
                     $this->writeRoom($floor, $roomOrder, $roomData, $updateOnly);
                 }
+
+                $this->furnishFloor($floor, $floorData);
             }
         }));
+    }
+
+    /**
+     * Gives the default floors their doors and fixtures, without touching rooms or tables.
+     * A floor that already has doors or fixtures is left as it is.
+     */
+    public function furnish(): void
+    {
+        DB::transaction(fn () => Model::withoutEvents(function (): void {
+            foreach ($this->layout() as $floorData) {
+                $floor = Floor::query()->where('name->en', $floorData['name']['en'])->first();
+                if ($floor !== null) {
+                    $this->furnishFloor($floor, $floorData);
+                }
+            }
+        }));
+    }
+
+    /**
+     * @return list<array{name: array<string, string>, rooms: list<array<string, mixed>>, doors?: list<array{0: string, 1: string, 2: int|float, 3: int|float, 4: int|float}>, fixtures?: list<array{0: string, 1: int|float, 2: int|float, 3: int, 4: int|float, 5: int|float, 6: list<array{0: int|float, 1: int|float}>|null}>}>
+     */
+    private function layout(): array
+    {
+        /** @var list<array{name: array<string, string>, rooms: list<array<string, mixed>>, doors?: list<array{0: string, 1: string, 2: int|float, 3: int|float, 4: int|float}>, fixtures?: list<array{0: string, 1: int|float, 2: int|float, 3: int, 4: int|float, 5: int|float, 6: list<array{0: int|float, 1: int|float}>|null}>}> $layout */
+        $layout = require database_path('data/lounge-layout.php');
+
+        return $layout;
+    }
+
+    /**
+     * @param  array{doors?: list<array{0: string, 1: string, 2: int|float, 3: int|float, 4: int|float}>, fixtures?: list<array{0: string, 1: int|float, 2: int|float, 3: int, 4: int|float, 5: int|float, 6: list<array{0: int|float, 1: int|float}>|null}>}  $data
+     */
+    private function furnishFloor(Floor $floor, array $data): void
+    {
+        if ($floor->doors()->exists() || $floor->fixtures()->exists()) {
+            return;
+        }
+
+        foreach ($data['doors'] ?? [] as [$kind, $orientation, $x, $y, $width]) {
+            $floor->doors()->create(['kind' => $kind, 'orientation' => $orientation, 'x' => $x, 'y' => $y, 'width' => $width]);
+        }
+
+        foreach ($data['fixtures'] ?? [] as [$type, $x, $y, $rotation, $width, $depth, $points]) {
+            $floor->fixtures()->create([
+                'type' => $type, 'x' => $x, 'y' => $y, 'rotation' => $rotation, 'width' => $width, 'depth' => $depth,
+                'points' => $points === null ? null : array_map(fn (array $point) => [(float) $point[0], (float) $point[1]], $points),
+            ]);
+        }
     }
 
     /**
