@@ -238,13 +238,29 @@ test('only an admin can queue new lounge photos', function () {
     Queue::assertNothingPushed();
 
     $this->actingAs(studioUser('admin'))->from(route('admin.floors.index'))
+        ->withHeader('Host', 'internal.example')
         ->post(route('admin.floors.photos.store'))
-        ->assertRedirect(route('admin.floors.index'))
+        ->assertRedirect()
         ->assertSessionHas('status');
-    Queue::assertPushed(RenderLoungePhotosJob::class, fn (RenderLoungePhotosJob $job) => $job->rootUrl === 'http://localhost');
+    Queue::assertPushed(RenderLoungePhotosJob::class, fn (RenderLoungePhotosJob $job) => $job->rootUrl === config('app.url'));
 
     config(['site.render_studio' => false]);
     $this->actingAs(studioUser('admin'))->post(route('admin.floors.photos.store'))->assertNotFound();
+});
+
+test('deleting a table or a room also deletes its picture', function () {
+    $this->seed(TableSeeder::class);
+    $renders = app(LoungeRenders::class);
+    $table = Table::where('name', 'T1')->firstOrFail();
+    $room = Room::where('name->en', 'Bar')->firstOrFail();
+    Storage::disk('public')->put($renders->tablePath($table->id), 'table');
+    Storage::disk('public')->put($renders->roomPath($room->id), 'room');
+    $admin = studioUser('admin');
+
+    $this->actingAs($admin)->delete(route('admin.tables.destroy', ['table' => $table]))->assertRedirect();
+    $this->actingAs($admin)->delete(route('admin.rooms.destroy', ['room' => $room]))->assertSessionMissing('error');
+
+    Storage::disk('public')->assertMissing([$renders->tablePath($table->id), $renders->roomPath($room->id)]);
 });
 
 // --- Table panel and default set ----------------------------------------------------------

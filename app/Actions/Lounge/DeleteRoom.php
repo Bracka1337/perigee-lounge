@@ -4,6 +4,7 @@ namespace App\Actions\Lounge;
 
 use App\Exceptions\BusinessRuleException;
 use App\Models\Room;
+use App\Services\LoungeRenders;
 
 class DeleteRoom
 {
@@ -18,5 +19,6 @@ class DeleteRoom
         }
 
         $room->delete();
+        app(LoungeRenders::class)->forget($room);
     }
 }
