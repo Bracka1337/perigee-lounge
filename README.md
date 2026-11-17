@@ -152,3 +152,9 @@ npm run build
 Browser tests (`tests/Browser`) use Pest 4 with Playwright and cover the flows that need JavaScript: QR table ordering from menu to confirmation, the menu category highlight, drag-and-drop category sorting, and JavaScript errors at phone width. Install the browser once with `npx playwright install chromium`.
 
 GitHub Actions runs all of these on every pull request.
+
+## License
+
+© 2026 Makarov ([Bracka1337](https://github.com/Bracka1337)). All rights reserved.
+
+This code is shown for portfolio purposes only. No permission is granted to use, copy, modify or deploy it, in whole or in part.
