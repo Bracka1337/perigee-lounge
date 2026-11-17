@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * A rectangle of a floor. x, y, width and height are in metres, measured from the
+ * top-left corner of the building.
+ */
 class Room extends Model
 {
     use HasTranslations, LogsActivity;
@@ -19,6 +23,7 @@ class Room extends Model
         'name',
         'kind',
         'color',
+        'is_bookable_whole',
         'x',
         'y',
         'width',
@@ -29,6 +34,7 @@ class Room extends Model
     protected $casts = [
         'name' => 'array',
         'kind' => RoomKind::class,
+        'is_bookable_whole' => 'boolean',
         'color' => RoomColor::class,
         'x' => 'float',
         'y' => 'float',
@@ -37,7 +43,7 @@ class Room extends Model
     ];
 
     /**
-     * Whether a point of the plan, in percent, lies inside this room.
+     * Whether a point of the floor, in metres, lies inside this room.
      */
     public function contains(float $x, float $y): bool
     {
