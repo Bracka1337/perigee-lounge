@@ -50,6 +50,27 @@ export function createLoungeViewer(container, layout, options = {}) {
     controls.zoomSpeed = 0.9;
 
     const lights = addLoungeLights(scene);
+    let daylight = false;
+
+    // Evening or day: a button in the corner of the view.
+    const dayButton = document.createElement('button');
+    dayButton.type = 'button';
+    dayButton.className = 'lounge-daylight-button';
+    dayButton.setAttribute('aria-pressed', 'false');
+    const dayLabels = options.labels ?? { day: 'Day', evening: 'Evening' };
+    const showDayButton = () => {
+        dayButton.textContent = daylight ? `☾ ${dayLabels.evening}` : `☀ ${dayLabels.day}`;
+        dayButton.setAttribute('aria-pressed', String(daylight));
+    };
+    showDayButton();
+    dayButton.addEventListener('click', () => {
+        daylight = !daylight;
+        scene.background.set(daylight ? '#2b3550' : COLORS.ground);
+        lights.setDaylight(daylight);
+        showDayButton();
+        requestRender();
+    });
+    container.append(dayButton);
 
     // Dark glass under the open floor: the floors below stay visible, but dimmed.
     const dimmer = new Mesh(
@@ -101,7 +122,7 @@ export function createLoungeViewer(container, layout, options = {}) {
 
         dimmer.visible = activeFloor.index > 0;
         dimmer.position.y = activeFloor.y - 0.32;
-        lights.forEach((light) => { if (light.userData.followsFloor) light.position.y = activeFloor.y + 4.2; });
+        lights.setSpots(activeFloor.lights, activeFloor.y);
 
         const to = activeFloor.y;
         if (animate && !reducedMotion) {
@@ -233,6 +254,7 @@ export function createLoungeViewer(container, layout, options = {}) {
             dimmer.material.dispose();
             renderer.dispose();
             renderer.domElement.remove();
+            dayButton.remove();
         },
     };
 }

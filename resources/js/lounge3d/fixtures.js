@@ -8,12 +8,44 @@ import { addHookah, addPlant } from './furniture.js';
 import { COLORS, mix } from './kit.js';
 
 const DARK = '#1b1c2b';
+
+export const LIGHT_COLORS = { amber: '#F5B860', violet: '#B9A5FF', rose: '#F28BB0', teal: '#5ED6C4', white: '#FFF1D6' };
 const SCREEN = '#9fb4ff';
 
 function screen(batch, width, height, y, z, colour = SCREEN) {
     batch.box(DARK, width + 0.08, height + 0.08, 0.06, 0, y - 0.04, z);
     batch.box(`glow:${mix(colour, '#ffffff', 0.25)}`, width, height, 0.015, 0, y, z + 0.035);
 }
+
+function lightColour(fixture) {
+    return LIGHT_COLORS[fixture.settings?.color] ?? LIGHT_COLORS.amber;
+}
+
+const lights = {
+    pendant_light(batch, fixture) {
+        const colour = lightColour(fixture);
+        batch.cylinder('#2a2c3f', 0.01, 0.01, 0.6, 0, 2.3, 0, 4);
+        batch.cylinder('#1e2033', 0.06, 0.24, 0.22, 0, 2.08, 0, 8);
+        batch.cylinder(`glow:${colour}`, 0.11, 0.08, 0.06, 0, 2.04, 0, 8);
+    },
+
+    floor_lamp(batch, fixture) {
+        const colour = lightColour(fixture);
+        batch.cylinder(COLORS.metal, 0.14, 0.16, 0.04, 0, 0, 0, 8);
+        batch.cylinder(COLORS.metal, 0.02, 0.02, 1.45, 0, 0.04, 0, 5);
+        batch.cylinder(`glow:${colour}`, 0.12, 0.2, 0.28, 0, 1.45, 0, 8);
+    },
+
+    neon_strip(batch, fixture) {
+        const colour = lightColour(fixture);
+        batch.box('#141524', fixture.width + 0.06, 0.12, 0.04, 0, 1.84, -fixture.depth / 2);
+        batch.box(`glow:${colour}`, fixture.width, 0.05, 0.03, 0, 1.87, -fixture.depth / 2 + 0.03);
+    },
+
+    led_strip(batch, fixture) {
+        batch.box(`glow:${lightColour(fixture)}`, fixture.width, 0.025, 0.04, 0, 0.02, 0);
+    },
+};
 
 const builders = {
     game_station(batch, w, d, random) {
@@ -165,9 +197,12 @@ export function addFixture(batch, fixture, centre, random) {
         return;
     }
 
-    const build = builders[fixture.type];
-    if (!build) return;
-
     batch.at(fixture.x - centre.x, 0.04, fixture.y - centre.z, (-fixture.rotation * Math.PI) / 180);
-    build(batch, fixture.width, fixture.depth, random);
+
+    if (lights[fixture.type]) {
+        lights[fixture.type](batch, fixture);
+        return;
+    }
+
+    builders[fixture.type]?.(batch, fixture.width, fixture.depth, random);
 }
