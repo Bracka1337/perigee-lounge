@@ -6231,6 +6231,252 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Plāns pa to laiku ir mainījies. Pārlādējiet lapu un mēģiniet vēlreiz.',
                 'ru' => 'План тем временем изменился. Обновите страницу и попробуйте снова.',
             ],
+
+            'door-kind-single' => [
+                'en' => 'Single door',
+                'lv' => 'Vienvērtņu durvis',
+                'ru' => 'Одностворчатая дверь',
+            ],
+
+            'door-kind-double' => [
+                'en' => 'Double door',
+                'lv' => 'Divvērtņu durvis',
+                'ru' => 'Двустворчатая дверь',
+            ],
+
+            'door-kind-sliding' => [
+                'en' => 'Sliding door',
+                'lv' => 'Bīdāmās durvis',
+                'ru' => 'Раздвижная дверь',
+            ],
+
+            'door-kind-opening' => [
+                'en' => 'Open doorway',
+                'lv' => 'Atvērta eja',
+                'ru' => 'Открытый проём',
+            ],
+
+            'fixture-group-entertainment' => [
+                'en' => 'Entertainment',
+                'lv' => 'Izklaide',
+                'ru' => 'Развлечения',
+            ],
+
+            'fixture-group-bar' => [
+                'en' => 'Bar and service',
+                'lv' => 'Bārs un apkalpošana',
+                'ru' => 'Бар и сервис',
+            ],
+
+            'fixture-group-decor' => [
+                'en' => 'Decor',
+                'lv' => 'Dekors',
+                'ru' => 'Декор',
+            ],
+
+            'fixture-game-station' => [
+                'en' => 'Game station (PS5 + TV)',
+                'lv' => 'Spēļu stacija (PS5 + TV)',
+                'ru' => 'Игровая станция (PS5 + ТВ)',
+            ],
+
+            'fixture-wall-tv' => [
+                'en' => 'Wall TV',
+                'lv' => 'Sienas televizors',
+                'ru' => 'Настенный телевизор',
+            ],
+
+            'fixture-projector-screen' => [
+                'en' => 'Projector screen',
+                'lv' => 'Projektora ekrāns',
+                'ru' => 'Экран проектора',
+            ],
+
+            'fixture-karaoke' => [
+                'en' => 'Karaoke set',
+                'lv' => 'Karaoke komplekts',
+                'ru' => 'Караоке-комплект',
+            ],
+
+            'fixture-dj-booth' => [
+                'en' => 'DJ booth',
+                'lv' => 'DJ pults',
+                'ru' => 'DJ-пульт',
+            ],
+
+            'fixture-speaker' => [
+                'en' => 'Speaker',
+                'lv' => 'Skaļrunis',
+                'ru' => 'Колонка',
+            ],
+
+            'fixture-bar-counter' => [
+                'en' => 'Bar counter',
+                'lv' => 'Bāra lete',
+                'ru' => 'Барная стойка',
+            ],
+
+            'fixture-hookah-station' => [
+                'en' => 'Hookah station',
+                'lv' => 'Ūdenspīpju stacija',
+                'ru' => 'Кальянная станция',
+            ],
+
+            'fixture-coat-rack' => [
+                'en' => 'Coat rack',
+                'lv' => 'Drēbju pakaramais',
+                'ru' => 'Вешалка',
+            ],
+
+            'fixture-plant' => [
+                'en' => 'Plant',
+                'lv' => 'Augs',
+                'ru' => 'Растение',
+            ],
+
+            'fixture-partition' => [
+                'en' => 'Partition',
+                'lv' => 'Starpsiena',
+                'ru' => 'Перегородка',
+            ],
+
+            'fixture-curtain' => [
+                'en' => 'Curtain',
+                'lv' => 'Aizkars',
+                'ru' => 'Штора',
+            ],
+
+            'fixture-aquarium' => [
+                'en' => 'Aquarium',
+                'lv' => 'Akvārijs',
+                'ru' => 'Аквариум',
+            ],
+
+            'fixture-feature-wall' => [
+                'en' => 'Feature wall',
+                'lv' => 'Akcenta siena',
+                'ru' => 'Акцентная стена',
+            ],
+
+            'admin-plan-tool-door' => [
+                'en' => 'Door',
+                'lv' => 'Durvis',
+                'ru' => 'Дверь',
+            ],
+
+            'admin-plan-tool-door-help' => [
+                'en' => 'Click on a wall to put a door in it',
+                'lv' => 'Noklikšķiniet uz sienas, lai tajā ieliktu durvis',
+                'ru' => 'Нажмите на стену, чтобы поставить в ней дверь',
+            ],
+
+            'admin-plan-tool-item' => [
+                'en' => 'Add item',
+                'lv' => 'Pievienot priekšmetu',
+                'ru' => 'Добавить предмет',
+            ],
+
+            'admin-plan-tool-item-help' => [
+                'en' => 'Choose a screen, game station, bar counter, plant and more, then click in a room',
+                'lv' => 'Izvēlieties ekrānu, spēļu staciju, bāra leti, augu u. c., tad noklikšķiniet telpā',
+                'ru' => 'Выберите экран, игровую станцию, барную стойку, растение и другое, затем нажмите в зале',
+            ],
+
+            'admin-plan-hint-door' => [
+                'en' => 'Click on a wall to add a door. Drag a door to slide it along its wall. Esc cancels.',
+                'lv' => 'Noklikšķiniet uz sienas, lai pievienotu durvis. Velciet durvis, lai pārbīdītu tās gar sienu. Esc atceļ.',
+                'ru' => 'Нажмите на стену, чтобы добавить дверь. Тяните дверь, чтобы сдвинуть её вдоль стены. Esc отменяет.',
+            ],
+
+            'admin-plan-hint-item' => [
+                'en' => 'Click inside a room to place the item. Esc cancels.',
+                'lv' => 'Noklikšķiniet telpā, lai novietotu priekšmetu. Esc atceļ.',
+                'ru' => 'Нажмите внутри зала, чтобы поставить предмет. Esc отменяет.',
+            ],
+
+            'admin-plan-help-door' => [
+                'en' => 'Door (D): click on a wall. A door between two rooms opens both walls.',
+                'lv' => 'Durvis (D): noklikšķiniet uz sienas. Durvis starp divām telpām atver abas sienas.',
+                'ru' => 'Дверь (D): нажмите на стену. Дверь между двумя залами открывает обе стены.',
+            ],
+
+            'admin-plan-help-item' => [
+                'en' => 'Add item (I): pick from the list, then click in a room. Bar counters bend at their corners.',
+                'lv' => 'Pievienot priekšmetu (I): izvēlieties no saraksta un noklikšķiniet telpā. Bāra letes var lauzt stūros.',
+                'ru' => 'Добавить предмет (I): выберите из списка и нажмите в зале. Барные стойки изгибаются в углах.',
+            ],
+
+            'admin-plan-selected-door' => [
+                'en' => 'Selected door',
+                'lv' => 'Izvēlētās durvis',
+                'ru' => 'Выбранная дверь',
+            ],
+
+            'admin-plan-door-help' => [
+                'en' => 'Drag the door to slide it along its wall, or onto another wall.',
+                'lv' => 'Velciet durvis, lai pārbīdītu tās gar sienu vai uz citu sienu.',
+                'ru' => 'Тяните дверь, чтобы сдвинуть её вдоль стены или на другую стену.',
+            ],
+
+            'admin-plan-delete-door' => [
+                'en' => 'Delete door',
+                'lv' => 'Dzēst durvis',
+                'ru' => 'Удалить дверь',
+            ],
+
+            'admin-plan-delete-item' => [
+                'en' => 'Delete item',
+                'lv' => 'Dzēst priekšmetu',
+                'ru' => 'Удалить предмет',
+            ],
+
+            'admin-plan-bar-help' => [
+                'en' => 'Drag the round handles to reshape the counter. Each piece gets stools on its guest side.',
+                'lv' => 'Velciet apaļos rokturus, lai mainītu letes formu. Katrai daļai ir krēsli viesu pusē.',
+                'ru' => 'Тяните круглые маркеры, чтобы изменить форму стойки. У каждой части стулья со стороны гостей.',
+            ],
+
+            'admin-plan-bar-corners' => [
+                'en' => 'Corners: :count',
+                'lv' => 'Stūri: :count',
+                'ru' => 'Углов: :count',
+            ],
+
+            'admin-plan-bar-add' => [
+                'en' => 'Add a corner',
+                'lv' => 'Pievienot stūri',
+                'ru' => 'Добавить угол',
+            ],
+
+            'admin-plan-bar-remove' => [
+                'en' => 'Remove last corner',
+                'lv' => 'Noņemt pēdējo stūri',
+                'ru' => 'Убрать последний угол',
+            ],
+
+            'admin-plan-door-off-wall' => [
+                'en' => 'A door is not on a wall. Drag it onto the edge of a room.',
+                'lv' => 'Durvis nav uz sienas. Velciet tās uz telpas malu.',
+                'ru' => 'Дверь не на стене. Перетащите её на край зала.',
+            ],
+
+            'admin-plan-fixture-outside' => [
+                'en' => 'An item is not inside a room.',
+                'lv' => 'Priekšmets neatrodas telpā.',
+                'ru' => 'Предмет находится вне зала.',
+            ],
+
+            'admin-plan-door-width' => [
+                'en' => 'A door has to be between 0.6 and 3 m wide.',
+                'lv' => 'Durvju platumam jābūt no 0,6 līdz 3 m.',
+                'ru' => 'Ширина двери должна быть от 0,6 до 3 м.',
+            ],
+
+            'admin-plan-bar-points' => [
+                'en' => 'A bar counter has 2 to 8 corners.',
+                'lv' => 'Bāra letei ir no 2 līdz 8 stūriem.',
+                'ru' => 'У барной стойки от 2 до 8 углов.',
+            ],
         ];
     }
 }
