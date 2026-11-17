@@ -7,7 +7,9 @@ use App\Exceptions\BusinessRuleException;
 use App\Models\OpeningHour;
 use App\Models\Order;
 use App\Models\Reservation;
+use App\Models\Room;
 use App\Models\Table;
+use App\Services\TableHolds;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -17,12 +19,13 @@ use Illuminate\Support\Facades\Log;
  */
 class CreateStaffReservation
 {
+    public function __construct(private TableHolds $holds, private CreateRoomReservation $bookRoom) {}
+
     /**
      * @param  array<string, mixed>  $data  Validated StoreReservationRequest data
      */
     public function handle(array $data): Reservation
     {
-        $tableId = (int) $data['table_id'];
         $start = Carbon::parse($data['date'].' '.$data['time']);
         $now = Carbon::now();
 
@@ -30,6 +33,16 @@ class CreateStaffReservation
             || ($start->toDateString() === $now->toDateString() && $start->lt($now))) {
             throw new BusinessRuleException('staff-reservations-error-past');
         }
+
+        if (($data['room_id'] ?? null) !== null) {
+            return $this->bookRoom->handle(Room::findOrFail((int) $data['room_id']), $start, (int) $data['guests_count'], [
+                'guest_name' => ($data['guest_name'] ?? '') !== '' ? $data['guest_name'] : null,
+                'guest_phone' => ($data['guest_phone'] ?? '') !== '' ? $data['guest_phone'] : null,
+                'source' => $data['mode'],
+            ]);
+        }
+
+        $tableId = (int) $data['table_id'];
 
         $table = Table::where('is_active', true)->findOrFail($tableId);
 
@@ -47,12 +60,8 @@ class CreateStaffReservation
             throw new BusinessRuleException('staff-reservations-error-closed');
         }
 
-        $tableTaken = Reservation::where('table_id', $tableId)
-            ->whereDate('start_at', $start->toDateString())
-            ->whereIn('status', ReservationStatus::holdingTable())
-            ->exists();
-
-        if ($tableTaken) {
+        // Also taken when the whole room around the table is booked that day.
+        if ($this->holds->tableHeld($tableId, $start->toDateString())) {
             throw new BusinessRuleException('staff-reservations-error-overlap');
         }
 

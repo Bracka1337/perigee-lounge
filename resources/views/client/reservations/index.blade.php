@@ -38,7 +38,8 @@
     @endif
 
     @php
-        $reservationsByTable = $reservations->groupBy('table_id');
+        // A whole-room booking counts for every table in its room.
+        $reservationsByTable = app(\App\Services\TableHolds::class)->byTable($reservations);
     @endphp
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -82,7 +83,7 @@
 
             <div class="overflow-x-auto" data-plan-2d>
                 @foreach ($floors as $floor)
-                    <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId">
+                    <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId" :room-booking="$roomBooking" :room-renders="$roomRenders">
 
                         @foreach ($floor->tables as $table)
                     @php
@@ -181,6 +182,7 @@
                   class="space-y-3">
                 @csrf
                 <input type="hidden" name="table_id" id="client_table_id" value="{{ old('table_id') }}">
+                <input type="hidden" name="room_id" id="client_room_id" value="{{ old('room_id') }}">
 
                 <div class="text-xs text-ink-muted mb-1" id="clientSelectedTableLabel">
                     {{ __('client-reservations-selected-table-empty') }}
@@ -289,7 +291,7 @@
         </div>
 
         <div class="mt-0.5 text-ink whitespace-nowrap">
-            {{ __('client-reservations-table-label') }} {{ $res->table->name ?? '#' }}
+            {{ $res->room_id ? __('room-booking-label').' '.($res->room?->t('name') ?? '') : __('client-reservations-table-label').' '.($res->table->name ?? '#') }}
         </div>
 
         <div class="text-xs text-ink-muted whitespace-nowrap">
@@ -353,11 +355,11 @@
             const panel = document.getElementById('clientTablePanel');
             const panelTitle = @json(__('client-reservations-panel-table', ['name' => '__NAME__']));
 
-            function showTablePanel(btn) {
+            function showTablePanel(btn, title = panelTitle) {
                 if (!panel) return;
 
                 const values = { room: btn.dataset.room, floor: btn.dataset.floor, capacity: btn.dataset.capacity, status: btn.dataset.statusLabel };
-                panel.querySelector('[data-panel-name]').textContent = panelTitle.replace('__NAME__', () => btn.dataset.name);
+                panel.querySelector('[data-panel-name]').textContent = title.replace('__NAME__', () => btn.dataset.name);
                 Object.entries(values).forEach(([field, value]) => {
                     panel.querySelectorAll(`[data-panel-row="${field}"]`).forEach((row) => row.classList.toggle('hidden', !value));
                     panel.querySelector(`[data-panel-value="${field}"]`).textContent = value ?? '';
@@ -368,7 +370,7 @@
                 figure.classList.toggle('hidden', !btn.dataset.render);
                 if (btn.dataset.render) {
                     image.src = btn.dataset.render;
-                    image.alt = panelTitle.replace('__NAME__', () => btn.dataset.name);
+                    image.alt = title.replace('__NAME__', () => btn.dataset.name);
                 }
 
                 panel.classList.remove('hidden');
@@ -391,6 +393,7 @@
                     const capacity = btn.dataset.capacity;
 
                     tableIdInput.value = id;
+                    clearRoom();
                     showTablePanel(btn);
                     label.textContent = name + ' · ' + '{{ __('client-reservations-guests-label') }}' + ' ' + capacity;
                 });
@@ -398,6 +401,51 @@
 
             if (dateInput && dateForm) {
                 dateInput.addEventListener('change', () => dateForm.submit());
+            }
+
+            // Whole-room booking: the name of a bookable room selects the room instead of a table.
+            const roomIdInput = document.getElementById('client_room_id');
+            const guestsInput = document.querySelector('[name="guests_count"]');
+            const roomTitle = @json(__('room-booking-panel-title', ['name' => '__NAME__']));
+            const roomLabel = @json(__('room-booking-selected', ['name' => '__NAME__', 'seats' => '__SEATS__']));
+            const statusFree = @json(__('client-reservations-legend-free'));
+            const statusTaken = @json(__('room-booking-taken'));
+            const roomButtons = document.querySelectorAll('.js-room-book');
+            let selectedRoom = null;
+
+            function clearRoom() {
+                roomIdInput.value = '';
+                selectedRoom?.setAttribute('aria-pressed', 'false');
+                selectedRoom = null;
+                guestsInput?.setAttribute('max', '20');
+            }
+
+            function selectRoom(button) {
+                if (selectedBtn) selectedBtn.classList.remove('ring-2', 'ring-line-strong');
+                selectedBtn = null;
+                tableIdInput.value = '';
+                selectedRoom?.setAttribute('aria-pressed', 'false');
+                selectedRoom = button;
+                button.setAttribute('aria-pressed', 'true');
+                roomIdInput.value = button.dataset.roomId;
+                guestsInput?.setAttribute('max', button.dataset.seats);
+                label.textContent = roomLabel.replace('__NAME__', () => button.dataset.name).replace('__SEATS__', button.dataset.seats);
+                showTablePanel({ dataset: {
+                    name: button.dataset.name, room: '', floor: button.dataset.floor, capacity: button.dataset.seats,
+                    statusLabel: button.dataset.taken === '1' ? statusTaken : statusFree, render: button.dataset.render,
+                } }, roomTitle);
+            }
+
+            roomButtons.forEach((button) => {
+                button.disabled = button.dataset.taken === '1';
+                if (button.disabled) button.title = statusTaken;
+                button.addEventListener('click', () => selectRoom(button));
+            });
+
+            // After a failed submit, show the room again.
+            if (roomIdInput.value) {
+                const again = [...roomButtons].find((button) => button.dataset.roomId === roomIdInput.value);
+                if (again && !again.disabled) selectRoom(again);
             }
 
 

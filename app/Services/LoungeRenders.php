@@ -52,6 +52,30 @@ class LoungeRenders
         return $urls;
     }
 
+    /**
+     * The picture of every room that has one.
+     *
+     * @param  Collection<int, Floor>  $floors
+     * @return array<int, string> room id => URL
+     */
+    public function roomUrlsFor(Collection $floors): array
+    {
+        $disk = Storage::disk(self::DISK);
+        $existing = array_flip($disk->files('renders/rooms'));
+
+        $urls = [];
+        foreach ($floors as $floor) {
+            foreach ($floor->rooms as $room) {
+                $path = $this->roomPath($room->id);
+                if (isset($existing[$path])) {
+                    $urls[$room->id] = $disk->url($path).'?v='.$disk->lastModified($path);
+                }
+            }
+        }
+
+        return $urls;
+    }
+
     public function forget(Room|Table $model): void
     {
         Storage::disk(self::DISK)->delete(

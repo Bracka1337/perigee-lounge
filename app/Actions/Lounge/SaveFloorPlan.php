@@ -7,6 +7,7 @@ use App\Exceptions\BusinessRuleException;
 use App\Models\Door;
 use App\Models\Fixture;
 use App\Models\Floor;
+use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\Table;
 use App\Services\LoungeRenders;
@@ -96,6 +97,11 @@ class SaveFloorPlan
             // A table that was not in the plan still stands in its old room. That room stays.
             if (Table::query()->whereIn('room_id', $removed->modelKeys())->whereNotIn('id', $sentTableIds)->exists()) {
                 throw new BusinessRuleException('admin-rooms-delete-has-tables');
+            }
+
+            // Whole-room bookings point at their room, so a booked room stays.
+            if (Reservation::query()->whereIn('room_id', $removed->modelKeys())->exists()) {
+                throw new BusinessRuleException('admin-rooms-delete-has-bookings');
             }
 
             $removed->each(fn (Room $room) => $room->delete());

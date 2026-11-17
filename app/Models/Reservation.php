@@ -18,6 +18,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',
         'table_id',
+        'room_id',
         'guest_name',
         'guest_phone',
         'start_at',
@@ -72,6 +73,29 @@ class Reservation extends Model
     public function table(): BelongsTo
     {
         return $this->belongsTo(Table::class);
+    }
+
+    /**
+     * Set when the guest booked the whole room. The table is then the room's lead table.
+     *
+     * @return BelongsTo<Room, $this>
+     */
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    /**
+     * What was booked, for lists and messages: the room for a room booking, else the table.
+     */
+    public function placeName(): string
+    {
+        // Inside the model, $this->table is Eloquent's table name, so the relation is read explicitly.
+        $table = $this->getRelationValue('table');
+
+        return $this->room_id !== null
+            ? ($this->room?->t('name') ?? '')
+            : ($table instanceof Table ? $table->name : '#'.$this->table_id);
     }
 
     /**

@@ -6603,6 +6603,72 @@ class DefaultTranslationsSeeder extends Seeder
                 'lv' => 'Vakars',
                 'ru' => 'Вечер',
             ],
+
+            'room-booking-label' => [
+                'en' => 'Whole room',
+                'lv' => 'Visa telpa',
+                'ru' => 'Весь зал',
+            ],
+
+            'room-booking-choose' => [
+                'en' => 'Book the whole :room',
+                'lv' => 'Rezervēt visu telpu :room',
+                'ru' => 'Забронировать весь зал :room',
+            ],
+
+            'room-booking-panel-title' => [
+                'en' => 'Whole room: :name',
+                'lv' => 'Visa telpa: :name',
+                'ru' => 'Весь зал: :name',
+            ],
+
+            'room-booking-selected' => [
+                'en' => ':name, the whole room · up to :seats guests',
+                'lv' => ':name, visa telpa · līdz :seats viesiem',
+                'ru' => ':name, весь зал · до :seats гостей',
+            ],
+
+            'room-booking-taken' => [
+                'en' => 'Not available: a table here is already booked or in use',
+                'lv' => 'Nav pieejama: kāds galdiņš šeit jau ir rezervēts vai aizņemts',
+                'ru' => 'Недоступен: столик здесь уже забронирован или занят',
+            ],
+
+            'room-booking-created' => [
+                'en' => 'The whole room is booked for you. We\'ll confirm it shortly.',
+                'lv' => 'Visa telpa ir rezervēta jums. Drīzumā to apstiprināsim.',
+                'ru' => 'Весь зал забронирован для вас. Мы скоро подтвердим бронь.',
+            ],
+
+            'room-booking-error-not-bookable' => [
+                'en' => 'This room cannot be booked as a whole.',
+                'lv' => 'Šo telpu nevar rezervēt visu.',
+                'ru' => 'Этот зал нельзя забронировать целиком.',
+            ],
+
+            'room-booking-error-too-many-guests' => [
+                'en' => 'More guests than the room has seats.',
+                'lv' => 'Viesu ir vairāk nekā sēdvietu telpā.',
+                'ru' => 'Гостей больше, чем мест в зале.',
+            ],
+
+            'room-booking-error-taken' => [
+                'en' => 'The room is not free that day: one of its tables is already booked or in use.',
+                'lv' => 'Telpa tajā dienā nav brīva: kāds tās galdiņš jau ir rezervēts vai aizņemts.',
+                'ru' => 'Зал в этот день не свободен: один из его столиков уже забронирован или занят.',
+            ],
+
+            'room-booking-help' => [
+                'en' => 'Rooms marked ◆ can be booked as a whole: tap the room\'s name.',
+                'lv' => 'Telpas ar ◆ var rezervēt pilnībā: pieskarieties telpas nosaukumam.',
+                'ru' => 'Залы с ◆ можно забронировать целиком: нажмите на название зала.',
+            ],
+
+            'admin-rooms-delete-has-bookings' => [
+                'en' => 'This room has bookings for the whole room and cannot be deleted.',
+                'lv' => 'Šai telpai ir visas telpas rezervācijas, to nevar dzēst.',
+                'ru' => 'У этого зала есть брони на весь зал, его нельзя удалить.',
+            ],
         ];
     }
 }
