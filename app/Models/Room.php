@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RoomColor;
 use App\Enums\RoomKind;
+use App\Enums\RoomMood;
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ class Room extends Model
         'name',
         'kind',
         'color',
+        'mood',
         'is_bookable_whole',
         'x',
         'y',
@@ -36,6 +38,7 @@ class Room extends Model
         'kind' => RoomKind::class,
         'is_bookable_whole' => 'boolean',
         'color' => RoomColor::class,
+        'mood' => RoomMood::class,
         'x' => 'float',
         'y' => 'float',
         'width' => 'float',

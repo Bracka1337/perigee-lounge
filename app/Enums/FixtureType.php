@@ -28,12 +28,30 @@ enum FixtureType: string
     case Aquarium = 'aquarium';
     case FeatureWall = 'feature_wall';
 
+    // Lights
+    case PendantLight = 'pendant_light';
+    case FloorLamp = 'floor_lamp';
+    case NeonStrip = 'neon_strip';
+    case LedStrip = 'led_strip';
+
+    /**
+     * The colours a light can have, as hex values.
+     */
+    public const LIGHT_COLORS = [
+        'amber' => '#F5B860',
+        'violet' => '#B9A5FF',
+        'rose' => '#F28BB0',
+        'teal' => '#5ED6C4',
+        'white' => '#FFF1D6',
+    ];
+
     public function group(): string
     {
         return match ($this) {
             self::GameStation, self::WallTv, self::ProjectorScreen, self::Karaoke, self::DjBooth, self::Speaker => 'entertainment',
             self::BarCounter, self::HookahStation, self::CoatRack => 'bar',
             self::Plant, self::Partition, self::Curtain, self::Aquarium, self::FeatureWall => 'decor',
+            self::PendantLight, self::FloorLamp, self::NeonStrip, self::LedStrip => 'lights',
         };
     }
 
@@ -59,7 +77,16 @@ enum FixtureType: string
             self::Curtain => [2.4, 0.15],
             self::Aquarium => [2.0, 0.6],
             self::FeatureWall => [3.0, 0.2],
+            self::PendantLight => [0.5, 0.5],
+            self::FloorLamp => [0.5, 0.5],
+            self::NeonStrip => [2.0, 0.1],
+            self::LedStrip => [3.0, 0.1],
         };
+    }
+
+    public function isLight(): bool
+    {
+        return $this->group() === 'lights';
     }
 
     public function labelKey(): string

@@ -6,6 +6,7 @@ use App\Enums\DoorKind;
 use App\Enums\FixtureType;
 use App\Enums\RoomColor;
 use App\Enums\RoomKind;
+use App\Enums\RoomMood;
 use App\Models\Floor;
 use App\Models\Table;
 use Illuminate\Foundation\Http\FormRequest;
@@ -56,7 +57,7 @@ class FloorPlanRequest extends FormRequest
 
         return [
             'rooms' => ['present', 'array', 'max:80'],
-            'rooms.*' => ['array:id,name,kind,color,is_bookable_whole,x,y,width,height'],
+            'rooms.*' => ['array:id,name,kind,color,mood,is_bookable_whole,x,y,width,height'],
             'rooms.*.id' => ['nullable', 'integer', 'distinct', Rule::exists('rooms', 'id')->where('floor_id', $floorId)],
             'rooms.*.name' => ['required', 'array:en,lv,ru'],
             'rooms.*.name.en' => ['required', 'string', 'max:60', 'regex:/\S/'],
@@ -65,6 +66,7 @@ class FloorPlanRequest extends FormRequest
             'rooms.*.kind' => ['required', Rule::enum(RoomKind::class)],
             'rooms.*.color' => ['required', Rule::enum(RoomColor::class)],
             'rooms.*.is_bookable_whole' => ['sometimes', 'boolean'],
+            'rooms.*.mood' => ['sometimes', Rule::enum(RoomMood::class)],
             'rooms.*.x' => $coordinate,
             'rooms.*.y' => $coordinate,
             'rooms.*.width' => ['required', 'numeric', 'min:'.self::MIN_ROOM, 'max:'.self::MAX_COORDINATE],
@@ -92,7 +94,7 @@ class FloorPlanRequest extends FormRequest
             'doors.*.width' => ['required', 'numeric', 'min:0.6', 'max:3'],
 
             'fixtures' => ['sometimes', 'array', 'max:200'],
-            'fixtures.*' => ['array:id,type,x,y,rotation,width,depth,points'],
+            'fixtures.*' => ['array:id,type,x,y,rotation,width,depth,points,settings'],
             'fixtures.*.id' => ['nullable', 'integer', 'distinct', Rule::exists('fixtures', 'id')->where('floor_id', $floorId)],
             'fixtures.*.type' => ['required', Rule::enum(FixtureType::class)],
             'fixtures.*.x' => $coordinate,
@@ -103,6 +105,9 @@ class FloorPlanRequest extends FormRequest
             'fixtures.*.points' => ['nullable', 'array', 'min:2', 'max:8'],
             'fixtures.*.points.*' => ['array:0,1', 'size:2'],
             'fixtures.*.points.*.*' => ['required', 'numeric', 'min:-'.self::MAX_COORDINATE, 'max:'.self::MAX_COORDINATE],
+            'fixtures.*.settings' => ['nullable', 'array:color,strength'],
+            'fixtures.*.settings.color' => ['sometimes', Rule::in(array_keys(FixtureType::LIGHT_COLORS))],
+            'fixtures.*.settings.strength' => ['sometimes', 'integer', 'min:1', 'max:10'],
         ];
     }
 
@@ -212,11 +217,11 @@ class FloorPlanRequest extends FormRequest
     }
 
     /**
-     * @return array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}>
+     * @return array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, mood?: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}>
      */
     public function rooms(): array
     {
-        /** @var array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}> $rooms */
+        /** @var array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, mood?: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}> $rooms */
         $rooms = $this->input('rooms', []);
 
         return $rooms;
@@ -241,7 +246,7 @@ class FloorPlanRequest extends FormRequest
     }
 
     /**
-     * @return array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>|null
+     * @return array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null, settings?: array{color?: string, strength?: int|string}|null}>|null
      */
     public function fixtures(): ?array
     {
@@ -249,7 +254,7 @@ class FloorPlanRequest extends FormRequest
             return null;
         }
 
-        /** @var array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}> $fixtures */
+        /** @var array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null, settings?: array{color?: string, strength?: int|string}|null}> $fixtures */
         $fixtures = $this->input('fixtures', []);
 
         return $fixtures;

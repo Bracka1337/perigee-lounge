@@ -2,6 +2,7 @@
 
 namespace App\Actions\Lounge;
 
+use App\Enums\FixtureType;
 use App\Exceptions\BusinessRuleException;
 use App\Models\Door;
 use App\Models\Fixture;
@@ -24,10 +25,10 @@ class SaveFloorPlan
     public function __construct(private LoungeRenders $renders) {}
 
     /**
-     * @param  array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}>  $rooms
+     * @param  array<int, array{id?: int|string|null, name: array<string, string|null>, kind: string, color: string, mood?: string, is_bookable_whole?: bool|int|string, x: int|float|string, y: int|float|string, width: int|float|string, height: int|float|string}>  $rooms
      * @param  array<int, array{id?: int|string|null, name: string, capacity: int|string, x: int|float|string, y: int|float|string, width: int|string, height: int|string, rotation: int|string, is_active: bool|int|string}>  $tables
      * @param  array<int, array{id?: int|string|null, kind: string, orientation: string, x: int|float|string, y: int|float|string, width: int|float|string}>|null  $doors
-     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>|null  $fixtures
+     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null, settings?: array{color?: string, strength?: int|string}|null}>|null  $fixtures
      */
     public function handle(Floor $floor, array $rooms, array $tables, ?array $doors = null, ?array $fixtures = null): void
     {
@@ -51,6 +52,7 @@ class SaveFloorPlan
                     ],
                     'kind' => $data['kind'],
                     'color' => $data['color'],
+                    'mood' => $data['mood'] ?? $room->mood ?? 'warm',
                     'is_bookable_whole' => filter_var($data['is_bookable_whole'] ?? false, FILTER_VALIDATE_BOOL),
                     'x' => round((float) $data['x'], 2),
                     'y' => round((float) $data['y'], 2),
@@ -139,7 +141,7 @@ class SaveFloorPlan
     }
 
     /**
-     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null}>  $fixtures
+     * @param  array<int, array{id?: int|string|null, type: string, x: int|float|string, y: int|float|string, rotation: int|string, width: int|float|string, depth: int|float|string, points?: list<array{0: int|float|string, 1: int|float|string}>|null, settings?: array{color?: string, strength?: int|string}|null}>  $fixtures
      */
     private function syncFixtures(Floor $floor, array $fixtures): void
     {
@@ -157,6 +159,11 @@ class SaveFloorPlan
                 'rotation' => (int) $data['rotation'],
                 'width' => round((float) $data['width'], 2),
                 'depth' => round((float) $data['depth'], 2),
+                // Only lights keep settings: their colour and strength.
+                'settings' => FixtureType::from($data['type'])->isLight() ? [
+                    'color' => $data['settings']['color'] ?? 'amber',
+                    'strength' => (int) ($data['settings']['strength'] ?? 5),
+                ] : null,
                 'points' => $points === null || $points === [] ? null
                     : array_map(fn (array $point) => [round((float) $point[0], 2), round((float) $point[1], 2)], $points),
             ])->save();
