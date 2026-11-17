@@ -18,23 +18,37 @@ return new class extends Migration
     private const CM_PER_PX = 2.5;
 
     /**
-     * Tables of the default layout. They are moved, never created again.
+     * Tables of the first, one-floor layout. They are moved, never created again.
      */
-    private const DEFAULT_TABLES = [
+    private const GROUND_TABLES = [
         'T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
         'Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'P1', 'P2', 'VIP',
+    ];
+
+    /**
+     * Tables the second floor brought in.
+     */
+    private const SECOND_FLOOR_TABLES = [
         'L1', 'L2', 'L3', 'L4', 'C1', 'C2', 'C3', 'U1', 'U2', 'S1', 'S2', 'S3', 'S4', 'K1', 'K2',
     ];
 
     public function up(): void
     {
+        if (! DB::table('tables')->exists()) {
+            return; // a fresh database gets the layout from the seeders
+        }
+
+        // A database that already has floors got the second floor's tables before. Any of
+        // them that is gone now was removed by an admin, so it is not created again.
+        $hadFloors = DB::table('floors')->exists();
+
         $this->convert(self::PLAN_WIDTH / 100, self::PLAN_DEPTH / 100, self::CM_PER_PX);
 
         // Rooms and tables of the default layout move to the new layout without gaps. Rooms
         // and tables an admin added keep their place, now in metres. Ids never change.
-        if (DB::table('tables')->exists()) {
-            app(ApplyDefaultLayout::class)->handle(self::DEFAULT_TABLES);
-        }
+        app(ApplyDefaultLayout::class)->handle($hadFloors
+            ? [...self::GROUND_TABLES, ...self::SECOND_FLOOR_TABLES]
+            : self::GROUND_TABLES);
     }
 
     public function down(): void
