@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\Lounge\SaveFloorPlan;
+use App\Enums\DoorKind;
+use App\Enums\FixtureType;
 use App\Enums\RoomColor;
 use App\Enums\RoomKind;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\FloorPlanRequest;
+use App\Models\Door;
+use App\Models\Fixture;
 use App\Models\Floor;
 use App\Models\Room;
 use App\Models\Table;
@@ -43,6 +47,14 @@ class FloorPlanController extends Controller
                     'width' => $room->width,
                     'height' => $room->height,
                 ])->values(),
+                'doors' => $active->doors->map(fn (Door $door) => [
+                    'id' => $door->id, 'kind' => $door->kind->value, 'orientation' => $door->orientation,
+                    'x' => $door->x, 'y' => $door->y, 'width' => $door->width,
+                ])->values(),
+                'fixtures' => $active->fixtures->map(fn (Fixture $fixture) => [
+                    'id' => $fixture->id, 'type' => $fixture->type->value, 'x' => $fixture->x, 'y' => $fixture->y,
+                    'rotation' => $fixture->rotation, 'width' => $fixture->width, 'depth' => $fixture->depth, 'points' => $fixture->points,
+                ])->values(),
                 'tables' => $active->tables->map(fn (Table $table) => [
                     'id' => $table->id,
                     'name' => $table->name,
@@ -64,6 +76,13 @@ class FloorPlanController extends Controller
                     'hex' => $color->hex(), 'label' => __($color->labelKey()),
                 ]]),
                 'kinds' => collect(RoomKind::cases())->mapWithKeys(fn (RoomKind $kind) => [$kind->value => __($kind->labelKey())]),
+                'doorKinds' => collect(DoorKind::cases())->mapWithKeys(fn (DoorKind $kind) => [$kind->value => [
+                    'label' => __($kind->labelKey()), 'width' => $kind->defaultWidth(),
+                ]]),
+                'fixtureTypes' => collect(FixtureType::cases())->mapWithKeys(fn (FixtureType $type) => [$type->value => [
+                    'label' => __($type->labelKey()), 'group' => $type->group(), 'size' => $type->size(),
+                ]]),
+                'fixtureGroups' => collect(['entertainment', 'bar', 'decor'])->mapWithKeys(fn (string $group) => [$group => __('fixture-group-'.$group)]),
                 'otherFloors' => $floors->reject(fn (Floor $floor) => $floor->id === $active->id)
                     ->map(fn (Floor $floor) => ['id' => $floor->id, 'name' => $floor->t('name'), 'rooms' => $floor->rooms
                         ->reject(fn (Room $room) => $room->kind === RoomKind::Corridor)
@@ -81,7 +100,7 @@ class FloorPlanController extends Controller
 
     public function update(FloorPlanRequest $request, string $locale, Floor $floor, SaveFloorPlan $save): RedirectResponse
     {
-        $save->handle($floor, $request->rooms(), $request->tables());
+        $save->handle($floor, $request->rooms(), $request->tables(), $request->doors(), $request->fixtures());
 
         return redirect()
             ->route('admin.floor-plan', ['locale' => $locale, 'floor' => $floor->id])
