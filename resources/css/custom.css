@@ -115,6 +115,32 @@ body {
     background: none;
 }
 
+.floor-room--label-only.is-booked {
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--room) 16%, transparent) 0 6px, transparent 6px 14px);
+}
+
+/* The name of a room that can be booked whole is a button. */
+.floor-room__book {
+    pointer-events: auto;
+    min-height: 1.75rem;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--room) 55%, transparent);
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-ground) 80%, transparent);
+    cursor: pointer;
+}
+
+.floor-room__book:hover:not(:disabled),
+.floor-room__book[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--room) 25%, var(--color-ground));
+    color: var(--color-ink);
+}
+
+.floor-room__book:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .floor-room--corridor {
     border-color: transparent;
     background-color: color-mix(in srgb, var(--color-line) 45%, transparent);

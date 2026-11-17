@@ -106,8 +106,8 @@
                                                             <td style="padding: 4px 0; font-size: 13px; color: #1a1a1a;">{{ $reservation->guests_count }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="padding: 4px 0; font-size: 13px; color: #666666;">{{ __('reservation-email-table') }}:</td>
-                                                            <td style="padding: 4px 0; font-size: 13px; color: #1a1a1a;">#{{ $reservation->table_id }}</td>
+                                                            <td style="padding: 4px 0; font-size: 13px; color: #666666;">{{ $reservation->room_id ? __('room-booking-label') : __('reservation-email-table') }}:</td>
+                                                            <td style="padding: 4px 0; font-size: 13px; color: #1a1a1a;">{{ $reservation->placeName() }}</td>
                                                         </tr>
                                                         <tr>
                                                             <td style="padding: 4px 0; font-size: 13px; color: #666666;">{{ __('reservation-email-status') }}:</td>

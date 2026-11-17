@@ -65,7 +65,8 @@
 @endif
 
 @php
-    $reservationsByTable = $reservations->groupBy('table_id');
+    // A whole-room booking counts for every table in its room.
+        $reservationsByTable = app(\App\Services\TableHolds::class)->byTable($reservations);
 @endphp
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -84,7 +85,7 @@
 
         <div class="overflow-x-auto">
             @foreach ($floors as $floor)
-                <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId">
+                <x-floor-plan.stage :floor="$floor" :frame="$frame" :active="$activeFloorId" :room-booking="$roomBooking">
 
                     @foreach ($floor->tables as $table)
                 @php
@@ -162,6 +163,7 @@
               class="space-y-3">
             @csrf
             <input type="hidden" name="table_id" id="staff_table_id">
+            <input type="hidden" name="room_id" id="staff_room_id">
             <input type="hidden" name="mode" id="staff_mode" value="phone">
 
             <div class="rounded-2xl bg-ground/40 border border-line px-3 py-2 text-xs text-ink-soft min-w-0">
@@ -324,7 +326,7 @@
                                     @if($res->end_at) – {{ $res->end_at->format('H:i') }} @endif
                                 </div>
                                 <div class="text-ink truncate">
-                                    {{ __('staff-reservations-table-label') }} {{ $res->table->name ?? '#' }}
+                                    {{ $res->room_id ? __('room-booking-label').' '.($res->room?->t('name') ?? '') : __('staff-reservations-table-label').' '.($res->table->name ?? '#') }}
                                 </div>
                                 <div class="text-xs text-ink-muted truncate">
                                     {{ $res->guest_name ?? ($res->user->name ?? __('common-guest')) }}
@@ -395,6 +397,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const buttons = document.querySelectorAll('.js-staff-table');
     const label = document.getElementById('staffSelectedTableLabel');
     const tableIdInput = document.getElementById('staff_table_id');
+    const roomIdInput = document.getElementById('staff_room_id');
+    const staffGuests = document.querySelector('[name="guests_count"]');
+    const roomLabel = @json(__('room-booking-selected', ['name' => '__NAME__', 'seats' => '__SEATS__']));
+    let selectedRoom = null;
+
+    // Whole-room booking: the name of a bookable room selects the room.
+    document.querySelectorAll('.js-room-book').forEach((button) => {
+        button.disabled = button.dataset.taken === '1';
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.js-staff-table').forEach((table) => table.classList.remove('ring-2', 'ring-line-strong'));
+            selectedRoom?.setAttribute('aria-pressed', 'false');
+            selectedRoom = button;
+            button.setAttribute('aria-pressed', 'true');
+            if (tableIdInput) tableIdInput.value = '';
+            roomIdInput.value = button.dataset.roomId;
+            staffGuests?.setAttribute('max', button.dataset.seats);
+            if (label) label.textContent = roomLabel.replace('__NAME__', () => button.dataset.name).replace('__SEATS__', button.dataset.seats);
+        });
+    });
 
     let selectedBtn = null;
 
@@ -408,6 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedBtn = btn;
 
             if (tableIdInput) tableIdInput.value = btn.dataset.id;
+            roomIdInput.value = '';
+            selectedRoom?.setAttribute('aria-pressed', 'false');
+            selectedRoom = null;
+            staffGuests?.setAttribute('max', '20');
             if (label) label.textContent =
                 btn.dataset.name + ' · ' + @json(__('staff-reservations-guests-label')) + ' ' + btn.dataset.capacity;
         });

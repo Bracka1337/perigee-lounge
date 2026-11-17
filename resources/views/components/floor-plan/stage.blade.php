@@ -1,6 +1,6 @@
 {{-- One floor of the plan, drawn to the building's proportions, with its rooms under the tables
      passed in the slot. It can be zoomed and dragged around (resources/js/floor-plan.js). --}}
-@props(['floor', 'frame', 'active'])
+@props(['floor', 'frame', 'active', 'roomBooking' => [], 'roomRenders' => []])
 
 <div data-floor-panel="{{ $floor->id }}" data-plan-viewport
      @class(['plan-viewport relative overflow-hidden rounded-2xl border border-line bg-ground/70 select-none', 'hidden' => $floor->id !== $active])>
@@ -15,8 +15,24 @@
         {{-- Room names go above the doors and fixtures, so nothing covers them. --}}
         @foreach ($floor->rooms as $room)
             @if ($room->kind !== \App\Enums\RoomKind::Corridor)
-                <div class="floor-room floor-room--label-only" style="{{ $frame->roomStyle($room) }} --room: {{ $room->color->hex() }};">
-                    <span class="floor-room__label">{{ $room->t('name') }}</span>
+                @php($booking = $roomBooking[$room->id] ?? null)
+                <div @class(['floor-room floor-room--label-only', 'is-booked' => $booking['booked'] ?? false])
+                     style="{{ $frame->roomStyle($room) }} --room: {{ $room->color->hex() }};">
+                    @if ($booking)
+                        {{-- Rooms that can be booked as a whole: the name opens the room in the panel. --}}
+                        <button type="button" class="floor-room__label floor-room__book js-room-book"
+                                data-room-id="{{ $room->id }}"
+                                data-name="{{ $room->t('name') }}"
+                                data-floor="{{ $floor->t('name') }}"
+                                data-seats="{{ $booking['seats'] }}"
+                                data-taken="{{ $booking['taken'] ? '1' : '0' }}"
+                                data-render="{{ $roomRenders[$room->id] ?? '' }}"
+                                aria-label="{{ __('room-booking-choose', ['room' => $room->t('name')]) }}">
+                            {{ $room->t('name') }} <span aria-hidden="true">◆</span>
+                        </button>
+                    @else
+                        <span class="floor-room__label">{{ $room->t('name') }}</span>
+                    @endif
                 </div>
             @endif
         @endforeach
